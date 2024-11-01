@@ -1,6 +1,6 @@
 # allhelps
 
-A new Flutter project.
+AllHelps - GOOGLE X NHA
 
 ## Getting Started
 

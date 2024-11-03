@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       // Change initialRoute to your team's page during development
-      initialRoute: '/',
+      initialRoute: '/helps',
       // Update this theme to unify basic color palette/font across project
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,

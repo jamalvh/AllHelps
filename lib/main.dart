@@ -1,6 +1,5 @@
 import 'package:allhelps/alert.dart';
 import 'package:allhelps/helps.dart';
-import 'package:allhelps/home.dart';
 import 'package:allhelps/my.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       // Change initialRoute to your team's page during development
       initialRoute: '/',
       // Update this theme to unify basic color palette/font across project

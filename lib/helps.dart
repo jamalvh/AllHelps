@@ -1,3 +1,4 @@
+import 'package:allhelps/search_bar_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as lat_lng;
@@ -52,18 +53,7 @@ class _HelpsPageState extends State<HelpsPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         toolbarHeight: MediaQuery.of(context).size.height * 0.15,
-        title: Column(children: [
-          const SearchBar(
-            leading: Icon(Icons.search),
-            hintText: 'I want to find ...',
-            backgroundColor: WidgetStatePropertyAll(Colors.white),
-            side: WidgetStatePropertyAll(BorderSide(color: Colors.black12)),
-            shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(15)))),
-            elevation: WidgetStatePropertyAll(0),
-          ),
-          ListView(scrollDirection: Axis.horizontal, children: [])
-        ]),
+        title: const Column(children: [SearchBarWidget()]),
         actions: [
           Column(
             children: [

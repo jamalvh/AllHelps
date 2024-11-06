@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomIconButton extends StatelessWidget {
-  final String iconPath;
+  final IconData icon;
   final String label;
   final VoidCallback onPressed;
   final bool isSelected;
 
   const CustomIconButton({
     super.key,
-    required this.iconPath,
+    required this.icon,
     required this.label,
     required this.onPressed,
     required this.isSelected,
@@ -31,9 +30,9 @@ class CustomIconButton extends StatelessWidget {
           ),
         ),
       ),
-      icon: SvgPicture.asset(
-        iconPath,
-        height: 20,
+      icon: Icon(
+        icon,
+        size: 20,
         color: const Color(0xFF6359CA),
       ),
       label: Text(
@@ -82,42 +81,45 @@ class _AlertSelectorState extends State<AlertSelector> {
     });
   }
 
-  static const double size = 10.0;
+  static const double size = 8.0; // Changed from 10.0 to 8.0
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          CustomIconButton(
-            iconPath: 'icons/all.svg',
-            label: 'All',
-            isSelected: allSelected,
-            onPressed: toggleAll,
-          ),
-          const SizedBox(width: size),
-          CustomIconButton(
-            iconPath: 'icons/events.svg',
-            label: 'Event',
-            isSelected: selectedButtons[1],
-            onPressed: () => toggleButton(1),
-          ),
-          const SizedBox(width: size),
-          CustomIconButton(
-            iconPath: 'icons/resources.svg',
-            label: 'Resources',
-            isSelected: selectedButtons[2],
-            onPressed: () => toggleButton(2),
-          ),
-          const SizedBox(width: size),
-          CustomIconButton(
-            iconPath: 'icons/safety.svg',
-            label: 'Safety',
-            isSelected: selectedButtons[3],
-            onPressed: () => toggleButton(3),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 13.5),
+        child: Row(
+          children: [
+            CustomIconButton(
+              icon: Icons.forum,
+              label: 'All',
+              isSelected: allSelected,
+              onPressed: toggleAll,
+            ),
+            const SizedBox(width: size),
+            CustomIconButton(
+              icon: Icons.event,
+              label: 'Event',
+              isSelected: selectedButtons[1],
+              onPressed: () => toggleButton(1),
+            ),
+            const SizedBox(width: size),
+            CustomIconButton(
+              icon: Icons.favorite,
+              label: 'Resources',
+              isSelected: selectedButtons[2],
+              onPressed: () => toggleButton(2),
+            ),
+            const SizedBox(width: size),
+            CustomIconButton(
+              icon: Icons.security,
+              label: 'Safety',
+              isSelected: selectedButtons[3],
+              onPressed: () => toggleButton(3),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -134,15 +136,40 @@ class AlertPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(onPressed: () {
-          Navigator.pop(context);
-        }),
-        centerTitle: true,
-        title: const Text('Alerts', style: TextStyle(color: Colors.white)),
-        backgroundColor: mainColor,
-        iconTheme: const IconThemeData(color: Colors.white),
-        toolbarHeight: 100.0,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(110.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: mainColor,
+          ),
+          child: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.only(top: 50.0, bottom: 10.0),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Positioned(
+                    left: 0,
+                    child: BackButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      color: Colors.white,
+                    ),
+                  ),
+                  const Text(
+                    'Alerts',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
       body: Center(
         child: 

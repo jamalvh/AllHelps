@@ -21,7 +21,7 @@ class CustomIconButton extends StatelessWidget {
       onPressed: onPressed,
       style: TextButton.styleFrom(
         backgroundColor: isSelected ? const Color(0xFFCBDFFF) : Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(13.3),
           side: BorderSide(
@@ -128,6 +128,8 @@ class AlertPage extends StatelessWidget {
 
   final Color mainColor = const Color(0xFF6359ca);
   final bool isEmergency = true; //placeholder
+  //this will be equal to the amount of items that will be shown: placeholder number rn
+  final int itemCount = 5;
 
   @override
   Widget build(BuildContext context) {
@@ -143,22 +145,28 @@ class AlertPage extends StatelessWidget {
         toolbarHeight: 100.0,
       ),
       body: Center(
-        child: Column(
+        child: 
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          
           children: [
+            //padding 
+            
             AlertSelector(
               onSelectionChanged: (selections) {
                 // Handle the selection changes here
                 print('Selected buttons: $selections');
               },
             ),
+
+
             Expanded(
               child: ListView.builder(
+                itemCount: itemCount,
                 itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    color: (isEmergency) ? Colors.orange : Colors.cyan,
-                    child: const Text("placeholder"),
-                  );
+                  return AlertItem(isEmergency: isEmergency, alertTitle: "title placeholder", alertContent: "placeholde",);
                 },
+
               ),
             ),
           ],
@@ -167,3 +175,46 @@ class AlertPage extends StatelessWidget {
     );
   }
 }
+
+class AlertItem extends StatelessWidget {
+  const AlertItem({
+    super.key,
+    required this.isEmergency,
+    required this.alertContent,
+    required this.alertTitle
+  });
+
+  final bool isEmergency;
+  final String alertContent;
+  final String alertTitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: (isEmergency) ? Colors.orange : Colors.cyan,
+        borderRadius: const BorderRadius.all(Radius.circular(10.0))
+      ),
+      padding: const EdgeInsets.all(100.0),
+      alignment: Alignment.bottomLeft,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10), //placeholder value
+            child:Text(
+              alertTitle,
+              //style: const TextStyle()
+            )
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Text(
+              alertContent
+            )
+          )
+        ]
+    )
+    );
+  }
+}
+

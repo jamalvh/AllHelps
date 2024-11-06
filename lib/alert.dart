@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomIconButton extends StatelessWidget {
-  final String iconPath;
+  final IconData icon;
   final String label;
   final VoidCallback onPressed;
   final bool isSelected;
 
   const CustomIconButton({
     super.key,
-    required this.iconPath,
+    required this.icon,
     required this.label,
     required this.onPressed,
     required this.isSelected,
@@ -31,9 +30,9 @@ class CustomIconButton extends StatelessWidget {
           ),
         ),
       ),
-      icon: SvgPicture.asset(
-        iconPath,
-        height: 20,
+      icon: Icon(
+        icon,
+        size: 20,
         color: const Color(0xFF6359CA),
       ),
       label: Text(
@@ -88,36 +87,39 @@ class _AlertSelectorState extends State<AlertSelector> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          CustomIconButton(
-            iconPath: 'icons/all.svg',
-            label: 'All',
-            isSelected: allSelected,
-            onPressed: toggleAll,
-          ),
-          const SizedBox(width: size),
-          CustomIconButton(
-            iconPath: 'icons/events.svg',
-            label: 'Event',
-            isSelected: selectedButtons[1],
-            onPressed: () => toggleButton(1),
-          ),
-          const SizedBox(width: size),
-          CustomIconButton(
-            iconPath: 'icons/resources.svg',
-            label: 'Resources',
-            isSelected: selectedButtons[2],
-            onPressed: () => toggleButton(2),
-          ),
-          const SizedBox(width: size),
-          CustomIconButton(
-            iconPath: 'icons/safety.svg',
-            label: 'Safety',
-            isSelected: selectedButtons[3],
-            onPressed: () => toggleButton(3),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          children: [
+            CustomIconButton(
+              icon: Icons.all_inclusive,
+              label: 'All',
+              isSelected: allSelected,
+              onPressed: toggleAll,
+            ),
+            const SizedBox(width: size),
+            CustomIconButton(
+              icon: Icons.event,
+              label: 'Event',
+              isSelected: selectedButtons[1],
+              onPressed: () => toggleButton(1),
+            ),
+            const SizedBox(width: size),
+            CustomIconButton(
+              icon: Icons.library_books,
+              label: 'Resources',
+              isSelected: selectedButtons[2],
+              onPressed: () => toggleButton(2),
+            ),
+            const SizedBox(width: size),
+            CustomIconButton(
+              icon: Icons.security,
+              label: 'Safety',
+              isSelected: selectedButtons[3],
+              onPressed: () => toggleButton(3),
+            ),
+          ],
+        ),
       ),
     );
   }

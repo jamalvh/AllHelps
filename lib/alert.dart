@@ -81,18 +81,18 @@ class _AlertSelectorState extends State<AlertSelector> {
     });
   }
 
-  static const double size = 10.0;
+  static const double size = 8.0; // Changed from 10.0 to 8.0
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
+        padding: const EdgeInsets.symmetric(vertical: 13.5),
         child: Row(
           children: [
             CustomIconButton(
-              icon: Icons.all_inclusive,
+              icon: Icons.forum,
               label: 'All',
               isSelected: allSelected,
               onPressed: toggleAll,
@@ -106,7 +106,7 @@ class _AlertSelectorState extends State<AlertSelector> {
             ),
             const SizedBox(width: size),
             CustomIconButton(
-              icon: Icons.library_books,
+              icon: Icons.favorite,
               label: 'Resources',
               isSelected: selectedButtons[2],
               onPressed: () => toggleButton(2),
@@ -134,15 +134,40 @@ class AlertPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(onPressed: () {
-          Navigator.pop(context);
-        }),
-        centerTitle: true,
-        title: const Text('Alerts', style: TextStyle(color: Colors.white)),
-        backgroundColor: mainColor,
-        iconTheme: const IconThemeData(color: Colors.white),
-        toolbarHeight: 100.0,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(110.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: mainColor,
+          ),
+          child: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.only(top: 50.0, bottom: 10.0),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Positioned(
+                    left: 0,
+                    child: BackButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      color: Colors.white,
+                    ),
+                  ),
+                  const Text(
+                    'Alerts',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
       body: Center(
         child: Column(

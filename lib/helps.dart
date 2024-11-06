@@ -15,6 +15,15 @@ class _HelpsPageState extends State<HelpsPage> {
   final double _dragSensitivity = 600;
 
   List<String> chosenFilters = [];
+
+  final Map<String, String> filter_images = {
+    "Food": "lib/help_page_assets/food.png",
+    "Support": "lib/help_page_assets/support.png",
+    "Medical": "lib/help_page_assets/medicene.png",
+    "Shelter": "lib/help_page_assets/shelter.png",
+    "Resources": "lib/help_page_assets/resource.png"
+  };
+
   final Map<String, List<String>> filters = {
     "Food": ["Food and Meals- Hot Meals", "Food bank"],
     "Support": [
@@ -48,12 +57,32 @@ class _HelpsPageState extends State<HelpsPage> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> top_filters = [];
+
+    filter_images.forEach((categoryName, filename) {
+      top_filters.add(SizedBox(
+          height: 50,
+          width: MediaQuery.of(context).size.width,
+          child: Filter(categoryName: categoryName, filename: filename)));
+    });
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         toolbarHeight: MediaQuery.of(context).size.height * 0.15,
-        title: const Column(children: [SearchBarWidget()]),
+        title: Column(
+          children: [
+            const SearchBarWidget(),
+            ListView.builder(
+              itemCount: top_filters.length,
+              itemBuilder: (_, index) {
+                return top_filters[index];
+              },
+              scrollDirection: Axis.horizontal,
+            )
+          ],
+        ),
         actions: [
           Column(
             children: [
@@ -189,6 +218,21 @@ class Grabber extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class Filter extends StatelessWidget {
+  final String categoryName;
+  final String filename;
+  const Filter({super.key, required this.categoryName, required this.filename});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      minTileHeight: 50,
+      leading: Image.asset(filename),
+      title: Text(categoryName),
     );
   }
 }

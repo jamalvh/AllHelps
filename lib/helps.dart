@@ -60,9 +60,16 @@ class _HelpsPageState extends State<HelpsPage> {
     List<Widget> top_filters = [];
 
     filter_images.forEach((categoryName, filename) {
-      top_filters.add(SizedBox(
-          height: 50,
-          width: MediaQuery.of(context).size.width,
+      top_filters.add(Container(
+          constraints: BoxConstraints(
+            maxHeight: 50,
+            maxWidth: MediaQuery.of(context).size.width / 3,
+          ),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.black12),
+              borderRadius: BorderRadius.circular(10)),
+          margin: const EdgeInsets.fromLTRB(0, 15, 15, 0),
+          padding: const EdgeInsets.all(10),
           child: Filter(categoryName: categoryName, filename: filename)));
     });
 
@@ -70,17 +77,14 @@ class _HelpsPageState extends State<HelpsPage> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        toolbarHeight: MediaQuery.of(context).size.height * 0.15,
+        toolbarHeight: MediaQuery.of(context).size.height * 0.18,
         title: Column(
           children: [
             const SearchBarWidget(),
-            ListView.builder(
-              itemCount: top_filters.length,
-              itemBuilder: (_, index) {
-                return top_filters[index];
-              },
+            SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-            )
+              child: Row(children: top_filters),
+            ),
           ],
         ),
         actions: [
@@ -229,10 +233,19 @@ class Filter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      minTileHeight: 50,
-      leading: Image.asset(filename),
-      title: Text(categoryName),
-    );
+    return Row(children: [
+      Image.asset(
+        filename,
+        width: 20,
+        height: 20,
+      ),
+      const SizedBox(
+        width: 10,
+      ),
+      Text(
+        categoryName,
+        style: const TextStyle(fontSize: 14),
+      ),
+    ]);
   }
 }

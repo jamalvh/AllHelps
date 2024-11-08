@@ -58,6 +58,7 @@ class _HelpsPageState extends State<HelpsPage> {
   @override
   Widget build(BuildContext context) {
     List<Widget> top_filters = [];
+    String chosenFilter;
 
     filter_images.forEach((categoryName, filename) {
       top_filters.add(Container(
@@ -70,7 +71,28 @@ class _HelpsPageState extends State<HelpsPage> {
               borderRadius: BorderRadius.circular(10)),
           margin: const EdgeInsets.fromLTRB(0, 15, 15, 0),
           padding: const EdgeInsets.all(10),
-          child: Filter(categoryName: categoryName, filename: filename)));
+          child: ElevatedButton(
+            onPressed: () {
+              setState(() {
+                chosenFilter = categoryName;
+                print(chosenFilter);
+              });
+            },
+            child: Row(children: [
+              Image.asset(
+                filename,
+                width: 20,
+                height: 20,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Text(
+                categoryName,
+                style: const TextStyle(fontSize: 14),
+              ),
+            ]),
+          )));
     });
 
     return Scaffold(
@@ -245,26 +267,26 @@ class Grabber extends StatelessWidget {
   }
 }
 
-class Filter extends StatelessWidget {
-  final String categoryName;
-  final String filename;
-  const Filter({super.key, required this.categoryName, required this.filename});
+// class Filter extends StatelessWidget {
+//   final String categoryName;
+//   final String filename;
+//   const Filter({super.key, required this.categoryName, required this.filename});
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(children: [
-      Image.asset(
-        filename,
-        width: 20,
-        height: 20,
-      ),
-      const SizedBox(
-        width: 10,
-      ),
-      Text(
-        categoryName,
-        style: const TextStyle(fontSize: 14),
-      ),
-    ]);
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(children: [
+//       Image.asset(
+//         filename,
+//         width: 20,
+//         height: 20,
+//       ),
+//       const SizedBox(
+//         width: 10,
+//       ),
+//       Text(
+//         categoryName,
+//         style: const TextStyle(fontSize: 14),
+//       ),
+//     ]);
+//   }
+// }

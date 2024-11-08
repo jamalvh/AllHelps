@@ -61,17 +61,9 @@ class _HelpsPageState extends State<HelpsPage> {
     String chosenFilter;
 
     filter_images.forEach((categoryName, filename) {
-      top_filters.add(Container(
-          constraints: BoxConstraints(
-            maxHeight: 50,
-            maxWidth: MediaQuery.of(context).size.width / 3,
-          ),
-          // decoration: BoxDecoration(
-          //     border: Border.all(color: Colors.black12),
-          //     borderRadius: BorderRadius.circular(10)),
-          margin: const EdgeInsets.fromLTRB(0, 15, 15, 0),
-          // padding: const EdgeInsets.all(10),
-          child: ElevatedButton(
+      top_filters.add(Row(
+        children: [
+          ElevatedButton(
             onPressed: () {
               setState(() {
                 chosenFilter = categoryName;
@@ -92,7 +84,12 @@ class _HelpsPageState extends State<HelpsPage> {
                 style: const TextStyle(fontSize: 14),
               ),
             ]),
-          )));
+          ),
+          const SizedBox(
+            width: 10,
+          )
+        ],
+      ));
     });
 
     return Scaffold(
@@ -132,6 +129,9 @@ class _HelpsPageState extends State<HelpsPage> {
                       ),
                     ))
               ],
+            ),
+            const SizedBox(
+              height: 10,
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,

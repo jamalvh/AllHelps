@@ -85,40 +85,47 @@ class _AlertSelectorState extends State<AlertSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 13.5),
-        child: Row(
-          children: [
-            CustomIconButton(
-              icon: Icons.forum,
-              label: 'All',
-              isSelected: allSelected,
-              onPressed: toggleAll,
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      child: Center(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 13.5, horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomIconButton(
+                  icon: Icons.forum,
+                  label: 'All',
+                  isSelected: allSelected,
+                  onPressed: toggleAll,
+                ),
+                const SizedBox(width: size),
+                CustomIconButton(
+                  icon: Icons.event,
+                  label: 'Event',
+                  isSelected: selectedButtons[1],
+                  onPressed: () => toggleButton(1),
+                ),
+                const SizedBox(width: size),
+                CustomIconButton(
+                  icon: Icons.favorite,
+                  label: 'Resources',
+                  isSelected: selectedButtons[2],
+                  onPressed: () => toggleButton(2),
+                ),
+                const SizedBox(width: size),
+                CustomIconButton(
+                  icon: Icons.security,
+                  label: 'Safety',
+                  isSelected: selectedButtons[3],
+                  onPressed: () => toggleButton(3),
+                ),
+              ],
             ),
-            const SizedBox(width: size),
-            CustomIconButton(
-              icon: Icons.event,
-              label: 'Event',
-              isSelected: selectedButtons[1],
-              onPressed: () => toggleButton(1),
-            ),
-            const SizedBox(width: size),
-            CustomIconButton(
-              icon: Icons.favorite,
-              label: 'Resources',
-              isSelected: selectedButtons[2],
-              onPressed: () => toggleButton(2),
-            ),
-            const SizedBox(width: size),
-            CustomIconButton(
-              icon: Icons.security,
-              label: 'Safety',
-              isSelected: selectedButtons[3],
-              onPressed: () => toggleButton(3),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -132,7 +139,8 @@ class AlertPage extends StatelessWidget {
   final bool isEmergency = true; // Placeholder
   final int itemCount = 5;
   final Color welcomeText = const Color(0xFF3d3a8d);
-  final Color welcomeBG = const Color(0xFFedf4ff);
+  final Color welcomeBG = const Color.fromRGBO(237, 244, 255, 1);
+  final Color welcomeBorder = const Color.fromRGBO(220, 220, 224, 1);
 
 
 
@@ -155,11 +163,12 @@ class AlertPage extends StatelessWidget {
       ]
     ;
     return Scaffold(
+      backgroundColor: const Color(0xFFF4F4F4),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(110.0),
         child: Container(
           decoration: BoxDecoration(
-            color: mainColor,
+            color: const Color(0xFF6359CA),
           ),
           child: SafeArea(
             child: Padding(
@@ -199,18 +208,19 @@ class AlertPage extends StatelessWidget {
                 print('Selected buttons: $selections');
               },
             ),
+            const SizedBox(height: 14),
             Padding(
-              padding: const EdgeInsets.all(4), // Changed from 8 to 4
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Container(
-                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: welcomeBG,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: Colors.blue.shade200,
-                    width: 1.4,
+                    color: welcomeBorder,
+                    width: 1,
                   ),
                 ),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

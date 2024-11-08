@@ -85,40 +85,47 @@ class _AlertSelectorState extends State<AlertSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 13.5),
-        child: Row(
-          children: [
-            CustomIconButton(
-              icon: Icons.forum,
-              label: 'All',
-              isSelected: allSelected,
-              onPressed: toggleAll,
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      child: Center(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 13.5, horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomIconButton(
+                  icon: Icons.forum,
+                  label: 'All',
+                  isSelected: allSelected,
+                  onPressed: toggleAll,
+                ),
+                const SizedBox(width: size),
+                CustomIconButton(
+                  icon: Icons.event,
+                  label: 'Event',
+                  isSelected: selectedButtons[1],
+                  onPressed: () => toggleButton(1),
+                ),
+                const SizedBox(width: size),
+                CustomIconButton(
+                  icon: Icons.favorite,
+                  label: 'Resources',
+                  isSelected: selectedButtons[2],
+                  onPressed: () => toggleButton(2),
+                ),
+                const SizedBox(width: size),
+                CustomIconButton(
+                  icon: Icons.security,
+                  label: 'Safety',
+                  isSelected: selectedButtons[3],
+                  onPressed: () => toggleButton(3),
+                ),
+              ],
             ),
-            const SizedBox(width: size),
-            CustomIconButton(
-              icon: Icons.event,
-              label: 'Event',
-              isSelected: selectedButtons[1],
-              onPressed: () => toggleButton(1),
-            ),
-            const SizedBox(width: size),
-            CustomIconButton(
-              icon: Icons.favorite,
-              label: 'Resources',
-              isSelected: selectedButtons[2],
-              onPressed: () => toggleButton(2),
-            ),
-            const SizedBox(width: size),
-            CustomIconButton(
-              icon: Icons.security,
-              label: 'Safety',
-              isSelected: selectedButtons[3],
-              onPressed: () => toggleButton(3),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -138,11 +145,12 @@ class AlertPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF4F4F4),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(110.0),
         child: Container(
           decoration: BoxDecoration(
-            color: mainColor,
+            color: const Color(0xFF6359CA),
           ),
           child: SafeArea(
             child: Padding(
@@ -182,6 +190,7 @@ class AlertPage extends StatelessWidget {
                 print('Selected buttons: $selections');
               },
             ),
+            const SizedBox(height: 14),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Container(

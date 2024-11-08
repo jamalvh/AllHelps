@@ -15,6 +15,7 @@ class _HelpsPageState extends State<HelpsPage> {
   final double _dragSensitivity = 600;
 
   List<String> chosenFilters = [];
+  String chosenFilter = "";
 
   final Map<String, String> filter_images = {
     "Food": "lib/help_page_assets/food.png",
@@ -58,35 +59,34 @@ class _HelpsPageState extends State<HelpsPage> {
   @override
   Widget build(BuildContext context) {
     List<Widget> top_filters = [];
-    String chosenFilter;
 
     filter_images.forEach((categoryName, filename) {
       top_filters.add(Row(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-            child: ElevatedButton(
-            onPressed: () {
-              setState(() {
-                chosenFilter = categoryName;
-                print(chosenFilter);
-              });
-            },
-            child: Row(children: [
-              Image.asset(
-                filename,
-                width: 20,
-                height: 20,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(
-                categoryName,
-                style: const TextStyle(fontSize: 14),
-              ),
-            ]),
-          )),
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    chosenFilter = categoryName;
+                    List<String> subCategories = filters[chosenFilter]!;
+                  });
+                },
+                child: Row(children: [
+                  Image.asset(
+                    filename,
+                    width: 20,
+                    height: 20,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    categoryName,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ]),
+              )),
         ],
       ));
     });
@@ -132,10 +132,14 @@ class _HelpsPageState extends State<HelpsPage> {
             const SizedBox(
               height: 10,
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(children: top_filters),
-            ),
+            chosenFilter == ""
+                ? SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(children: top_filters),
+                  )
+                : Container(
+                    child: const Text('Subcategories'),
+                  ),
           ],
         ),
         backgroundColor: Colors.white,

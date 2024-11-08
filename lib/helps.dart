@@ -63,7 +63,9 @@ class _HelpsPageState extends State<HelpsPage> {
     filter_images.forEach((categoryName, filename) {
       top_filters.add(Row(
         children: [
-          ElevatedButton(
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
             onPressed: () {
               setState(() {
                 chosenFilter = categoryName;
@@ -84,10 +86,7 @@ class _HelpsPageState extends State<HelpsPage> {
                 style: const TextStyle(fontSize: 14),
               ),
             ]),
-          ),
-          const SizedBox(
-            width: 10,
-          )
+          )),
         ],
       ));
     });

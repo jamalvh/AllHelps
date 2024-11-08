@@ -94,12 +94,18 @@ class HelpsRow extends StatelessWidget {
                   color1: Color(0xFF50714A),
                   color2: Color(0xFF5BB139),
                   text: "Looking for Shelter",
-                  imageURL: "assets/images/helps_shelter_icon.png"),
+                  imageURL: "assets/images/helps_shelter_icon.png",
+                  onTap: () {
+                    Navigator.pushNamed(context, '/helps');
+                  }),
               HelpsButton(
                   color1: Color(0xFF4F77C0),
                   color2: Color(0xFF86A8FE),
                   text: "Get Medical Relief",
-                  imageURL: "assets/images/helps_medicine_icon.png")
+                  imageURL: "assets/images/helps_medicine_icon.png",
+                  onTap: () {
+                    Navigator.pushNamed(context, '/helps');
+                  })
             ],
           ))
     ]);
@@ -128,53 +134,56 @@ class HelpsButton extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(14),
       child: Material(
-        //color: backgroundColor,
-        // Ripple effect
-        child: InkWell(
-          onTap: onTap,
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: RadialGradient(
-                colors: [
-                  color1,
-                  color2,
-                ],
-                center: Alignment.bottomRight,
-                radius: 1.2,
-              ),
-            ),
-            width: 116,
-            height: 144,
-            child: Stack(
-              children: [
-                // Icon
-                Positioned(
-                  top: 12,
-                  left: 12,
-                  child: Container(
-                    height: 46,
-                    width: 46,
-                    child: Image.asset(
-                      imageURL,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                // Text caption
-                Positioned(
-                  bottom: 20,
-                  left: 12,
-                  right: 12,
-                  child: Text(
-                    text,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              colors: [
+                color1,
+                color2,
               ],
+              center: Alignment.bottomRight,
+              radius: 1.2,
+            ),
+          ),
+          // Add a ripple effect when button is clicked
+          child: InkWell(
+            onTap: onTap,
+            splashColor: color2.withOpacity(1),
+            highlightColor: color2.withOpacity(.5),
+            child: Container(
+              width: 116,
+              height: 144,
+              child: Stack(
+                children: [
+                  // Icon
+                  Positioned(
+                    top: 12,
+                    left: 12,
+                    child: Container(
+                      height: 46,
+                      width: 46,
+                      child: Image.asset(
+                        imageURL,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  // Text caption
+                  Positioned(
+                    bottom: 20,
+                    left: 12,
+                    right: 12,
+                    child: Text(
+                      text,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -131,6 +131,17 @@ class _HelpsPageState extends State<HelpsPage> {
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.example.app',
               ),
+              // MarkerLayer(
+              //   markers: [
+              //     Marker(
+              //       point: const lat_lng.LatLng(36.1716, -115.1391),
+              //       width: 80,
+              //       height: 80,
+              //       child:
+              //           Image.asset('lib/help_page_assets/shelter_marker.png'),
+              //     ),
+              //   ],
+              // ),
             ],
           ),
           DraggableScrollableSheet(

@@ -64,7 +64,7 @@ class _HelpsPageState extends State<HelpsPage> {
       top_filters.add(Row(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 5),
             child: ElevatedButton(
             onPressed: () {
               setState(() {

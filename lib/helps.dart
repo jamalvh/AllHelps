@@ -16,6 +16,8 @@ class _HelpsPageState extends State<HelpsPage> {
 
   List<String> chosenFilters = [];
   String chosenFilter = "";
+  List<Widget> topFilters = [];
+  List<Widget> subFilters = [];
 
   final Map<String, String> filter_images = {
     "Food": "lib/help_page_assets/food.png",
@@ -58,37 +60,8 @@ class _HelpsPageState extends State<HelpsPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> top_filters = [];
-
     filter_images.forEach((categoryName, filename) {
-      top_filters.add(Row(
-        children: [
-          Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    chosenFilter = categoryName;
-                    List<String> subCategories = filters[chosenFilter]!;
-                  });
-                },
-                child: Row(children: [
-                  Image.asset(
-                    filename,
-                    width: 20,
-                    height: 20,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    categoryName,
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ]),
-              )),
-        ],
-      ));
+      topFilters.add(renderTopFilters(categoryName, filename));
     });
 
     return Scaffold(
@@ -132,14 +105,12 @@ class _HelpsPageState extends State<HelpsPage> {
             const SizedBox(
               height: 10,
             ),
-            chosenFilter == ""
-                ? SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(children: top_filters),
-                  )
-                : Container(
-                    child: const Text('Subcategories'),
-                  ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: chosenFilter == "" ? topFilters : subFilters,
+              ),
+            )
           ],
         ),
         backgroundColor: Colors.white,
@@ -237,6 +208,71 @@ class _HelpsPageState extends State<HelpsPage> {
       ),
     );
   }
+
+  Widget renderTopFilters(categoryName, filename) {
+    return Row(
+      children: [
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  chosenFilter = categoryName;
+                  List<String> subCategories = filters[chosenFilter]!;
+                  subFilters.clear();
+                  subFilters.add(renderSubFilters(''));
+                  subFilters.add(renderSubFilters('Distance'));
+                  subCategories.forEach((subCategory) {
+                    subFilters.add(renderSubFilters(subCategory));
+                  });
+                });
+              },
+              child: Row(children: [
+                Image.asset(
+                  filename,
+                  width: 20,
+                  height: 20,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  categoryName,
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ]),
+            )),
+      ],
+    );
+  }
+
+  Widget renderSubFilters(categoryName) {
+    return Row(
+      children: [
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: ElevatedButton(
+              onPressed: () {
+                setState(() {});
+              },
+              child: Row(children: [
+                // Image.asset(
+                //   filename,
+                //   width: 20,
+                //   height: 20,
+                // ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  categoryName,
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ]),
+            )),
+      ],
+    );
+  }
 }
 
 class Grabber extends StatelessWidget {
@@ -269,27 +305,3 @@ class Grabber extends StatelessWidget {
     );
   }
 }
-
-// class Filter extends StatelessWidget {
-//   final String categoryName;
-//   final String filename;
-//   const Filter({super.key, required this.categoryName, required this.filename});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Row(children: [
-//       Image.asset(
-//         filename,
-//         width: 20,
-//         height: 20,
-//       ),
-//       const SizedBox(
-//         width: 10,
-//       ),
-//       Text(
-//         categoryName,
-//         style: const TextStyle(fontSize: 14),
-//       ),
-//     ]);
-//   }
-// }

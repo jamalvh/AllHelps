@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'helps.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -84,18 +83,21 @@ class HelpsRow extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               HelpsButton(
-                  backgroundColor: Color(0xFFE57701),
+                  color1: Color(0xFFE57701),
+                  color2: Color(0xFFFFB15E),
                   text: "Searching for Food",
                   imageURL: "assets/images/helps_food_icon.png",
                   onTap: () {
                     Navigator.pushNamed(context, '/helps');
                   }),
               HelpsButton(
-                  backgroundColor: Color(0xFF50714A),
+                  color1: Color(0xFF50714A),
+                  color2: Color(0xFF5BB139),
                   text: "Looking for Shelter",
                   imageURL: "assets/images/helps_shelter_icon.png"),
               HelpsButton(
-                  backgroundColor: Color(0xFF4F77C0),
+                  color1: Color(0xFF4F77C0),
+                  color2: Color(0xFF86A8FE),
                   text: "Get Medical Relief",
                   imageURL: "assets/images/helps_medicine_icon.png")
             ],
@@ -104,17 +106,18 @@ class HelpsRow extends StatelessWidget {
   }
 }
 
-
 // Widget for Helps Button
 class HelpsButton extends StatelessWidget {
-  final Color backgroundColor;
+  final Color color1;
+  final Color color2;
   final String text;
   final String imageURL;
   final VoidCallback? onTap; // Add this line
 
   const HelpsButton({
     Key? key,
-    required this.backgroundColor,
+    required this.color1,
+    required this.color2,
     required this.text,
     required this.imageURL,
     this.onTap, // And this line
@@ -123,16 +126,25 @@ class HelpsButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      // Ensures the ripple effect is clipped to the border radius
       borderRadius: BorderRadius.circular(14),
       child: Material(
-        color: backgroundColor, // Use the background color here
+        //color: backgroundColor,
+        // Ripple effect
         child: InkWell(
-          onTap: onTap, // Detects taps
+          onTap: onTap,
           child: Container(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                colors: [
+                  color1,
+                  color2,
+                ],
+                center: Alignment.bottomRight,
+                radius: 1.2,
+              ),
+            ),
             width: 116,
             height: 144,
-            // Remove the decoration color since it's now set in Material
             child: Stack(
               children: [
                 // Icon

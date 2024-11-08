@@ -66,11 +66,11 @@ class _HelpsPageState extends State<HelpsPage> {
             maxHeight: 50,
             maxWidth: MediaQuery.of(context).size.width / 3,
           ),
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black12),
-              borderRadius: BorderRadius.circular(10)),
+          // decoration: BoxDecoration(
+          //     border: Border.all(color: Colors.black12),
+          //     borderRadius: BorderRadius.circular(10)),
           margin: const EdgeInsets.fromLTRB(0, 15, 15, 0),
-          padding: const EdgeInsets.all(10),
+          // padding: const EdgeInsets.all(10),
           child: ElevatedButton(
             onPressed: () {
               setState(() {

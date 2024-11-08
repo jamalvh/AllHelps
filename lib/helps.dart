@@ -80,24 +80,43 @@ class _HelpsPageState extends State<HelpsPage> {
         toolbarHeight: MediaQuery.of(context).size.height * 0.18,
         title: Column(
           children: [
-            const SearchBarWidget(),
+            Row(
+              children: [
+                const Expanded(child: SearchBarWidget()),
+                const SizedBox(
+                  width: 10,
+                ),
+                Container(
+                    alignment: Alignment.topCenter,
+                    decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 89, 28, 211),
+                        borderRadius: BorderRadius.circular(10)),
+                    width: 0.15 * MediaQuery.of(context).size.width,
+                    height: 0.065 * MediaQuery.of(context).size.height,
+                    child: ListTile(
+                      minLeadingWidth: 0,
+                      minTileHeight: 0,
+                      title: IconButton(
+                        highlightColor: Colors.amber,
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.filter_alt_off_sharp,
+                          color: Colors.white,
+                        ),
+                      ),
+                      subtitle: const Text(
+                        'Filter',
+                        style: TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                    ))
+              ],
+            ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(children: top_filters),
             ),
           ],
         ),
-        actions: [
-          Column(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.filter_alt_off_sharp),
-              ),
-              const Text('Filter')
-            ],
-          )
-        ],
         backgroundColor: Colors.white,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(20))),

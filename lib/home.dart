@@ -6,8 +6,18 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFEDF4FF),
-      body: Column(
+        body: Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFFEDF4FF),
+            Color(0xFFc8dcf8),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: Column(
         children: [
           Header(),
           Column(
@@ -19,7 +29,7 @@ class MyHomePage extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 }
 
@@ -72,7 +82,7 @@ class HelpsRow extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Text(
               "We are here to help",
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               textAlign: TextAlign.left,
             ),
           )),

@@ -132,7 +132,8 @@ class AlertPage extends StatelessWidget {
   final bool isEmergency = true; // Placeholder
   final int itemCount = 5;
   final Color welcomeText = const Color(0xFF3d3a8d);
-  final Color welcomeBG = const Color(0xFFedf4ff);
+  final Color welcomeBG = const Color.fromRGBO(237, 244, 255, 1);
+  final Color welcomeBorder = const Color.fromRGBO(220, 220, 224, 1);
 
   @override
   Widget build(BuildContext context) {
@@ -182,17 +183,17 @@ class AlertPage extends StatelessWidget {
               },
             ),
             Padding(
-              padding: const EdgeInsets.all(4), // Changed from 8 to 4
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Container(
-                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: welcomeBG,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: Colors.blue.shade200,
-                    width: 1.4,
+                    color: welcomeBorder,
+                    width: 1,
                   ),
                 ),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

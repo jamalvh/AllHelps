@@ -20,7 +20,7 @@ class CustomIconButton extends StatelessWidget {
       onPressed: onPressed,
       style: TextButton.styleFrom(
         backgroundColor: isSelected ? const Color(0xFFCBDFFF) : Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(13.3),
           side: BorderSide(
@@ -81,7 +81,7 @@ class _AlertSelectorState extends State<AlertSelector> {
     });
   }
 
-  static const double size = 8.0; // Final size chosen
+  static const double size = 8.0; // Changed from 10.0 to 8.0
 
   @override
   Widget build(BuildContext context) {
@@ -131,6 +131,8 @@ class AlertPage extends StatelessWidget {
   final Color mainColor = const Color(0xFF6359ca);
   final bool isEmergency = true; // Placeholder
   final int itemCount = 5;
+  final Color welcomeText = const Color(0xFF3d3a8d);
+  final Color welcomeBG = const Color(0xFFedf4ff);
 
   @override
   Widget build(BuildContext context) {
@@ -178,6 +180,41 @@ class AlertPage extends StatelessWidget {
               onSelectionChanged: (selections) {
                 print('Selected buttons: $selections');
               },
+            ),
+            Padding(
+              padding: const EdgeInsets.all(4), // Changed from 8 to 4
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: welcomeBG,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: Colors.blue.shade200,
+                    width: 1.4,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Welcome to the Alerts Board!',
+                      style: TextStyle(
+                        color: welcomeText,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Missed a notification from us? No worries. They\'ll be right here waiting for you and for up to 14 days.',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
             Expanded(
               child: ListView.builder(

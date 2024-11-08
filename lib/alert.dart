@@ -134,8 +134,26 @@ class AlertPage extends StatelessWidget {
   final Color welcomeText = const Color(0xFF3d3a8d);
   final Color welcomeBG = const Color(0xFFedf4ff);
 
+
+
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, dynamic>> alertsArray = [
+        {
+          //mmddyy: month, date, year
+          "Date": 11072024,
+          "Title": "free houses",
+          "Description": "giving away houses to homeless people",
+          "isEmergency": true
+        },
+        {
+          "Date": 11072024,
+          "Title": "free apartments",
+          "Description": "giving away apartments to homeless people",
+          "isEmergency": false
+        }
+      ]
+    ;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(110.0),
@@ -217,16 +235,19 @@ class AlertPage extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: itemCount,
-                itemBuilder: (BuildContext context, int index) {
-                  return AlertItem(
-                    isEmergency: isEmergency,
-                    alertTitle: "title placeholder",
-                    alertContent: "placeholder",
-                  );
-                },
-              ),
+              child: 
+              Listener(
+                child: ListView.builder(
+                          itemCount: itemCount,
+                          itemBuilder: (BuildContext context, int index) {
+                            return AlertItem(
+                              isEmergency: alertsArray[index]["isEmergency"],
+                              alertTitle: alertsArray[index]["Title"],
+                              alertContent: alertsArray[index]["Description"],
+                            );
+                          },
+                        ),
+              )
             ),
           ],
         ),
@@ -235,6 +256,7 @@ class AlertPage extends StatelessWidget {
   }
 }
 
+//https://stackoverflow.com/questions/64281024/how-to-create-a-wrapper-widget-and-pass-children-and-properties-to-it-in-flutter
 class AlertItem extends StatelessWidget {
   const AlertItem({
     super.key,
@@ -242,6 +264,9 @@ class AlertItem extends StatelessWidget {
     required this.alertContent,
     required this.alertTitle,
   });
+
+  //add date sections
+
 
   final bool isEmergency;
   final String alertContent;

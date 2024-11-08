@@ -20,11 +20,7 @@ class CustomIconButton extends StatelessWidget {
       onPressed: onPressed,
       style: TextButton.styleFrom(
         backgroundColor: isSelected ? const Color(0xFFCBDFFF) : Colors.white,
-<<<<<<< Updated upstream
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-=======
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
->>>>>>> Stashed changes
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(13.3),
           side: BorderSide(
@@ -85,30 +81,18 @@ class _AlertSelectorState extends State<AlertSelector> {
     });
   }
 
-<<<<<<< Updated upstream
-  static const double size = 8.0; // Changed from 10.0 to 8.0
-=======
-  static const double size = 10.0;
->>>>>>> Stashed changes
+  static const double size = 8.0; // Final size chosen
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Padding(
-<<<<<<< Updated upstream
         padding: const EdgeInsets.symmetric(vertical: 13.5),
         child: Row(
           children: [
             CustomIconButton(
               icon: Icons.forum,
-=======
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          children: [
-            CustomIconButton(
-              icon: Icons.all_inclusive,
->>>>>>> Stashed changes
               label: 'All',
               isSelected: allSelected,
               onPressed: toggleAll,
@@ -122,11 +106,7 @@ class _AlertSelectorState extends State<AlertSelector> {
             ),
             const SizedBox(width: size),
             CustomIconButton(
-<<<<<<< Updated upstream
               icon: Icons.favorite,
-=======
-              icon: Icons.library_books,
->>>>>>> Stashed changes
               label: 'Resources',
               isSelected: selectedButtons[2],
               onPressed: () => toggleButton(2),
@@ -149,19 +129,12 @@ class AlertPage extends StatelessWidget {
   const AlertPage({super.key});
 
   final Color mainColor = const Color(0xFF6359ca);
-  final bool isEmergency = true; //placeholder
-<<<<<<< Updated upstream
-  //this will be equal to the amount of items that will be shown: placeholder number rn
+  final bool isEmergency = true; // Placeholder
   final int itemCount = 5;
-=======
-  final Color welcomeText = const Color(0xFF3d3a8d);
-  final Color welcomeBG = const Color(0xFFedf4ff);
->>>>>>> Stashed changes
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-<<<<<<< Updated upstream
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(110.0),
         child: Container(
@@ -198,89 +171,24 @@ class AlertPage extends StatelessWidget {
         ),
       ),
       body: Center(
-        child: 
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          
-          children: [
-            //padding 
-            
-=======
-      appBar: AppBar(
-        leading: BackButton(onPressed: () {
-          Navigator.pop(context);
-        }),
-        centerTitle: true,
-        title: const Text('Alerts', style: TextStyle(color: Colors.white)),
-        backgroundColor: mainColor,
-        iconTheme: const IconThemeData(color: Colors.white),
-        toolbarHeight: 100.0,
-      ),
-      body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
->>>>>>> Stashed changes
             AlertSelector(
               onSelectionChanged: (selections) {
-                // Handle the selection changes here
                 print('Selected buttons: $selections');
               },
             ),
-<<<<<<< Updated upstream
-
-
             Expanded(
               child: ListView.builder(
                 itemCount: itemCount,
                 itemBuilder: (BuildContext context, int index) {
-                  return AlertItem(isEmergency: isEmergency, alertTitle: "title placeholder", alertContent: "placeholde",);
-                },
-
-=======
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: welcomeBG,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: Colors.blue.shade200,
-                    width: 1.4,
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Welcome to the Alerts Board!',
-                      style: TextStyle(
-                        color: welcomeText,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Missed a notification from us? No worries. They\'ll be right here waiting for you and for up to 14 days.',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    color: (isEmergency) ? Colors.orange : Colors.cyan,
-                    child: const Text("placeholder"),
+                  return AlertItem(
+                    isEmergency: isEmergency,
+                    alertTitle: "title placeholder",
+                    alertContent: "placeholder",
                   );
                 },
->>>>>>> Stashed changes
               ),
             ),
           ],
@@ -295,7 +203,7 @@ class AlertItem extends StatelessWidget {
     super.key,
     required this.isEmergency,
     required this.alertContent,
-    required this.alertTitle
+    required this.alertTitle,
   });
 
   final bool isEmergency;
@@ -307,28 +215,26 @@ class AlertItem extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: (isEmergency) ? Colors.orange : Colors.cyan,
-        borderRadius: const BorderRadius.all(Radius.circular(10.0))
+        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
       ),
       padding: const EdgeInsets.all(100.0),
       alignment: Alignment.bottomLeft,
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(10), //placeholder value
-            child:Text(
+            padding: const EdgeInsets.all(10),
+            child: Text(
               alertTitle,
-              //style: const TextStyle()
-            )
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(10),
             child: Text(
-              alertContent
-            )
-          )
-        ]
-    )
+              alertContent,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
-

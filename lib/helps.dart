@@ -1,6 +1,6 @@
+import 'package:allhelps/help_page_filters.dart';
 import 'package:allhelps/search_bar_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as lat_lng;
 
@@ -15,47 +15,10 @@ class _HelpsPageState extends State<HelpsPage> {
   double _sheetPosition = 0.5;
   final double _dragSensitivity = 600;
 
-  List<String> chosenFilters = [];
-  String chosenFilter = "";
-  List<Widget> topFilters = [];
-  List<Widget> subFilters = [];
-
-  final Map<String, List<String>> filters = {
-    "Food": ["Meal", "Pantry"],
-    "Support": ["Abuse", "Family", "Financial"],
-    "Medical": ["General", "Mental", "Treatment"],
-    "Shelter": ["Residence", "Cooling", "Hygiene", "Housing"],
-    "Resources": ["Essentials", "Legals", "Job", "Education"],
-  };
-
-  String getTopLevelImage(String topCategory) {
-    String url = 'lib/help_page_assets/${topCategory.toLowerCase()}.png';
-    return url;
-  }
-
-  String getSubLevelImage(String subCategory) {
-    String formattedFileName = subCategory.replaceAll(' ', '_');
-    String url = 'lib/help_page_assets/${formattedFileName.toLowerCase()}.png';
-    return url;
-  }
-
-  Future<bool> assetExists(String path) async {
-    try {
-      // Attempt to load the asset
-      await rootBundle.load(path);
-      return true; // Asset exists
-    } catch (e) {
-      return false; // Asset doesn't exist
-    }
-  }
+  bool isSelected = false;
 
   @override
   Widget build(BuildContext context) {
-    filters.keys.toList().forEach((categoryName) {
-      topFilters
-          .add(renderTopFilters(categoryName, getTopLevelImage(categoryName)));
-    });
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -98,11 +61,7 @@ class _HelpsPageState extends State<HelpsPage> {
               height: 10,
             ),
             SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: chosenFilter == "" ? topFilters : subFilters,
-              ),
-            )
+                scrollDirection: Axis.horizontal, child: Filters())
           ],
         ),
         backgroundColor: Colors.white,
@@ -209,96 +168,6 @@ class _HelpsPageState extends State<HelpsPage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget renderTopFilters(categoryName, filename) {
-    return Row(
-      children: [
-        Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-            child: ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  chosenFilter = categoryName;
-                  List<String> subCategories = filters[chosenFilter]!;
-                  subFilters.clear();
-                  subFilters.add(
-                      renderSubFilters('', getSubLevelImage('Clear filter')));
-                  subFilters.add(renderSubFilters(
-                      'Distance', getSubLevelImage('Distance')));
-                  for (var subCategory in subCategories) {
-                    subFilters.add(renderSubFilters(
-                        subCategory, getSubLevelImage(subCategory)));
-                  }
-                });
-              },
-              child: Row(children: [
-                FutureBuilder<bool>(
-                  future: assetExists(filename),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return snapshot.data == true
-                          ? Image.asset(
-                              filename,
-                              width: 20,
-                              height: 20,
-                            )
-                          : Container();
-                    } else {
-                      return const CircularProgressIndicator();
-                    }
-                  },
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  categoryName,
-                  style: const TextStyle(fontSize: 14),
-                ),
-              ]),
-            )),
-      ],
-    );
-  }
-
-  Widget renderSubFilters(categoryName, filename) {
-    return Row(
-      children: [
-        Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-            child: ElevatedButton(
-              onPressed: () {
-                setState(() {});
-              },
-              child: Row(children: [
-                FutureBuilder<bool>(
-                  future: assetExists(filename),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return snapshot.data == true
-                          ? Image.asset(
-                              filename,
-                              width: 20,
-                              height: 20,
-                            )
-                          : Container();
-                    } else {
-                      return const CircularProgressIndicator();
-                    }
-                  },
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  categoryName,
-                  style: const TextStyle(fontSize: 14),
-                ),
-              ]),
-            )),
-      ],
     );
   }
 }

@@ -15,8 +15,6 @@ class _HelpsPageState extends State<HelpsPage> {
   double _sheetPosition = 0.5;
   final double _dragSensitivity = 600;
 
-  bool isSelected = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +58,7 @@ class _HelpsPageState extends State<HelpsPage> {
             const SizedBox(
               height: 10,
             ),
-            SingleChildScrollView(
+            const SingleChildScrollView(
                 scrollDirection: Axis.horizontal, child: Filters())
           ],
         ),

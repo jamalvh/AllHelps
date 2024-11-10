@@ -1,17 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-String getTopLevelImage(String topCategory) {
-  String url = 'lib/help_page_assets/${topCategory.toLowerCase()}.png';
-  return url;
-}
-
-String getSubLevelImage(String subCategory) {
-  String formattedFileName = subCategory.replaceAll(' ', '_');
-  String url = 'lib/help_page_assets/${formattedFileName.toLowerCase()}.png';
-  return url;
-}
-
 class Filters extends StatefulWidget {
   const Filters({super.key});
 
@@ -33,6 +22,17 @@ class _FiltersState extends State<Filters> {
   List<Widget> subFilters = [];
 
   bool isSelected = false;
+
+  String getTopLevelImage(String topCategory) {
+    String url = 'lib/help_page_assets/${topCategory.toLowerCase()}.png';
+    return url;
+  }
+
+  String getSubLevelImage(String subCategory) {
+    String formattedFileName = subCategory.replaceAll(' ', '_');
+    String url = 'lib/help_page_assets/${formattedFileName.toLowerCase()}.png';
+    return url;
+  }
 
   List<Widget> renderTopFilters() {
     List<Widget> topFilters = [];

@@ -1,5 +1,6 @@
 import 'package:allhelps/search_bar_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as lat_lng;
 
@@ -19,49 +20,40 @@ class _HelpsPageState extends State<HelpsPage> {
   List<Widget> topFilters = [];
   List<Widget> subFilters = [];
 
-  final Map<String, String> filter_images = {
-    "Food": "lib/help_page_assets/food.png",
-    "Support": "lib/help_page_assets/support.png",
-    "Medical": "lib/help_page_assets/medicene.png",
-    "Shelter": "lib/help_page_assets/shelter.png",
-    "Resources": "lib/help_page_assets/resource.png"
+  final Map<String, List<String>> filters = {
+    "Food": ["Meal", "Pantry"],
+    "Support": ["Abuse", "Family", "Financial"],
+    "Medical": ["General", "Mental", "Treatment"],
+    "Shelter": ["Residence", "Cooling", "Hygiene", "Housing"],
+    "Resources": ["Essentials", "Legals", "Job", "Education"],
   };
 
-  final Map<String, List<String>> filters = {
-    "Food": ["Food and Meals- Hot Meals", "Food bank"],
-    "Support": [
-      "Abuse/Stalking- locations",
-      "Child care",
-      "Donation Centers",
-      "Financial Guidance & Management",
-      "Foster care service"
-    ],
-    "Medical": [],
-    "Shelter": [
-      "Cooling station",
-      "Housing",
-      "Housing Assistance/Coordinated Entry",
-      "Laundry",
-      "Shelter",
-      "Showers"
-    ],
-    "Resources": [
-      "Bus ticket home",
-      "Clothing",
-      "Community Resources",
-      "Coordinated Energy Assessment Sites",
-      "Energy SHARE",
-      "Families with Children",
-      "Disability Housing Program",
-      "Disability Services"
-    ],
-    "Other": []
-  };
+  String getTopLevelImage(String topCategory) {
+    String url = 'lib/help_page_assets/${topCategory.toLowerCase()}.png';
+    return url;
+  }
+
+  String getSubLevelImage(String subCategory) {
+    String formattedFileName = subCategory.replaceAll(' ', '_');
+    String url = 'lib/help_page_assets/${formattedFileName.toLowerCase()}.png';
+    return url;
+  }
+
+  Future<bool> assetExists(String path) async {
+    try {
+      // Attempt to load the asset
+      await rootBundle.load(path);
+      return true; // Asset exists
+    } catch (e) {
+      return false; // Asset doesn't exist
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    filter_images.forEach((categoryName, filename) {
-      topFilters.add(renderTopFilters(categoryName, filename));
+    filters.keys.toList().forEach((categoryName) {
+      topFilters
+          .add(renderTopFilters(categoryName, getTopLevelImage(categoryName)));
     });
 
     return Scaffold(
@@ -231,18 +223,32 @@ class _HelpsPageState extends State<HelpsPage> {
                   chosenFilter = categoryName;
                   List<String> subCategories = filters[chosenFilter]!;
                   subFilters.clear();
-                  subFilters.add(renderSubFilters(''));
-                  subFilters.add(renderSubFilters('Distance'));
-                  subCategories.forEach((subCategory) {
-                    subFilters.add(renderSubFilters(subCategory));
-                  });
+                  subFilters.add(
+                      renderSubFilters('', getSubLevelImage('Clear filter')));
+                  subFilters.add(renderSubFilters(
+                      'Distance', getSubLevelImage('Distance')));
+                  for (var subCategory in subCategories) {
+                    subFilters.add(renderSubFilters(
+                        subCategory, getSubLevelImage(subCategory)));
+                  }
                 });
               },
               child: Row(children: [
-                Image.asset(
-                  filename,
-                  width: 20,
-                  height: 20,
+                FutureBuilder<bool>(
+                  future: assetExists(filename),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return snapshot.data == true
+                          ? Image.asset(
+                              filename,
+                              width: 20,
+                              height: 20,
+                            )
+                          : Container();
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+                  },
                 ),
                 const SizedBox(
                   width: 10,
@@ -257,7 +263,7 @@ class _HelpsPageState extends State<HelpsPage> {
     );
   }
 
-  Widget renderSubFilters(categoryName) {
+  Widget renderSubFilters(categoryName, filename) {
     return Row(
       children: [
         Padding(
@@ -267,11 +273,22 @@ class _HelpsPageState extends State<HelpsPage> {
                 setState(() {});
               },
               child: Row(children: [
-                // Image.asset(
-                //   filename,
-                //   width: 20,
-                //   height: 20,
-                // ),
+                FutureBuilder<bool>(
+                  future: assetExists(filename),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return snapshot.data == true
+                          ? Image.asset(
+                              filename,
+                              width: 20,
+                              height: 20,
+                            )
+                          : Container();
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+                  },
+                ),
                 const SizedBox(
                   width: 10,
                 ),

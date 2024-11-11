@@ -1,5 +1,8 @@
+import 'package:allhelps/filter_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'search_bar_page.dart';
 
 class Filters extends StatefulWidget {
   const Filters({super.key});
@@ -9,36 +12,15 @@ class Filters extends StatefulWidget {
 }
 
 class _FiltersState extends State<Filters> {
-  final Map<String, List<String>> filters = {
-    "Food": ["Meal", "Pantry"],
-    "Support": ["Abuse", "Family", "Financial"],
-    "Medical": ["General", "Mental", "Treatment"],
-    "Shelter": ["Residence", "Cooling", "Hygiene", "Housing"],
-    "Resources": ["Essentials", "Legals", "Job", "Education"],
-  };
+  FilterModel filterModel = FilterModel();
 
-  String chosenFilter = "";
   Set<String> chosenSubfilters = {''};
-  List<Widget> subFilters = [];
-
-  bool isSelected = false;
-
-  String getTopLevelImage(String topCategory) {
-    String url = 'lib/help_page_assets/${topCategory.toLowerCase()}.png';
-    return url;
-  }
-
-  String getSubLevelImage(String subCategory) {
-    String formattedFileName = subCategory.replaceAll(' ', '_');
-    String url = 'lib/help_page_assets/${formattedFileName.toLowerCase()}.png';
-    return url;
-  }
 
   List<Widget> renderTopFilters() {
     List<Widget> topFilters = [];
-    filters.keys.toList().forEach((categoryName) {
-      topFilters
-          .add(renderTopFilter(categoryName, getTopLevelImage(categoryName)));
+    filterModel.filters.keys.toList().forEach((categoryName) {
+      topFilters.add(renderTopFilter(
+          categoryName, filterModel.getTopLevelImage(categoryName)));
     });
 
     return topFilters;
@@ -52,7 +34,7 @@ class _FiltersState extends State<Filters> {
             child: ElevatedButton(
               onPressed: () {
                 setState(() {
-                  chosenFilter = categoryName;
+                  filterModel.setChosenFilter(categoryName);
                 });
               },
               style: ElevatedButton.styleFrom(
@@ -95,11 +77,13 @@ class _FiltersState extends State<Filters> {
 
   List<Widget> renderSubFilters(topCategory) {
     List<Widget> subFilters = [];
-    subFilters.add(renderSubFilter('', getSubLevelImage('Clear filter')));
-    subFilters.add(renderSubFilter('Distance', getSubLevelImage('Distance')));
-    filters[topCategory]?.forEach((subCategory) {
-      subFilters
-          .add(renderSubFilter(subCategory, getSubLevelImage(subCategory)));
+    subFilters
+        .add(renderSubFilter('', filterModel.getSubLevelImage('Clear filter')));
+    subFilters.add(
+        renderSubFilter('Distance', filterModel.getSubLevelImage('Distance')));
+    filterModel.filters[topCategory]?.forEach((subCategory) {
+      subFilters.add(renderSubFilter(
+          subCategory, filterModel.getSubLevelImage(subCategory)));
     });
     return subFilters;
   }
@@ -112,7 +96,7 @@ class _FiltersState extends State<Filters> {
             setState(() {
               if (categoryName == '') {
                 chosenSubfilters = {''};
-                chosenFilter = '';
+                filterModel.setChosenFilter('');
               } else {
                 if (chosenSubfilters.contains(categoryName)) {
                   chosenSubfilters.remove(categoryName);
@@ -130,7 +114,7 @@ class _FiltersState extends State<Filters> {
                     color: chosenSubfilters.contains(categoryName)
                         ? Colors.indigo.shade300
                         : Colors.black12,
-                    width: 1.5)),
+                    width: 1)),
             backgroundColor: chosenSubfilters.contains(categoryName)
                 ? Colors.indigo.shade100
                 : Colors.white,
@@ -167,17 +151,13 @@ class _FiltersState extends State<Filters> {
     if (subFilter == '') {
       setState(() {
         chosenSubfilters = {};
-        chosenFilter = "";
+        filterModel.setChosenFilter('');
       });
     } else {
       setState(() {
         chosenSubfilters.add(subFilter);
       });
     }
-
-    setState(() {
-      isSelected = !isSelected;
-    });
   }
 
   Future<bool> assetExists(String path) async {
@@ -190,11 +170,61 @@ class _FiltersState extends State<Filters> {
     }
   }
 
+  void onUpdate() {
+    setState(() {
+      filterModel.setChosenFilter("");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-        children: chosenFilter == ""
-            ? renderTopFilters()
-            : renderSubFilters(chosenFilter));
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(child: searchBarWidget(context, onUpdate)),
+            filterModel.getChosenFilter() == ""
+                ? const SizedBox(
+                    width: 10,
+                  )
+                : Container(),
+            filterModel.getChosenFilter() == ""
+                ? Container(
+                    alignment: Alignment.topCenter,
+                    decoration: BoxDecoration(
+                        color: Colors.indigo.shade400,
+                        borderRadius: BorderRadius.circular(10)),
+                    width: 0.15 * MediaQuery.of(context).size.width,
+                    height: 0.065 * MediaQuery.of(context).size.height,
+                    child: ListTile(
+                      minLeadingWidth: 0,
+                      minTileHeight: 0,
+                      title: IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.filter_alt_off_sharp,
+                          color: Colors.white,
+                        ),
+                      ),
+                      subtitle: const Text(
+                        'Filter',
+                        style: TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                    ))
+                : Container()
+          ],
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: filterModel.getChosenFilter() == ""
+                  ? renderTopFilters()
+                  : renderSubFilters(filterModel.getChosenFilter()),
+            ))
+      ],
+    );
   }
 }

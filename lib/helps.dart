@@ -1,5 +1,5 @@
+import 'package:allhelps/filter_model.dart';
 import 'package:allhelps/help_page_filters.dart';
-import 'package:allhelps/search_bar_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as lat_lng;
@@ -15,6 +15,8 @@ class _HelpsPageState extends State<HelpsPage> {
   double _sheetPosition = 0.5;
   final double _dragSensitivity = 600;
 
+  FilterModel filterModel = FilterModel();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,46 +24,7 @@ class _HelpsPageState extends State<HelpsPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         toolbarHeight: MediaQuery.of(context).size.height * 0.18,
-        title: Column(
-          children: [
-            Row(
-              children: [
-                const Expanded(child: SearchBarWidget()),
-                const SizedBox(
-                  width: 10,
-                ),
-                Container(
-                    alignment: Alignment.topCenter,
-                    decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 89, 28, 211),
-                        borderRadius: BorderRadius.circular(10)),
-                    width: 0.15 * MediaQuery.of(context).size.width,
-                    height: 0.065 * MediaQuery.of(context).size.height,
-                    child: ListTile(
-                      minLeadingWidth: 0,
-                      minTileHeight: 0,
-                      title: IconButton(
-                        highlightColor: Colors.amber,
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.filter_alt_off_sharp,
-                          color: Colors.white,
-                        ),
-                      ),
-                      subtitle: const Text(
-                        'Filter',
-                        style: TextStyle(color: Colors.white, fontSize: 12),
-                      ),
-                    ))
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            const SingleChildScrollView(
-                scrollDirection: Axis.horizontal, child: Filters())
-          ],
-        ),
+        title: const Filters(),
         backgroundColor: Colors.white,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(20))),

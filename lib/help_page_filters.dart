@@ -55,6 +55,14 @@ class _FiltersState extends State<Filters> {
                   chosenFilter = categoryName;
                 });
               },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  side: const BorderSide(color: Colors.black12, width: 1),
+                ),
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+              ),
               child: Row(children: [
                 FutureBuilder<bool>(
                   future: assetExists(filename),
@@ -115,9 +123,18 @@ class _FiltersState extends State<Filters> {
             });
           },
           style: ElevatedButton.styleFrom(
-              backgroundColor: chosenSubfilters.contains(categoryName)
-                  ? Colors.purpleAccent
-                  : Colors.white),
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+                side: BorderSide(
+                    color: chosenSubfilters.contains(categoryName)
+                        ? Colors.indigo.shade300
+                        : Colors.black12,
+                    width: 1.5)),
+            backgroundColor: chosenSubfilters.contains(categoryName)
+                ? Colors.indigo.shade100
+                : Colors.white,
+          ),
           child: Row(children: [
             FutureBuilder<bool>(
               future: assetExists(filename),

@@ -1,29 +1,46 @@
 import 'package:flutter/material.dart';
 
-class NavigationBar extends StatelessWidget {
-  const NavigationBar({super.key});
+class MyNavigationBar extends StatelessWidget {
+  final int currentPageIndex;
+  final ValueChanged<int> onItemTapped;
+
+  const MyNavigationBar({
+    super.key,
+    required this.currentPageIndex,
+    required this.onItemTapped,
+    });
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home, size: 40),
-          label: 'Home',
+          icon: Image.asset(
+            'assets/images/Home.png',
+            height: 40),
+            label: 'Home'
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.search, size: 40),
-          label: 'Search',
+          icon: Image.asset(
+            'assets/images/Helps.png',
+            height: 40),
+          label: 'Helps'
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.my_library_books_sharp, size: 40),
-          label: 'Library',
+          icon: Image.asset(
+            'assets/images/Alert.png',
+            height: 40),
+            label: 'Alert'
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person, size: 40),
-          label: 'Profile',
+          icon: Image.asset(
+            'assets/images/My.png',
+            height: 40),
+            label: 'My'
         ),
       ],
+      currentIndex: currentPageIndex,
+      onTap: onItemTapped,
     );
   }
 }

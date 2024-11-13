@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:allhelps/navigation.dart';
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
             Color(0xFFEDF4FF),
@@ -17,8 +29,8 @@ class MyHomePage extends StatelessWidget {
           end: Alignment.bottomCenter,
         ),
       ),
-      child: Column(
-        children: [
+      child: ListView(
+        children: const [
           Header(),
           Column(
             children: [
@@ -33,7 +45,12 @@ class MyHomePage extends StatelessWidget {
           ),
         ],
       ),
-    ));
+    ),
+    bottomNavigationBar: MyNavigationBar(
+                currentPageIndex: _selectedIndex,
+                onItemTapped: _onItemTapped,
+              ),
+    );
   }
 }
 
@@ -280,6 +297,14 @@ class EmergencyButton extends StatelessWidget {
           color: Colors.white,
           child: InkWell(
             onTap: onTap,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border.all(
+                color: Colors.grey.shade300,
+                width: 1.0,
+                ),
+              borderRadius: BorderRadius.circular(14.0), // Uniform radius
+              ),
             child: Container(
               width: 180,
               height: 120,

@@ -68,6 +68,10 @@ flutter:
     - assets/images/24-hours-line.png
     - assets/images/phone-fill.png
     - assets/images/arrow-right-s-line.png
+    - assets/images/Alert.png
+    - assets/images/Helps.png
+    - assets/images/Home.png
+    - assets/images/My.png
   
 
   # An image asset can refer to one or more resolution-specific "variants", see

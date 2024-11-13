@@ -1,5 +1,6 @@
 import 'package:allhelps/filter_model.dart';
 import 'package:allhelps/help_page_filters.dart';
+import 'package:allhelps/search_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as lat_lng;
@@ -15,10 +16,13 @@ class _HelpsPageState extends State<HelpsPage> {
   double _sheetPosition = 0.5;
   final double _dragSensitivity = 600;
 
+  SearchModel searchModel = SearchModel(name: 'test', isOpen: true, location: const lat_lng.LatLng(42, 42), filters: [], timings: ''); //TODO: Real models
+
   FilterModel filterModel = FilterModel();
 
   @override
   Widget build(BuildContext context) {
+    searchModel.getCurrentLocation();
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(

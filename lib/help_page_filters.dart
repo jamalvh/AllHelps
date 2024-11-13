@@ -35,6 +35,7 @@ class _FiltersState extends State<Filters> {
               onPressed: () {
                 setState(() {
                   filterModel.setChosenFilter(categoryName);
+                  // Conduct search
                 });
               },
               style: ElevatedButton.styleFrom(
@@ -195,22 +196,41 @@ class _FiltersState extends State<Filters> {
                         color: Colors.indigo.shade400,
                         borderRadius: BorderRadius.circular(10)),
                     width: 0.15 * MediaQuery.of(context).size.width,
-                    height: 0.065 * MediaQuery.of(context).size.height,
-                    child: ListTile(
-                      minLeadingWidth: 0,
-                      minTileHeight: 0,
-                      title: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.filter_alt_off_sharp,
-                          color: Colors.white,
+                    height: 0.075 * MediaQuery.of(context).size.height,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'lib/help_page_assets/top_clear_filter.png',
+                          height: 24,
+                          width: 24,
                         ),
-                      ),
-                      subtitle: const Text(
-                        'Filter',
-                        style: TextStyle(color: Colors.white, fontSize: 12),
-                      ),
-                    ))
+                        const SizedBox(
+                          height: 2,
+                        ),
+                        const Text(
+                          'Filter',
+                          style: TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                    // child: ListTile(
+                    //   minLeadingWidth: 0,
+                    //   minTileHeight: 0,
+                    //   title: IconButton(
+                    //     onPressed: () {},
+                    //     icon: const Icon(
+                    //       Icons.filter_alt_off_sharp,
+                    //       color: Colors.white,
+                    //     ),
+                    //   ),
+                    //   subtitle: const Text(
+                    //     'Filter',
+                    //     style: TextStyle(color: Colors.white, fontSize: 12),
+                    //   ),
+                    // )
+                  )
                 : Container()
           ],
         ),

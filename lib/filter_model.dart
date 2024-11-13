@@ -15,6 +15,8 @@ class FilterModel {
     "Resources": ["Essentials", "Legals", "Job", "Education"],
   };
 
+  List<String> searches = [];
+
   String chosenFilter = "";
   Set<String> chosenSubfilters = {''};
 
@@ -34,6 +36,11 @@ class FilterModel {
   String getSubLevelImage(String subCategory) {
     String formattedFileName = subCategory.replaceAll(' ', '_');
     String url = 'lib/help_page_assets/${formattedFileName.toLowerCase()}.png';
+    return url;
+  }
+
+  String getMarkerIcon(String topCategory) {
+    String url = 'lib/help_page_assets/${topCategory.toLowerCase()}_marker.png';
     return url;
   }
 }

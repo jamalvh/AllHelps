@@ -2,12 +2,19 @@ import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart' as lat_lng;
 
 class SearchModel {
+  // Singleton model
+  static final SearchModel _instance = SearchModel._internal();
+  SearchModel._internal();
+
+  factory SearchModel() {
+    return _instance;
+  }
   String name = "";
   bool isOpen = false;
-  lat_lng.LatLng location;
+  late lat_lng.LatLng location;
   List<String> filters = [];
   String timings = "";
-  
+
   Future<lat_lng.LatLng> getCurrentLocation() async {
     Location location_res = Location();
     bool serviceEnabled;
@@ -34,13 +41,9 @@ class SearchModel {
 
     locationData = await location_res.getLocation();
 
-    return lat_lng.LatLng(locationData.latitude!, locationData.longitude!); //FIXME: Using ! to enforce non-null is... unsafe
+    return lat_lng.LatLng(
+        locationData.latitude!,
+        locationData
+            .longitude!); //FIXME: Using ! to enforce non-null is... unsafe
   }
-  
-  SearchModel(
-      {required this.name,
-      required this.isOpen,
-      required this.location,
-      required this.filters,
-      required this.timings});
 }

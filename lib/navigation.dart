@@ -12,35 +12,75 @@ class MyNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      items: [
-        BottomNavigationBarItem(
-          icon: Image.asset(
-            'assets/images/Home.png',
-            height: 40),
-            label: 'Home'
+    return 
+    Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+        color: Colors.grey.shade300,
+        width: 1.0,
         ),
-        BottomNavigationBarItem(
-          icon: Image.asset(
-            'assets/images/Helps.png',
-            height: 40),
-          label: 'Helps'
-        ),
-        BottomNavigationBarItem(
-          icon: Image.asset(
-            'assets/images/Alert.png',
-            height: 40),
-            label: 'Alert'
-        ),
-        BottomNavigationBarItem(
-          icon: Image.asset(
-            'assets/images/My.png',
-            height: 40),
-            label: 'My'
-        ),
-      ],
-      currentIndex: currentPageIndex,
-      onTap: onItemTapped,
+      borderRadius: BorderRadius.circular(14.0), // Uniform radius
+      ), 
+      child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(14),
+            topRight: Radius.circular(14)
+          ),
+        
+          child: BottomNavigationBar(
+            
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.white,
+            items:  <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: currentPageIndex != 0 
+                ? Image.asset(
+                  'assets/images/Home.png',
+                  height: 40)
+                  : Image.asset(
+                  'assets/images/Home_selected.png',
+                  height: 40),
+                  label: 'Home'
+              ),
+              BottomNavigationBarItem(
+                icon: currentPageIndex != 1
+                ? Image.asset(
+                  'assets/images/Helps.png',
+                  height: 40)
+                  : Image.asset(
+                  'assets/images/Helps_selected.png',
+                  height: 40),
+                  label: 'Helps'
+              ),
+              BottomNavigationBarItem(
+                icon: currentPageIndex != 2
+                ? Image.asset(
+                  'assets/images/Alert.png',
+                  height: 40)
+                  : Image.asset(
+                  'assets/images/Alert_selected.png',
+                  height: 40),
+                  label: 'Alert'
+              ),
+              BottomNavigationBarItem(
+                icon: currentPageIndex != 3
+                ? Image.asset(
+                  'assets/images/My.png',
+                  height: 40)
+                  : Image.asset(
+                  'assets/images/My_selected.png',
+                  height: 40),
+                  label: 'My'
+              ),
+            ],
+            currentIndex: currentPageIndex,
+            selectedItemColor: Color(0xFF6359CA),
+            onTap: onItemTapped,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+          ),
+        
+      ),
     );
   }
 }

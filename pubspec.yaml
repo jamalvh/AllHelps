@@ -72,6 +72,10 @@ flutter:
     - assets/images/Helps.png
     - assets/images/Home.png
     - assets/images/My.png
+    - assets/images/Alert_selected.png
+    - assets/images/Helps_selected.png
+    - assets/images/Home_selected.png
+    - assets/images/My_selected.png
   
 
   # An image asset can refer to one or more resolution-specific "variants", see

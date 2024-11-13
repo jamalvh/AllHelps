@@ -18,7 +18,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
+      extendBody: true,
+      body: Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -41,15 +42,16 @@ class _MyHomePageState extends State<MyHomePage> {
               GuideButton(),
               SizedBox(height: 80,),
               EmergencyRow(),
+              SizedBox(height: 50,)
             ],
           ),
         ],
       ),
     ),
     bottomNavigationBar: MyNavigationBar(
-                currentPageIndex: _selectedIndex,
-                onItemTapped: _onItemTapped,
-              ),
+        currentPageIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+      ),
     );
   }
 }
@@ -305,7 +307,7 @@ class EmergencyButton extends StatelessWidget {
                 ),
               borderRadius: BorderRadius.circular(14.0), // Uniform radius
               ),
-            child: Container(
+            child: SizedBox(
               width: 180,
               height: 120,
               child: Stack(
@@ -330,7 +332,7 @@ class EmergencyButton extends StatelessWidget {
                     right: 12,
                     child: Text(
                       title,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
@@ -343,7 +345,7 @@ class EmergencyButton extends StatelessWidget {
                     right: 12,
                     child: Text(
                       text,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 10,
                         fontWeight: FontWeight.w300,
@@ -356,7 +358,7 @@ class EmergencyButton extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 
 }
@@ -375,6 +377,14 @@ class GuideButton extends StatelessWidget {
             onTap: () {
                 Navigator.pushNamed(context, '/helps');
               },
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border.all(
+                color: Colors.grey.shade300,
+                width: 1.0,
+                ),
+              borderRadius: BorderRadius.circular(14.0), // Uniform radius
+              ),
             child: Container(
               width: 360,
               height: 80,
@@ -394,7 +404,7 @@ class GuideButton extends StatelessWidget {
                     ),
                   ),
                   // Text caption
-                  Positioned(
+                  const Positioned(
                     top: 20,
                     left: 12,
                     right: 12,
@@ -407,7 +417,7 @@ class GuideButton extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Positioned(
+                  const Positioned(
                     bottom: 20,
                     left: 12,
                     right: 12,
@@ -426,7 +436,7 @@ class GuideButton extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 
 

@@ -25,6 +25,8 @@ class MyHomePage extends StatelessWidget {
               SizedBox(height: 112), // TODO: Replace this with Search Bar
               //SearchBar(),
               HelpsRow(),
+              SizedBox(height: 50,),
+              EmergencyRow(),
             ],
           ),
         ],
@@ -200,4 +202,136 @@ class HelpsButton extends StatelessWidget {
       ),
     );
   }
+}
+
+// Widget for Emergency Row
+
+
+class EmergencyRow extends StatelessWidget {
+  const EmergencyRow({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+  return Column(
+  children: [
+    Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      child: Container(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          "Need Emergency Help?",
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          textAlign: TextAlign.left,
+        ),
+        ),),
+    SizedBox(height: 10),
+    Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Row (
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          EmergencyButton(
+            title: "24/7 Hotline",
+            text: "Reach out anytime for support",
+            imageURL: "assets/images/24-hours-line.png",
+            onTap: () {
+                Navigator.pushNamed(context, '/helps');
+              }
+          ),
+          EmergencyButton(
+            title: "Local outreach team",
+            text: "Connect with your local agency",
+            imageURL: "assets/images/phone-fill.png",
+            onTap: () {
+                Navigator.pushNamed(context, '/helps');
+              }
+          ),
+        ],
+        )
+      )
+    ],
+  );
+  }
+  
+}
+
+// Widget for Emergency Buttons
+class EmergencyButton extends StatelessWidget {
+
+  final String title;
+  final String text;
+  final String imageURL;
+  final VoidCallback? onTap; // Add this line
+
+  const EmergencyButton({
+    Key? key,
+    required this.title,
+    required this.text,
+    required this.imageURL,
+    this.onTap, // And this line
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14),
+      child: Material(
+        child: Ink(
+          color: Colors.white,
+          child: InkWell(
+            onTap: onTap,
+            child: Container(
+              width: 183,
+              height: 125,
+              child: Stack(
+                children: [
+                  // Icon
+                  Positioned(
+                    top: 12,
+                    left: 12,
+                    child: Container(
+                      height: 35,
+                      width: 35,
+                      child: Image.asset(
+                        imageURL,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  // Text caption
+                  Positioned(
+                    bottom: 40,
+                    left: 12,
+                    right: 12,
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 20,
+                    left: 12,
+                    right: 12,
+                    child: Text(
+                      text,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
 }

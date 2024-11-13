@@ -60,33 +60,30 @@ class Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child:
-            // Stack to overlay image over header
-            Stack(children: [
-      // Header
-      Container(
-        height: 213,
-        decoration: BoxDecoration(
-            color: Color(0xFF6359CA),
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(26),
-                bottomRight: Radius.circular(26))),
-        alignment: Alignment.center,
-      ),
-      // Image
-      Positioned(
-        top: 0,
-        left: 20,
-        child: Center(
-          child: Image.asset(
-            'assets/images/header_image.png',
-            height: 180,
-            fit: BoxFit.cover,
+    return Stack(children: [
+          // Header
+          Container(
+            height: 213,
+            decoration: const BoxDecoration(
+    color: Color(0xFF6359CA),
+    borderRadius: BorderRadius.only(
+        bottomLeft: Radius.circular(26),
+        bottomRight: Radius.circular(26))),
+            alignment: Alignment.center,
           ),
-        ),
-      ),
-    ]));
+          // Image
+          Positioned(
+            top: 0,
+            left: 20,
+            child: Center(
+              child: Image.asset(
+    'assets/images/header_image.png',
+    height: 180,
+    fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ]);
   }
 }
 
@@ -101,37 +98,37 @@ class HelpsRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14),
           child: Container(
             alignment: Alignment.centerLeft,
-            child: Text(
+            child: const Text(
               "We are here to help",
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               textAlign: TextAlign.left,
             ),
           )),
-      SizedBox(height: 10),
+      const SizedBox(height: 10),
       Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               HelpsButton(
-                  color1: Color(0xFFE57701),
-                  color2: Color(0xFFFFB15E),
+                  color1: const Color(0xFFE57701),
+                  color2: const Color(0xFFFFB15E),
                   text: "Searching for Food",
                   imageURL: "assets/images/helps_food_icon.png",
                   onTap: () {
                     Navigator.pushNamed(context, '/helps');
                   }),
               HelpsButton(
-                  color1: Color(0xFF50714A),
-                  color2: Color(0xFF5BB139),
+                  color1: const Color(0xFF50714A),
+                  color2: const Color(0xFF5BB139),
                   text: "Looking for Shelter",
                   imageURL: "assets/images/helps_shelter_icon.png",
                   onTap: () {
                     Navigator.pushNamed(context, '/helps');
                   }),
               HelpsButton(
-                  color1: Color(0xFF4F77C0),
-                  color2: Color(0xFF86A8FE),
+                  color1: const Color(0xFF4F77C0),
+                  color2: const Color(0xFF86A8FE),
                   text: "Get Medical Relief",
                   imageURL: "assets/images/helps_medicine_icon.png",
                   onTap: () {
@@ -152,13 +149,13 @@ class HelpsButton extends StatelessWidget {
   final VoidCallback? onTap; // Add this line
 
   const HelpsButton({
-    Key? key,
+    super.key,
     required this.color1,
     required this.color2,
     required this.text,
     required this.imageURL,
     this.onTap, // And this line
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +178,7 @@ class HelpsButton extends StatelessWidget {
             onTap: onTap,
             splashColor: color2.withOpacity(1),
             highlightColor: color2.withOpacity(.5),
-            child: Container(
+            child: SizedBox(
               width: 116,
               height: 144,
               child: Stack(
@@ -190,7 +187,7 @@ class HelpsButton extends StatelessWidget {
                   Positioned(
                     top: 12,
                     left: 12,
-                    child: Container(
+                    child: SizedBox(
                       height: 46,
                       width: 46,
                       child: Image.asset(
@@ -206,7 +203,7 @@ class HelpsButton extends StatelessWidget {
                     right: 12,
                     child: Text(
                       text,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
@@ -235,13 +232,13 @@ class EmergencyRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14),
       child: Container(
         alignment: Alignment.centerLeft,
-        child: Text(
+        child: const Text(
           "Need Emergency Help?",
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           textAlign: TextAlign.left,
         ),
         ),),
-    SizedBox(height: 10),
+    const SizedBox(height: 10),
     Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Row (
@@ -281,12 +278,12 @@ class EmergencyButton extends StatelessWidget {
   final VoidCallback? onTap; // Add this line
 
   const EmergencyButton({
-    Key? key,
+    super.key,
     required this.title,
     required this.text,
     required this.imageURL,
     this.onTap, // And this line
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -305,7 +302,7 @@ class EmergencyButton extends StatelessWidget {
                 ),
               borderRadius: BorderRadius.circular(14.0), // Uniform radius
               ),
-            child: Container(
+            child: SizedBox(
               width: 180,
               height: 120,
               child: Stack(
@@ -314,7 +311,7 @@ class EmergencyButton extends StatelessWidget {
                   Positioned(
                     top: 12,
                     left: 12,
-                    child: Container(
+                    child: SizedBox(
                       height: 30,
                       width: 30,
                       child: Image.asset(
@@ -330,7 +327,7 @@ class EmergencyButton extends StatelessWidget {
                     right: 12,
                     child: Text(
                       title,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
@@ -343,7 +340,7 @@ class EmergencyButton extends StatelessWidget {
                     right: 12,
                     child: Text(
                       text,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 10,
                         fontWeight: FontWeight.w300,
@@ -356,7 +353,7 @@ class EmergencyButton extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 
 }

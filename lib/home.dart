@@ -22,10 +22,12 @@ class MyHomePage extends StatelessWidget {
           Header(),
           Column(
             children: [
-              SizedBox(height: 112), // TODO: Replace this with Search Bar
+              SizedBox(height: 80), // TODO: Replace this with Search Bar
               //SearchBar(),
               HelpsRow(),
-              SizedBox(height: 50,),
+              SizedBox(height: 10,),
+              GuideButton(),
+              SizedBox(height: 80,),
               EmergencyRow(),
             ],
           ),
@@ -205,8 +207,6 @@ class HelpsButton extends StatelessWidget {
 }
 
 // Widget for Emergency Row
-
-
 class EmergencyRow extends StatelessWidget {
   const EmergencyRow({super.key});
 
@@ -281,8 +281,8 @@ class EmergencyButton extends StatelessWidget {
           child: InkWell(
             onTap: onTap,
             child: Container(
-              width: 183,
-              height: 125,
+              width: 180,
+              height: 120,
               child: Stack(
                 children: [
                   // Icon
@@ -290,8 +290,8 @@ class EmergencyButton extends StatelessWidget {
                     top: 12,
                     left: 12,
                     child: Container(
-                      height: 35,
-                      width: 35,
+                      height: 30,
+                      width: 30,
                       child: Image.asset(
                         imageURL,
                         fit: BoxFit.cover,
@@ -333,5 +333,76 @@ class EmergencyButton extends StatelessWidget {
       ),
     );
   }
+
+}
+
+class GuideButton extends StatelessWidget {
+  const GuideButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14),
+      child: Material(
+        child: Ink(
+          color: Colors.white,
+          child: InkWell(
+            onTap: () {
+                Navigator.pushNamed(context, '/helps');
+              },
+            child: Container(
+              width: 360,
+              height: 80,
+              child: Stack(
+                children: [
+                  // Icon
+                  Positioned(
+                    top: 20,
+                    right: 12,
+                    child: Container(
+                      height: 35,
+                      width: 35,
+                      child: Image.asset(
+                        "assets/images/arrow-right-s-line.png",
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  // Text caption
+                  Positioned(
+                    top: 20,
+                    left: 12,
+                    right: 12,
+                    child: Text(
+                      "Guide you to the right services faster",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 20,
+                    left: 12,
+                    right: 12,
+                    child: Text(
+                      "Please choose your current situation",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
 
 }

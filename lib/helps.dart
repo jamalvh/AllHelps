@@ -52,35 +52,38 @@ class _HelpsPageState extends State<HelpsPage> {
                 // lat_lng.LatLng current_location = lat_lng.LatLng(
                 //     snapshot.data!.latitude, snapshot.data!.longitude);
 
-                curr_lat = snapshot.data!.latitude;
-                curr_long = snapshot.data!.longitude;
-                return FlutterMap(
-                  options: MapOptions(
-                    initialCenter: lat_lng.LatLng(snapshot.data!.latitude,
-                        snapshot.data!.longitude), // Current location
-                    minZoom: 0.5,
-                  ),
-                  mapController: _mapController,
-                  children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'com.example.app',
-                    ),
-                    MarkerLayer(
-                      markers: [
-                        Marker(
-                          point: lat_lng.LatLng(snapshot.data!.latitude,
-                              snapshot.data!.longitude),
-                          width: 20,
-                          height: 20,
-                          child: Image.asset(
-                              'lib/help_page_assets/current_location_marker.png'),
+                curr_lat = snapshot.data != null ? snapshot.data!.latitude : 0;
+                curr_long =
+                    snapshot.data != null ? snapshot.data!.longitude : 0;
+                return snapshot.connectionState == ConnectionState.done
+                    ? FlutterMap(
+                        options: MapOptions(
+                          initialCenter: lat_lng.LatLng(snapshot.data!.latitude,
+                              snapshot.data!.longitude), // Current location
+                          minZoom: 0.5,
                         ),
-                      ],
-                    ),
-                  ],
-                );
+                        mapController: _mapController,
+                        children: [
+                          TileLayer(
+                            urlTemplate:
+                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            userAgentPackageName: 'com.example.app',
+                          ),
+                          MarkerLayer(
+                            markers: [
+                              Marker(
+                                point: lat_lng.LatLng(snapshot.data!.latitude,
+                                    snapshot.data!.longitude),
+                                width: 20,
+                                height: 20,
+                                child: Image.asset(
+                                    'lib/help_page_assets/current_location_marker.png'),
+                              ),
+                            ],
+                          ),
+                        ],
+                      )
+                    : const CircularProgressIndicator();
               }),
 
           Positioned(

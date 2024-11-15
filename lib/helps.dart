@@ -26,17 +26,16 @@ class _HelpsPageState extends State<HelpsPage> {
   double currLat = 0;
   double currLong = 0;
 
-  void updateSearch() {
+  void activateSearch() {
     setState(() {
       searchModel.showResults = true;
       filterModel.setChosenFilter('show search');
     });
   }
 
-  void onUpdate() {
+  void closeSearch() {
     setState(() {
       filterModel.setChosenFilter("");
-      filterModel.chosenSubfilters = {''};
     });
   }
 
@@ -60,8 +59,8 @@ class _HelpsPageState extends State<HelpsPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Filters(
-                  closeSearch: onUpdate,
-                  activateSearch: updateSearch,
+                  closeSearch: closeSearch,
+                  activateSearch: activateSearch,
                 ),
               ),
               searchModel.showResults ? SearchOptions() : Container(),

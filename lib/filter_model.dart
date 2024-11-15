@@ -20,7 +20,6 @@ class FilterModel {
   List<String> searches = [];
 
   String chosenFilter = "";
-  Set<String> chosenSubfilters = {''};
 
   void setChosenFilter(String newFilter) {
     chosenFilter = newFilter;

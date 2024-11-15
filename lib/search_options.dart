@@ -12,7 +12,7 @@ Widget SearchOptions() {
       return ListTile(
         title: TextButton(
           onPressed: () {
-            filterModel.chosenSubfilters = {''};
+            // filterModel.chosenSubfilters = {''};
             filterModel.setChosenFilter(filterOption);
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
               return const HelpsPage();

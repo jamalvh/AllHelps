@@ -1,7 +1,6 @@
 import 'package:allhelps/filter_model.dart';
 import 'package:allhelps/search_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'search_bar_page.dart';
 
@@ -19,7 +18,9 @@ class _FiltersState extends State<Filters> {
   FilterModel filterModel = FilterModel();
   SearchModel searchModel = SearchModel();
 
-  Set<String> chosenSubfilters = {''};
+  Set<String> chosenSubfilters = {
+    ''
+  }; // Local variable to keep track of chosen sub filters for a set filter
 
   List<Widget> renderTopFilters() {
     List<Widget> topFilters = [];
@@ -39,6 +40,7 @@ class _FiltersState extends State<Filters> {
             child: ElevatedButton(
               onPressed: () {
                 setState(() {
+                  chosenSubfilters = {''};
                   filterModel.setChosenFilter(categoryName);
                   // Conduct search
                 });

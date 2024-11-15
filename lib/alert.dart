@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'alert_base_class.dart';
 
 class CustomIconButton extends StatelessWidget {

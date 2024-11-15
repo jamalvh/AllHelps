@@ -141,6 +141,7 @@ class AlertPage extends StatelessWidget {
   final Color welcomeText = const Color(0xFF3d3a8d);
   final Color welcomeBG = const Color.fromRGBO(237, 244, 255, 1);
   final Color welcomeBorder = const Color.fromRGBO(220, 220, 224, 1);
+  final int datesShown = 14;
 
 
 
@@ -246,14 +247,24 @@ class AlertPage extends StatelessWidget {
             ),
             Expanded(
               child: 
-              Listener(
+              Listener( 
+                //this listener class makes it so that we should be able to add new alerts in the back end
                 child: ListView.builder(
-                          itemCount: itemCount,
-                          itemBuilder: (BuildContext context, int index) {
-                            return AlertItem(
-                              isEmergency: alertsArray[index]["isEmergency"],
-                              alertTitle: alertsArray[index]["Title"],
-                              alertContent: alertsArray[index]["Description"],
+                          itemCount: datesShown,
+
+                          //itembuilder that shows each date section
+                          itemBuilder: (BuildContext context, int dateindex) {
+                            return ListView.builder(
+                              itemCount: dateindex, //placeholder value
+
+                              //itemblder that shows each alert item in each date
+                              itemBuilder: (BuildContext context, int itemindex) { 
+                                return AlertItem(
+                                  isEmergency: alertsArray[itemindex]["isEmergency"],
+                                  alertTitle: alertsArray[itemindex]["Title"],
+                                  alertContent: alertsArray[itemindex]["Description"],
+                                );
+                              }
                             );
                           },
                         ),

@@ -9,11 +9,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  // void _onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -31,18 +31,19 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       child: ListView(
+        padding: EdgeInsets.zero,
         children: const [
           Header(),
           Column(
             children: [
               SizedBox(height: 80), // TODO: Replace this with Search Bar
-              //SearchBar(),
+              //SearchBar(), // renderd by the helps team, we will use the same search bar
               HelpsRow(),
               SizedBox(height: 10,),
               GuideButton(),
               SizedBox(height: 80,),
               EmergencyRow(),
-              SizedBox(height: 50,)
+              SizedBox(height: 200,)
             ],
           ),
         ],
@@ -50,7 +51,11 @@ class _MyHomePageState extends State<MyHomePage> {
     ),
     bottomNavigationBar: MyNavigationBar(
         currentPageIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
+        onItemTapped: (int index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        }
       ),
     );
   }
@@ -62,7 +67,8 @@ class Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
+    return Stack(
+      children: [
           // Header
           Container(
             height: 213,
@@ -366,6 +372,7 @@ class GuideButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
+      
       borderRadius: BorderRadius.circular(14),
       child: Material(
         child: Ink(
@@ -382,8 +389,8 @@ class GuideButton extends StatelessWidget {
                 ),
               borderRadius: BorderRadius.circular(14.0), // Uniform radius
               ),
-            child: Container(
-              width: 360,
+            child: SizedBox(
+              width: 365,
               height: 80,
               child: Stack(
                 children: [
@@ -391,7 +398,7 @@ class GuideButton extends StatelessWidget {
                   Positioned(
                     top: 20,
                     right: 12,
-                    child: Container(
+                    child: SizedBox(
                       height: 35,
                       width: 35,
                       child: Image.asset(

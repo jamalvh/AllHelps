@@ -32,9 +32,9 @@ class MyApp extends StatelessWidget {
         //       ),
         //     ),
         '/': (context) => MyHomePage(),
-        '/helps': (context) => const HelpsPage(),
-        '/alert': (context) => const AlertPage(),
-        '/my': (context) => const MyPage(),
+        '/helps': (context) => HelpsPage(),
+        '/alert': (context) => AlertPage(),
+        '/my': (context) => MyPage(),
       },
     );
   }

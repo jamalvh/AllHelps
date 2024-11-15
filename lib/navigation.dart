@@ -9,6 +9,8 @@ class MyNavigationBar extends StatelessWidget {
     required this.currentPageIndex,
     required this.onItemTapped,
     });
+  
+  
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +77,24 @@ class MyNavigationBar extends StatelessWidget {
             ],
             currentIndex: currentPageIndex,
             selectedItemColor: Color(0xFF6359CA),
-            onTap: onItemTapped,
             showSelectedLabels: false,
             showUnselectedLabels: false,
+            onTap: (index) {
+              switch(index) {
+                case 0: 
+                  Navigator.pushNamed(context, '/');
+                  break;
+                case 1:
+                  Navigator.pushNamed(context, '/helps');
+                  break;
+                case 2:
+                  Navigator.pushNamed(context, '/alert');
+                  break;
+                case 3:
+                  Navigator.pushNamed(context, '/my');
+                  break;
+              }
+            }
           ),
         
       ),

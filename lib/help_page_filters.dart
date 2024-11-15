@@ -1,4 +1,5 @@
 import 'package:allhelps/filter_model.dart';
+import 'package:allhelps/search_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -6,7 +7,9 @@ import 'search_bar_page.dart';
 
 class Filters extends StatefulWidget {
   final Function updateSearch;
-  const Filters({super.key, required this.updateSearch});
+  final Function onUpdate;
+  const Filters(
+      {super.key, required this.updateSearch, required this.onUpdate});
 
   @override
   State<Filters> createState() => _FiltersState();
@@ -14,6 +17,7 @@ class Filters extends StatefulWidget {
 
 class _FiltersState extends State<Filters> {
   FilterModel filterModel = FilterModel();
+  SearchModel searchModel = SearchModel();
 
   Set<String> chosenSubfilters = {''};
 
@@ -49,7 +53,7 @@ class _FiltersState extends State<Filters> {
               ),
               child: Row(children: [
                 FutureBuilder<bool>(
-                  future: assetExists(filename),
+                  future: filterModel.assetExists(filename),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       return snapshot.data == true
@@ -122,7 +126,7 @@ class _FiltersState extends State<Filters> {
           ),
           child: Row(children: [
             FutureBuilder<bool>(
-              future: assetExists(filename),
+              future: filterModel.assetExists(filename),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   return snapshot.data == true
@@ -148,23 +152,6 @@ class _FiltersState extends State<Filters> {
         ));
   }
 
-  Future<bool> assetExists(String path) async {
-    try {
-      // Attempt to load the asset
-      await rootBundle.load(path);
-      return true; // Asset exists
-    } catch (e) {
-      return false; // Asset doesn't exist
-    }
-  }
-
-  void onUpdate() {
-    setState(() {
-      filterModel.setChosenFilter("");
-      filterModel.chosenSubfilters = {''};
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -173,7 +160,7 @@ class _FiltersState extends State<Filters> {
           children: [
             Expanded(
                 child: SearchBarWidget(
-              onUpdate: onUpdate,
+              onUpdate: widget.onUpdate,
               updateSearch: widget.updateSearch,
             )),
             filterModel.getChosenFilter() == ""
@@ -217,9 +204,11 @@ class _FiltersState extends State<Filters> {
         SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: filterModel.getChosenFilter() == ""
-                  ? renderTopFilters()
-                  : renderSubFilters(filterModel.getChosenFilter()),
+              children: searchModel.showResults
+                  ? [Container()]
+                  : filterModel.getChosenFilter() == ""
+                      ? renderTopFilters()
+                      : renderSubFilters(filterModel.getChosenFilter()),
             ))
       ],
     );

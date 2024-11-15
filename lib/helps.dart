@@ -28,27 +28,93 @@ class _HelpsPageState extends State<HelpsPage> {
   void updateSearch() {
     setState(() {
       searchModel.showResults = true;
-      filterModel.setChosenFilter('');
+      filterModel.setChosenFilter('show search');
+    });
+  }
+
+  void onUpdate() {
+    setState(() {
+      filterModel.setChosenFilter("");
+      filterModel.chosenSubfilters = {''};
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    
-    searchModel.location.onLocationChanged.listen((LocationData currentLocation) {
-      if (currentLocation.latitude == currLat && currentLocation.longitude == currLong) return;
-      // setState(() {
-      //   curr_lat = currentLocation.latitude != null ? currentLocation.latitude! : curr_lat;
-      //   curr_long = currentLocation.longitude != null ? currentLocation.longitude! : curr_long;
-      // });
+    searchModel.location.onLocationChanged
+        .listen((LocationData currentLocation) {
+      if (currentLocation.latitude == currLat &&
+          currentLocation.longitude == currLong) return;
     });
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        toolbarHeight: MediaQuery.of(context).size.height * 0.18,
-        title: Filters(
-          updateSearch: updateSearch,
+        toolbarHeight: !searchModel.showResults
+            ? MediaQuery.of(context).size.height * 0.18
+            : MediaQuery.of(context).size.height,
+        flexibleSpace: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Filters(
+                  onUpdate: onUpdate,
+                  updateSearch: updateSearch,
+                ),
+              ),
+              searchModel.showResults
+                  ? Expanded(
+                      child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        String filterOption =
+                            filterModel.filters.keys.toList().elementAt(index);
+                        String filename =
+                            filterModel.getTopLevelImage(filterOption);
+                        return ListTile(
+                          title: TextButton(
+                            onPressed: () {
+                              filterModel.chosenSubfilters = {''};
+                              filterModel.setChosenFilter(filterOption);
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(builder: (context) {
+                                return const HelpsPage();
+                              }));
+                            },
+                            child: Row(children: [
+                              FutureBuilder<bool>(
+                                future: filterModel.assetExists(filename),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    return snapshot.data == true
+                                        ? Image.asset(
+                                            filename,
+                                            width: 20,
+                                            height: 20,
+                                          )
+                                        : Container();
+                                  } else {
+                                    return const CircularProgressIndicator();
+                                  }
+                                },
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                filterOption,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ]),
+                          ),
+                        );
+                      },
+                      itemCount: filterModel.filters.keys.length,
+                    ))
+                  : Container(),
+            ],
+          ),
         ),
         backgroundColor: Colors.white,
         shape: const RoundedRectangleBorder(
@@ -63,8 +129,10 @@ class _HelpsPageState extends State<HelpsPage> {
                 // lat_lng.LatLng current_location = lat_lng.LatLng(
                 //     snapshot.data!.latitude, snapshot.data!.longitude);
 
-                currLat = snapshot.data != null ? snapshot.data!.latitude : currLat;
-                currLong = snapshot.data != null ? snapshot.data!.longitude : currLong;
+                currLat =
+                    snapshot.data != null ? snapshot.data!.latitude : currLat;
+                currLong =
+                    snapshot.data != null ? snapshot.data!.longitude : currLong;
                 return snapshot.connectionState == ConnectionState.done
                     ? FlutterMap(
                         options: MapOptions(
@@ -297,21 +365,6 @@ class _HelpsPageState extends State<HelpsPage> {
               );
             },
           ),
-          // searchModel.showResults
-          //     ? Expanded(child: ListView.builder(itemBuilder: (context, index) {
-          //         return ListTile(
-          //           title: Text(index.toString()),
-          //         );
-          //       }))
-          //     : Container(),
-
-          if (searchModel.showResults)
-            Positioned.fill(
-                child: ListView.builder(itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(index.toString()),
-              );
-            }))
         ],
       ),
     );

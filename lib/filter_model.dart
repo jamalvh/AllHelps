@@ -1,3 +1,5 @@
+import 'package:flutter/services.dart';
+
 class FilterModel {
   // Singleton model
   static final FilterModel _instance = FilterModel._internal();
@@ -42,5 +44,15 @@ class FilterModel {
   String getMarkerIcon(String topCategory) {
     String url = 'lib/help_page_assets/${topCategory.toLowerCase()}_marker.png';
     return url;
+  }
+
+  Future<bool> assetExists(String path) async {
+    try {
+      // Attempt to load the asset
+      await rootBundle.load(path);
+      return true; // Asset exists
+    } catch (e) {
+      return false; // Asset doesn't exist
+    }
   }
 }

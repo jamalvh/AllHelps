@@ -15,19 +15,22 @@ class SearchBarWidget extends StatefulWidget {
 class _SearchBarWidgetState extends State<SearchBarWidget> {
   FilterModel filterModel = FilterModel();
   SearchModel searchModel = SearchModel();
+  FocusNode focusNode = FocusNode();
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         SearchBar(
+          focusNode: focusNode,
           onTap: () {
-            print('tapped');
-            widget.updateSearch();
-            print(searchModel.showResults);
+            setState(() {
+              widget.updateSearch();
+            });
           },
           onTapOutside: (event) {
             setState(() {
               searchModel.showResults = false;
+              focusNode.unfocus();
             });
           },
           leading: Padding(
@@ -40,24 +43,21 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                   )
                 : IconButton(
                     onPressed: () {
-                      widget.onUpdate();
+                      setState(() {
+                        widget.onUpdate();
+                        searchModel.showResults = false;
+                      });
                     },
                     icon: const Icon(Icons.arrow_back_ios)),
           ),
-          hintText: 'I want to find ... ${filterModel.getChosenFilter()}',
+          hintText:
+              'I want to find ${filterModel.getChosenFilter() == '' || filterModel.getChosenFilter() == 'show search' ? '...' : filterModel.getChosenFilter()}',
           backgroundColor: const WidgetStatePropertyAll(Colors.white),
           side: const WidgetStatePropertyAll(BorderSide(color: Colors.black12)),
           shape: const WidgetStatePropertyAll(RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(15)))),
           elevation: const WidgetStatePropertyAll(0),
         ),
-        searchModel.showResults
-            ? Expanded(child: ListView.builder(itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(index.toString()),
-                );
-              }))
-            : Container(),
       ],
     );
   }

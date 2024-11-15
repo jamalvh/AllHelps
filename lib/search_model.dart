@@ -12,40 +12,37 @@ class SearchModel {
   }
   String name = "";
   bool isOpen = false;
-  late lat_lng.LatLng location;
+  late lat_lng.LatLng latLng;
   List<String> filters = [];
   String timings = "";
+  Location location = Location();
+  late LocationData locationData;
   bool showResults = false;
 
   Future<lat_lng.LatLng> getCurrentLocation() async {
-    Location location_res = Location();
     bool serviceEnabled;
     PermissionStatus permissionGranted;
-    LocationData locationData;
 
     if (!kIsWeb) {
-      serviceEnabled = await location_res.serviceEnabled();
+      serviceEnabled = await location.serviceEnabled();
       if (!serviceEnabled) {
-        serviceEnabled = await location_res.requestService();
+        serviceEnabled = await location.requestService();
         if (!serviceEnabled) {
           return Future.error('Service failed');
         }
       }
 
-      permissionGranted = await location_res.hasPermission();
+      permissionGranted = await location.hasPermission();
       if (permissionGranted == PermissionStatus.denied) {
-        permissionGranted = await location_res.requestPermission();
+        permissionGranted = await location.requestPermission();
         if (permissionGranted != PermissionStatus.granted) {
           return Future.error('Permission failed');
         }
       }
     }
 
-    locationData = await location_res.getLocation();
+    locationData = await location.getLocation();
 
-    return lat_lng.LatLng(
-        locationData.latitude!,
-        locationData
-            .longitude!); //FIXME: Using ! to enforce non-null is... unsafe
+    return lat_lng.LatLng(locationData.latitude!, locationData.longitude!);
   }
 }

@@ -3,6 +3,7 @@ import 'package:allhelps/help_page_filters.dart';
 import 'package:allhelps/search_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart' as lat_lng;
 
 class HelpsPage extends StatefulWidget {
@@ -16,20 +17,13 @@ class _HelpsPageState extends State<HelpsPage> {
   double _sheetPosition = 0.5;
   final double _dragSensitivity = 600;
 
-  // SearchModel searchModel = SearchModel(
-  //     name: 'test',
-  //     isOpen: true,
-  //     location: const lat_lng.LatLng(42, 42),
-  //     filters: [],
-  //     timings: ''); //TODO: Real models
-
   SearchModel searchModel = SearchModel();
 
   FilterModel filterModel = FilterModel();
 
   final MapController _mapController = MapController();
-  double curr_lat = 0;
-  double curr_long = 0;
+  double currLat = 0;
+  double currLong = 0;
 
   void updateSearch() {
     setState(() {
@@ -40,6 +34,14 @@ class _HelpsPageState extends State<HelpsPage> {
 
   @override
   Widget build(BuildContext context) {
+    
+    searchModel.location.onLocationChanged.listen((LocationData currentLocation) {
+      if (currentLocation.latitude == currLat && currentLocation.longitude == currLong) return;
+      // setState(() {
+      //   curr_lat = currentLocation.latitude != null ? currentLocation.latitude! : curr_lat;
+      //   curr_long = currentLocation.longitude != null ? currentLocation.longitude! : curr_long;
+      // });
+    });
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -61,9 +63,8 @@ class _HelpsPageState extends State<HelpsPage> {
                 // lat_lng.LatLng current_location = lat_lng.LatLng(
                 //     snapshot.data!.latitude, snapshot.data!.longitude);
 
-                curr_lat = snapshot.data != null ? snapshot.data!.latitude : 0;
-                curr_long =
-                    snapshot.data != null ? snapshot.data!.longitude : 0;
+                currLat = snapshot.data != null ? snapshot.data!.latitude : currLat;
+                currLong = snapshot.data != null ? snapshot.data!.longitude : currLong;
                 return snapshot.connectionState == ConnectionState.done
                     ? FlutterMap(
                         options: MapOptions(
@@ -76,7 +77,7 @@ class _HelpsPageState extends State<HelpsPage> {
                           TileLayer(
                             urlTemplate:
                                 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            userAgentPackageName: 'com.example.app',
+                            userAgentPackageName: 'com.example.allhelps',
                           ),
                           MarkerLayer(
                             markers: [
@@ -100,7 +101,7 @@ class _HelpsPageState extends State<HelpsPage> {
             left: 0.05 * MediaQuery.of(context).size.width,
             child: FloatingActionButton(
               onPressed: () {
-                _mapController.move(lat_lng.LatLng(curr_lat, curr_long),
+                _mapController.move(lat_lng.LatLng(currLat, currLong),
                     13); // Default initial zoom of map is 13
               },
               backgroundColor: Colors.white,

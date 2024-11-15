@@ -1,6 +1,7 @@
 import 'package:allhelps/filter_model.dart';
 import 'package:allhelps/help_page_filters.dart';
 import 'package:allhelps/search_model.dart';
+import 'package:allhelps/search_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:location/location.dart';
@@ -59,60 +60,11 @@ class _HelpsPageState extends State<HelpsPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Filters(
-                  onUpdate: onUpdate,
-                  updateSearch: updateSearch,
+                  closeSearch: onUpdate,
+                  activateSearch: updateSearch,
                 ),
               ),
-              searchModel.showResults
-                  ? Expanded(
-                      child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        String filterOption =
-                            filterModel.filters.keys.toList().elementAt(index);
-                        String filename =
-                            filterModel.getTopLevelImage(filterOption);
-                        return ListTile(
-                          title: TextButton(
-                            onPressed: () {
-                              filterModel.chosenSubfilters = {''};
-                              filterModel.setChosenFilter(filterOption);
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(builder: (context) {
-                                return const HelpsPage();
-                              }));
-                            },
-                            child: Row(children: [
-                              FutureBuilder<bool>(
-                                future: filterModel.assetExists(filename),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.done) {
-                                    return snapshot.data == true
-                                        ? Image.asset(
-                                            filename,
-                                            width: 20,
-                                            height: 20,
-                                          )
-                                        : Container();
-                                  } else {
-                                    return const CircularProgressIndicator();
-                                  }
-                                },
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                filterOption,
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                            ]),
-                          ),
-                        );
-                      },
-                      itemCount: filterModel.filters.keys.length,
-                    ))
-                  : Container(),
+              searchModel.showResults ? SearchOptions() : Container(),
             ],
           ),
         ),

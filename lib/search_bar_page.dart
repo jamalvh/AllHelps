@@ -3,10 +3,10 @@ import 'package:allhelps/search_model.dart';
 import 'package:flutter/material.dart';
 
 class SearchBarWidget extends StatefulWidget {
-  final Function onUpdate;
-  final Function updateSearch;
+  final Function closeSearch;
+  final Function activateSearch;
   const SearchBarWidget(
-      {super.key, required this.onUpdate, required this.updateSearch});
+      {super.key, required this.closeSearch, required this.activateSearch});
 
   @override
   State<SearchBarWidget> createState() => _SearchBarWidgetState();
@@ -24,7 +24,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
           focusNode: focusNode,
           onTap: () {
             setState(() {
-              widget.updateSearch();
+              widget.activateSearch();
             });
           },
           onTapOutside: (event) {
@@ -44,7 +44,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                 : IconButton(
                     onPressed: () {
                       setState(() {
-                        widget.onUpdate();
+                        widget.closeSearch();
                         searchModel.showResults = false;
                       });
                     },

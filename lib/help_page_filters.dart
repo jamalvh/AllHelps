@@ -6,10 +6,10 @@ import 'package:flutter/services.dart';
 import 'search_bar_page.dart';
 
 class Filters extends StatefulWidget {
-  final Function updateSearch;
-  final Function onUpdate;
+  final Function activateSearch;
+  final Function closeSearch;
   const Filters(
-      {super.key, required this.updateSearch, required this.onUpdate});
+      {super.key, required this.activateSearch, required this.closeSearch});
 
   @override
   State<Filters> createState() => _FiltersState();
@@ -160,8 +160,8 @@ class _FiltersState extends State<Filters> {
           children: [
             Expanded(
                 child: SearchBarWidget(
-              onUpdate: widget.onUpdate,
-              updateSearch: widget.updateSearch,
+              closeSearch: widget.closeSearch,
+              activateSearch: widget.activateSearch,
             )),
             filterModel.getChosenFilter() == ""
                 ? const SizedBox(

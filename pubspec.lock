@@ -98,18 +98,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_svg
-      sha256: de82e6bf958cec7190fbc1c5298282c851228e35ae2b14e2b103e7f777818c64
+      sha256: "578bd8c508144fdaffd4f77b8ef2d8c523602275cd697cc3db284dbd762ef4ce"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.13"
-  flutter_svg:
-    dependency: "direct main"
-    description:
-      name: flutter_svg
-      sha256: de82e6bf958cec7190fbc1c5298282c851228e35ae2b14e2b103e7f777818c64
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.13"
+    version: "2.0.14"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -349,7 +341,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.2"
-<<<<<<< Updated upstream
   typed_data:
     dependency: transitive
     description:
@@ -378,12 +369,10 @@ packages:
     dependency: transitive
     description:
       name: vector_graphics_compiler
-      sha256: "26d520739b7c6b5d2a2b3274427874a8390831fd4cd5bb8cfbd7d913477d3a2e"
+      sha256: ab9ff38fc771e9ee1139320adbe3d18a60327370c218c60752068ebee4b49ab1
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.14"
-=======
->>>>>>> Stashed changes
+    version: "1.1.15"
   vector_math:
     dependency: transitive
     description:
@@ -400,7 +389,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "14.2.5"
-<<<<<<< Updated upstream
   web:
     dependency: transitive
     description:
@@ -417,8 +405,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.5.0"
-=======
->>>>>>> Stashed changes
 sdks:
   dart: ">=3.5.0 <4.0.0"
   flutter: ">=3.24.0"

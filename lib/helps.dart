@@ -99,9 +99,9 @@ class _HelpsPageState extends State<HelpsPage> {
             ),
           ),
 
-          DraggableScrollableSheet(
+                    DraggableScrollableSheet(
             initialChildSize: _sheetPosition,
-            minChildSize: 0,
+            minChildSize: 0.2,
             maxChildSize: 0.8,
             builder: (context, scrollController) {
               return ColoredBox(
@@ -116,47 +116,157 @@ class _HelpsPageState extends State<HelpsPage> {
                         });
                       },
                     ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'We found ',
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: '3 Shelter Locations',
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color.fromARGB(255, 106, 17, 122),
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' within 2 miles',
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            Icons.info_outline,
+                            size: 28.0,
+                            color: Color.fromARGB(255, 120, 119, 119),
+                          ),
+                        ],
+                      ),
+                    ),
+
                     Expanded(
                       child: ListView.builder(
                         controller: scrollController,
                         padding: EdgeInsets.zero,
                         itemCount: 20,
                         itemBuilder: (context, index) {
+
+                          // testing  for now
+                          final isOpen = index % 2 == 0; 
+
+                          //testing for now
+                          final services = ['Laundry', 'Support', 'Shower'];
+                          
                           return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 16.0),
+                            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                             child: Container(
                               padding: const EdgeInsets.all(16.0),
                               decoration: BoxDecoration(
                                 color: Colors.grey[300],
                                 borderRadius: BorderRadius.circular(12.0),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 4,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
                               ),
-                              child: Row(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Icon(Icons.location_on,
-                                      color: Colors.grey[700]),
-                                  const SizedBox(width: 16.0),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         'Location $index',
                                         style: const TextStyle(
-                                          fontSize: 16.0,
+                                          fontSize: 18.0,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black87,
                                         ),
                                       ),
-                                      const SizedBox(height: 40.0),
-                                      Text(
-                                        'Description of location $index',
-                                        style: TextStyle(
-                                          fontSize: 14.0,
-                                          color: Colors.grey[800],
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12.0,
+                                          vertical: 4.0,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: isOpen ? Colors.green : Colors.red,
+                                          borderRadius: BorderRadius.circular(20.0),
+                                        ),
+                                        child: Text(
+                                          isOpen ? 'OPEN' : 'CLOSED',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                     ],
+                                  ),
+                                  const SizedBox(height: 40.0),
+                                  const Row(
+                                    children: [
+                                      Icon(Icons.directions_walk, color: Colors.black54),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        //will make dynamic soon
+                                        '24 mins by walking (1.2 miles away)',
+                                        style: TextStyle(color: Colors.black54),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  const Row(
+                                    children: [
+                                      Icon(Icons.timer, color: Colors.black54),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        //will make dynamic soon
+                                        'Accept walk-in until 7:00 PM',
+                                        style: TextStyle(color: Colors.black54),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12.0),
+                                  // Services Tags
+                                  Wrap(
+                                    spacing: 8.0,
+                                    children: services.map((service) {
+                                      return Chip(
+                                        label: Text(
+                                          service,
+                                          style: const TextStyle(color: Colors.black),
+                                        ),
+                                        backgroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(20.0)
+                                        ),
+                                        side: BorderSide.none,
+                                        padding: const EdgeInsets.symmetric(vertical: 1.0, horizontal: 2.0), 
+                                      );
+                                    }).toList(),
                                   ),
                                 ],
                               ),

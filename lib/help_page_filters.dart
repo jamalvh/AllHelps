@@ -5,7 +5,8 @@ import 'package:flutter/services.dart';
 import 'search_bar_page.dart';
 
 class Filters extends StatefulWidget {
-  const Filters({super.key});
+  final Function updateSearch;
+  const Filters({super.key, required this.updateSearch});
 
   @override
   State<Filters> createState() => _FiltersState();
@@ -97,7 +98,6 @@ class _FiltersState extends State<Filters> {
             setState(() {
               if (categoryName == '') {
                 chosenSubfilters = {''};
-                filterModel.setChosenFilter('');
               } else {
                 if (chosenSubfilters.contains(categoryName)) {
                   chosenSubfilters.remove(categoryName);
@@ -133,7 +133,7 @@ class _FiltersState extends State<Filters> {
                         )
                       : Container();
                 } else {
-                  return const CircularProgressIndicator();
+                  return const Center(child: CircularProgressIndicator());
                 }
               },
             ),
@@ -146,19 +146,6 @@ class _FiltersState extends State<Filters> {
             ),
           ]),
         ));
-  }
-
-  void handleSubfilter(String subFilter) {
-    if (subFilter == '') {
-      setState(() {
-        chosenSubfilters = {};
-        filterModel.setChosenFilter('');
-      });
-    } else {
-      setState(() {
-        chosenSubfilters.add(subFilter);
-      });
-    }
   }
 
   Future<bool> assetExists(String path) async {
@@ -174,6 +161,7 @@ class _FiltersState extends State<Filters> {
   void onUpdate() {
     setState(() {
       filterModel.setChosenFilter("");
+      filterModel.chosenSubfilters = {''};
     });
   }
 
@@ -183,7 +171,11 @@ class _FiltersState extends State<Filters> {
       children: [
         Row(
           children: [
-            Expanded(child: searchBarWidget(context, onUpdate)),
+            Expanded(
+                child: SearchBarWidget(
+              onUpdate: onUpdate,
+              updateSearch: widget.updateSearch,
+            )),
             filterModel.getChosenFilter() == ""
                 ? const SizedBox(
                     width: 10,
@@ -215,21 +207,6 @@ class _FiltersState extends State<Filters> {
                         ),
                       ],
                     ),
-                    // child: ListTile(
-                    //   minLeadingWidth: 0,
-                    //   minTileHeight: 0,
-                    //   title: IconButton(
-                    //     onPressed: () {},
-                    //     icon: const Icon(
-                    //       Icons.filter_alt_off_sharp,
-                    //       color: Colors.white,
-                    //     ),
-                    //   ),
-                    //   subtitle: const Text(
-                    //     'Filter',
-                    //     style: TextStyle(color: Colors.white, fontSize: 12),
-                    //   ),
-                    // )
                   )
                 : Container()
           ],

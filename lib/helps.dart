@@ -31,6 +31,13 @@ class _HelpsPageState extends State<HelpsPage> {
   double curr_lat = 0;
   double curr_long = 0;
 
+  void updateSearch() {
+    setState(() {
+      searchModel.showResults = true;
+      filterModel.setChosenFilter('');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +45,9 @@ class _HelpsPageState extends State<HelpsPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         toolbarHeight: MediaQuery.of(context).size.height * 0.18,
-        title: const Filters(),
+        title: Filters(
+          updateSearch: updateSearch,
+        ),
         backgroundColor: Colors.white,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -99,7 +108,7 @@ class _HelpsPageState extends State<HelpsPage> {
             ),
           ),
 
-                    DraggableScrollableSheet(
+          DraggableScrollableSheet(
             initialChildSize: _sheetPosition,
             minChildSize: 0.2,
             maxChildSize: 0.8,
@@ -117,7 +126,8 @@ class _HelpsPageState extends State<HelpsPage> {
                       },
                     ),
                     const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -163,22 +173,21 @@ class _HelpsPageState extends State<HelpsPage> {
                         ],
                       ),
                     ),
-
                     Expanded(
                       child: ListView.builder(
                         controller: scrollController,
                         padding: EdgeInsets.zero,
                         itemCount: 20,
                         itemBuilder: (context, index) {
-
                           // testing  for now
-                          final isOpen = index % 2 == 0; 
+                          final isOpen = index % 2 == 0;
 
                           //testing for now
                           final services = ['Laundry', 'Support', 'Shower'];
-                          
+
                           return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 16.0),
                             child: Container(
                               padding: const EdgeInsets.all(16.0),
                               decoration: BoxDecoration(
@@ -196,7 +205,8 @@ class _HelpsPageState extends State<HelpsPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         'Location $index',
@@ -212,8 +222,11 @@ class _HelpsPageState extends State<HelpsPage> {
                                           vertical: 4.0,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: isOpen ? Colors.green : Colors.red,
-                                          borderRadius: BorderRadius.circular(20.0),
+                                          color: isOpen
+                                              ? Colors.green
+                                              : Colors.red,
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
                                         ),
                                         child: Text(
                                           isOpen ? 'OPEN' : 'CLOSED',
@@ -228,7 +241,8 @@ class _HelpsPageState extends State<HelpsPage> {
                                   const SizedBox(height: 40.0),
                                   const Row(
                                     children: [
-                                      Icon(Icons.directions_walk, color: Colors.black54),
+                                      Icon(Icons.directions_walk,
+                                          color: Colors.black54),
                                       SizedBox(width: 8),
                                       Text(
                                         //will make dynamic soon
@@ -257,14 +271,16 @@ class _HelpsPageState extends State<HelpsPage> {
                                       return Chip(
                                         label: Text(
                                           service,
-                                          style: const TextStyle(color: Colors.black),
+                                          style: const TextStyle(
+                                              color: Colors.black),
                                         ),
                                         backgroundColor: Colors.white,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(20.0)
-                                        ),
+                                            borderRadius:
+                                                BorderRadius.circular(20.0)),
                                         side: BorderSide.none,
-                                        padding: const EdgeInsets.symmetric(vertical: 1.0, horizontal: 2.0), 
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 1.0, horizontal: 2.0),
                                       );
                                     }).toList(),
                                   ),
@@ -280,6 +296,21 @@ class _HelpsPageState extends State<HelpsPage> {
               );
             },
           ),
+          // searchModel.showResults
+          //     ? Expanded(child: ListView.builder(itemBuilder: (context, index) {
+          //         return ListTile(
+          //           title: Text(index.toString()),
+          //         );
+          //       }))
+          //     : Container(),
+
+          if (searchModel.showResults)
+            Positioned.fill(
+                child: ListView.builder(itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(index.toString()),
+              );
+            }))
         ],
       ),
     );

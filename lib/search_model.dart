@@ -15,6 +15,7 @@ class SearchModel {
   late lat_lng.LatLng location;
   List<String> filters = [];
   String timings = "";
+  bool showResults = false;
 
   Future<lat_lng.LatLng> getCurrentLocation() async {
     Location location_res = Location();
@@ -22,7 +23,7 @@ class SearchModel {
     PermissionStatus permissionGranted;
     LocationData locationData;
 
-    if (!kIsWeb){
+    if (!kIsWeb) {
       serviceEnabled = await location_res.serviceEnabled();
       if (!serviceEnabled) {
         serviceEnabled = await location_res.requestService();

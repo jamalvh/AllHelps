@@ -1,5 +1,6 @@
 import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart' as lat_lng;
+import "package:flutter/foundation.dart" show kIsWeb;
 
 class SearchModel {
   // Singleton model
@@ -21,21 +22,21 @@ class SearchModel {
     PermissionStatus permissionGranted;
     LocationData locationData;
 
-    serviceEnabled = await location_res.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location_res.requestService();
+    if (!kIsWeb){
+      serviceEnabled = await location_res.serviceEnabled();
       if (!serviceEnabled) {
-        print('Service failed');
-        return Future.error('Service failed');
+        serviceEnabled = await location_res.requestService();
+        if (!serviceEnabled) {
+          return Future.error('Service failed');
+        }
       }
-    }
 
-    permissionGranted = await location_res.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await location_res.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) {
-        print('Permission failed');
-        return Future.error('Permission failed');
+      permissionGranted = await location_res.hasPermission();
+      if (permissionGranted == PermissionStatus.denied) {
+        permissionGranted = await location_res.requestPermission();
+        if (permissionGranted != PermissionStatus.granted) {
+          return Future.error('Permission failed');
+        }
       }
     }
 

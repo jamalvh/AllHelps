@@ -17,9 +17,13 @@ class FilterModel {
     "Resources": ["Essentials", "Legals", "Job", "Education"],
   };
 
+  String chosenFilter = "";
+
   List<String> searches = [];
 
-  String chosenFilter = "";
+  void initializeSearches() {
+    searches = filters.keys.toList();
+  }
 
   void setChosenFilter(String newFilter) {
     chosenFilter = newFilter;

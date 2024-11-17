@@ -28,14 +28,28 @@ class _HelpsPageState extends State<HelpsPage> {
 
   void activateSearch() {
     setState(() {
+      filterModel.initializeSearches();
       searchModel.showResults = true;
-      filterModel.setChosenFilter('show search');
+      // filterModel.setChosenFilter('show search');
     });
   }
 
   void closeSearch() {
     setState(() {
       filterModel.setChosenFilter("");
+      searchModel.showResults = false;
+    });
+  }
+
+  void updateSearch(value) {
+    setState(() {
+      if (value == '') {
+        filterModel.initializeSearches();
+      } else {
+        filterModel.searches.removeWhere((filter) {
+          return !filter.contains(value);
+        });
+      }
     });
   }
 
@@ -59,11 +73,15 @@ class _HelpsPageState extends State<HelpsPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Filters(
-                  closeSearch: closeSearch,
-                  activateSearch: activateSearch,
-                ),
+                    activateSearch: activateSearch,
+                    closeSearch: closeSearch,
+                    updateSearch: updateSearch),
               ),
-              searchModel.showResults ? SearchOptions() : Container(),
+              searchModel.showResults
+                  ? SearchOptions(
+                      searches: filterModel.searches,
+                    )
+                  : Container(),
             ],
           ),
         ),
@@ -112,7 +130,7 @@ class _HelpsPageState extends State<HelpsPage> {
                           ),
                         ],
                       )
-                    : const CircularProgressIndicator();
+                    : const Center(child: CircularProgressIndicator());
               }),
 
           Positioned(

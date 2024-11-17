@@ -2,18 +2,31 @@ import 'package:allhelps/filter_model.dart';
 import 'package:allhelps/helps.dart';
 import 'package:flutter/material.dart';
 
-Widget SearchOptions() {
+class SearchOptions extends StatefulWidget {
+  final List<String> searches;
+  const SearchOptions({super.key, required this.searches});
+
+  @override
+  State<SearchOptions> createState() => _SearchOptionsState();
+}
+
+class _SearchOptionsState extends State<SearchOptions> {
+  @override
+  Widget build(BuildContext context) {
+    return SearchOptionsWidget(widget.searches);
+  }
+}
+
+Widget SearchOptionsWidget(List<String> searches) {
   FilterModel filterModel = FilterModel();
   return Expanded(
       child: ListView.builder(
     itemBuilder: (context, index) {
-      String filterOption = filterModel.filters.keys.toList().elementAt(index);
-      String filename = filterModel.getTopLevelImage(filterOption);
+      String filename = filterModel.getTopLevelImage(searches.elementAt(index));
       return ListTile(
         title: TextButton(
           onPressed: () {
-            // filterModel.chosenSubfilters = {''};
-            filterModel.setChosenFilter(filterOption);
+            filterModel.setChosenFilter(searches.elementAt(index));
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
               return const HelpsPage();
             }));
@@ -39,13 +52,13 @@ Widget SearchOptions() {
               width: 10,
             ),
             Text(
-              filterOption,
+              filterModel.searches.elementAt(index),
               style: const TextStyle(fontSize: 14),
             ),
           ]),
         ),
       );
     },
-    itemCount: filterModel.filters.keys.length,
+    itemCount: searches.length,
   ));
 }

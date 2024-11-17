@@ -5,10 +5,14 @@ import 'package:flutter/material.dart';
 import 'search_bar_page.dart';
 
 class Filters extends StatefulWidget {
-  final Function activateSearch;
   final Function closeSearch;
+  final Function activateSearch;
+  final Function(String) updateSearch;
   const Filters(
-      {super.key, required this.activateSearch, required this.closeSearch});
+      {super.key,
+      required this.closeSearch,
+      required this.activateSearch,
+      required this.updateSearch});
 
   @override
   State<Filters> createState() => _FiltersState();
@@ -162,9 +166,9 @@ class _FiltersState extends State<Filters> {
           children: [
             Expanded(
                 child: SearchBarWidget(
-              closeSearch: widget.closeSearch,
-              activateSearch: widget.activateSearch,
-            )),
+                    closeSearch: widget.closeSearch,
+                    activateSearch: widget.activateSearch,
+                    updateSearch: widget.updateSearch)),
             filterModel.getChosenFilter() == ""
                 ? const SizedBox(
                     width: 10,
@@ -203,15 +207,15 @@ class _FiltersState extends State<Filters> {
         const SizedBox(
           height: 10,
         ),
-        SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: searchModel.showResults
-                  ? [Container()]
-                  : filterModel.getChosenFilter() == ""
+        searchModel.showResults
+            ? Container()
+            : SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: filterModel.getChosenFilter() == ""
                       ? renderTopFilters()
                       : renderSubFilters(filterModel.getChosenFilter()),
-            ))
+                ))
       ],
     );
   }

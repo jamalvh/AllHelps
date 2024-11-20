@@ -39,6 +39,8 @@ dependencies:
   latlong2: ^0.9.1
   provider:
   location: ^7.0.1
+  google_maps_flutter: ^2.9.0
+  flutter_svg: ^2.0.11
 
 dev_dependencies:
   flutter_test:

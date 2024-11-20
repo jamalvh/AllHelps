@@ -7,6 +7,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart' as lat_lng;
 
+import 'navigation.dart';
+
 class HelpsPage extends StatefulWidget {
   const HelpsPage({super.key});
 
@@ -25,6 +27,7 @@ class _HelpsPageState extends State<HelpsPage> {
   final MapController _mapController = MapController();
   double currLat = 0;
   double currLong = 0;
+  int _selectedIndex = 0;
 
   void activateSearch() {
     setState(() {
@@ -336,6 +339,13 @@ class _HelpsPageState extends State<HelpsPage> {
           ),
         ],
       ),
+      bottomNavigationBar: MyNavigationBar(
+          currentPageIndex: _selectedIndex,
+          onItemTapped: (int index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          }),
     );
   }
 }

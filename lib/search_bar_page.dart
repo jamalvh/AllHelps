@@ -6,11 +6,13 @@ class SearchBarWidget extends StatefulWidget {
   final Function closeSearch;
   final Function activateSearch;
   final Function(String) updateSearch;
+  final Function(String) updateResults;
   const SearchBarWidget(
       {super.key,
       required this.closeSearch,
       required this.activateSearch,
-      required this.updateSearch});
+      required this.updateSearch,
+      required this.updateResults});
 
   @override
   State<SearchBarWidget> createState() => _SearchBarWidgetState();
@@ -53,6 +55,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                 onPressed: () {
                   setState(() {
                     widget.closeSearch();
+                    widget.updateResults('');
                   });
                 },
                 icon: const Icon(Icons.arrow_back_ios)),

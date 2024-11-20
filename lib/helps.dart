@@ -2,6 +2,7 @@ import 'package:allhelps/filter_model.dart';
 import 'package:allhelps/help_page_filters.dart';
 import 'package:allhelps/search_model.dart';
 import 'package:allhelps/search_options.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:location/location.dart';
@@ -32,10 +33,13 @@ class _HelpsPageState extends State<HelpsPage> {
 
   List<LocationModel> locations = [];
 
+  Location location = Location();
+  late LocationData locationData;
+
   @override
   void initState() {
     super.initState();
-    // searchModel.getCurrentLocation();
+    getCurrentLocation();
     _loadLocations();
   }
 
@@ -71,21 +75,45 @@ class _HelpsPageState extends State<HelpsPage> {
     });
   }
 
+  void updateResults(topFilter) {
+    setState(() {
+      locations
+          .removeWhere((location) => location.services.contains(topFilter));
+    });
+  }
+
+  Future<void> getCurrentLocation() async {
+    bool serviceEnabled;
+    PermissionStatus permissionGranted;
+
+    if (!kIsWeb) {
+      serviceEnabled = await location.serviceEnabled();
+      if (!serviceEnabled) {
+        serviceEnabled = await location.requestService();
+        if (!serviceEnabled) {
+          return Future.error('Service failed');
+        }
+      }
+
+      permissionGranted = await location.hasPermission();
+      if (permissionGranted == PermissionStatus.denied) {
+        permissionGranted = await location.requestPermission();
+        if (permissionGranted != PermissionStatus.granted) {
+          return Future.error('Permission failed');
+        }
+      }
+    }
+
+    locationData = await location.getLocation();
+    setState(() {
+      locationObtained = true;
+      currLat = locationData.latitude!;
+      currLong = locationData.longitude!;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    searchModel.location.onLocationChanged
-        .listen((LocationData currentLocation) {
-      // if (currentLocation.latitude == currLat &&
-      //     currentLocation.longitude == currLong) return;
-      setState(() {
-        currLat = currentLocation.latitude != null
-            ? currentLocation.latitude!
-            : currLat;
-        currLong = currentLocation.latitude != null
-            ? currentLocation.longitude!
-            : currLong;
-      });
-    });
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -101,7 +129,8 @@ class _HelpsPageState extends State<HelpsPage> {
                 child: Filters(
                     activateSearch: activateSearch,
                     closeSearch: closeSearch,
-                    updateSearch: updateSearch),
+                    updateSearch: updateSearch,
+                    updateResults: updateResults),
               ),
               searchModel.showResults
                   ? SearchOptions(
@@ -129,48 +158,45 @@ class _HelpsPageState extends State<HelpsPage> {
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.example.allhelps',
               ),
-              FutureBuilder(
-                  future: searchModel.getCurrentLocation(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      print('updating location');
-                      currLat = snapshot.data == null
-                          ? snapshot.data!.latitude
-                          : currLat;
-                      currLong = snapshot.data == null
-                          ? snapshot.data!.longitude
-                          : currLong;
-
-                      locationObtained = true;
-                      return Container();
-                    }
-                    return locationObtained
-                        ? MarkerLayer(
-                            markers: [
-                              // Current location marker
-                              Marker(
-                                point: lat_lng.LatLng(currLat, currLong),
-                                width: 20,
-                                height: 20,
-                                child: Image.asset(
-                                    'lib/help_page_assets/current_location_marker.png'),
-                              ),
-                              // Shelter location markers
-                              ...locations.map((location) {
-                                return Marker(
-                                  point: lat_lng.LatLng(
-                                      location.coordinates.latitude,
-                                      location.coordinates.longitude),
-                                  width: 55,
-                                  height: 55,
-                                  child: Image.asset(
-                                      'lib/help_page_assets/shelter_marker.png'),
-                                );
-                              }).toList(),
-                            ],
-                          )
-                        : Container();
-                  }),
+              StatefulBuilder(builder: (context, setState) {
+                location.onLocationChanged
+                    .listen((LocationData currentLocation) {
+                  setState(() {
+                    currLat = currentLocation.latitude != null
+                        ? currentLocation.latitude!
+                        : currLat;
+                    currLong = currentLocation.latitude != null
+                        ? currentLocation.longitude!
+                        : currLong;
+                  });
+                });
+                return locationObtained
+                    ? MarkerLayer(
+                        markers: [
+                          // Current location marker
+                          Marker(
+                            point: lat_lng.LatLng(currLat, currLong),
+                            width: 20,
+                            height: 20,
+                            child: Image.asset(
+                                'lib/help_page_assets/current_location_marker.png'),
+                          ),
+                          // Shelter location markers
+                          ...locations.map((location) {
+                            return Marker(
+                              point: lat_lng.LatLng(
+                                  location.coordinates.latitude,
+                                  location.coordinates.longitude),
+                              width: 55,
+                              height: 55,
+                              child: Image.asset(
+                                  'lib/help_page_assets/shelter_marker.png'),
+                            );
+                          }).toList(),
+                        ],
+                      )
+                    : Container();
+              })
             ],
           ),
           locationObtained

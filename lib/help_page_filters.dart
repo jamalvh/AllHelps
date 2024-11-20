@@ -8,11 +8,13 @@ class Filters extends StatefulWidget {
   final Function closeSearch;
   final Function activateSearch;
   final Function(String) updateSearch;
+  final Function(String) updateResults;
   const Filters(
       {super.key,
       required this.closeSearch,
       required this.activateSearch,
-      required this.updateSearch});
+      required this.updateSearch,
+      required this.updateResults});
 
   @override
   State<Filters> createState() => _FiltersState();
@@ -47,6 +49,7 @@ class _FiltersState extends State<Filters> {
                   chosenSubfilters = {''};
                   filterModel.setChosenFilter(categoryName);
                   // Conduct search
+                  widget.updateResults(categoryName);
                 });
               },
               style: ElevatedButton.styleFrom(
@@ -168,7 +171,8 @@ class _FiltersState extends State<Filters> {
                 child: SearchBarWidget(
                     closeSearch: widget.closeSearch,
                     activateSearch: widget.activateSearch,
-                    updateSearch: widget.updateSearch)),
+                    updateSearch: widget.updateSearch,
+                    updateResults: widget.updateResults)),
             filterModel.getChosenFilter() == ""
                 ? const SizedBox(
                     width: 10,

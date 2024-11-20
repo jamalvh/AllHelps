@@ -4,6 +4,7 @@
     "latitude": 42.2750,
     "longitude": -83.7356,
     "isOpen": true,
+    "type" : "Food",
     "services": ["Food", "Shelter", "Medical"]
   },
   {
@@ -11,6 +12,7 @@
     "latitude": 42.3610,
     "longitude": -71.0570,
     "isOpen": false,
+    "type" : "Medical",
     "services": ["Shower", "Support"]
   },
   {
@@ -18,6 +20,7 @@
     "latitude": 42.3622,
     "longitude": -71.0595,
     "isOpen": true,
+    "type" : "Shelter",
     "services": ["Laundry", "Counseling"]
   }
 ]

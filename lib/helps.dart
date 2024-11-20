@@ -147,6 +147,7 @@ class _HelpsPageState extends State<HelpsPage> {
                     return locationObtained
                         ? MarkerLayer(
                             markers: [
+                              // Current location marker
                               Marker(
                                 point: lat_lng.LatLng(currLat, currLong),
                                 width: 20,
@@ -154,6 +155,18 @@ class _HelpsPageState extends State<HelpsPage> {
                                 child: Image.asset(
                                     'lib/help_page_assets/current_location_marker.png'),
                               ),
+                              // Shelter location markers
+                              ...locations.map((location) {
+                                return Marker(
+                                  point: lat_lng.LatLng(
+                                      location.coordinates.latitude,
+                                      location.coordinates.longitude),
+                                  width: 55,
+                                  height: 55,
+                                  child: Image.asset(
+                                      'lib/help_page_assets/shelter_marker.png'),
+                                );
+                              }).toList(),
                             ],
                           )
                         : Container();

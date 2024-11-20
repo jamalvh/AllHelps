@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Joes Pizza Shelter",
+    "latitude": 42.2750,
+    "longitude": -83.7356,
+    "isOpen": true,
+    "services": ["Food", "Shelter", "Medical"]
+  },
+  {
+    "name": "Shelter B",
+    "latitude": 42.3610,
+    "longitude": -71.0570,
+    "isOpen": false,
+    "services": ["Shower", "Support"]
+  },
+  {
+    "name": "Shelter C",
+    "latitude": 42.3622,
+    "longitude": -71.0595,
+    "isOpen": true,
+    "services": ["Laundry", "Counseling"]
+  }
+]

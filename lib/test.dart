@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'locations.dart';
 
+
 class HelpsPage extends StatefulWidget {
   const HelpsPage({super.key});
 
@@ -34,7 +35,9 @@ class _HelpsPageState extends State<HelpsPage> {
   double curr_lat = 0;
   double curr_long = 0;
 
-    List<LocationModel> locations = [];
+
+
+  List<LocationModel> locations = [];
 
     @override
     void initState() {
@@ -47,7 +50,6 @@ class _HelpsPageState extends State<HelpsPage> {
     locations = await loadLocations(); 
     setState(() {}); 
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +66,7 @@ class _HelpsPageState extends State<HelpsPage> {
       body: Stack(
         children: [
           // Map Layer
+
           FutureBuilder(
               future: searchModel.getCurrentLocation(),
               builder: (context, snapshot) {
@@ -71,7 +74,8 @@ class _HelpsPageState extends State<HelpsPage> {
                 //     snapshot.data!.latitude, snapshot.data!.longitude);
 
                 curr_lat = snapshot.data != null ? snapshot.data!.latitude : 0;
-                curr_long = snapshot.data != null ? snapshot.data!.longitude : 0;
+                curr_long =snapshot.data != null ? snapshot.data!.longitude : 0;
+
                 return snapshot.connectionState == ConnectionState.done
                     ? FlutterMap(
                         options: MapOptions(
@@ -96,6 +100,9 @@ class _HelpsPageState extends State<HelpsPage> {
                                 child: Image.asset(
                                     'lib/help_page_assets/current_location_marker.png'),
                               ),
+                              
+                                
+      
                             ],
                           ),
                         ],
@@ -285,7 +292,7 @@ class Grabber extends StatelessWidget {
       onVerticalDragUpdate: onVerticalDragUpdate,
       child: Container(
         width: double.infinity,
-        color: Colors.grey[300],
+        color: Colors.grey[100],
         child: Center(
           child: Container(
             margin: const EdgeInsets.symmetric(vertical: 8.0),

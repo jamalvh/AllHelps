@@ -146,21 +146,45 @@ class AlertPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> alertsArray = [
+
+    final List<String> dateName = ["Today", "This Week", "Last Week"];
+
+    //the json backend of the array
+    //this will be sorted by date, starting with more recent to most in the future
+    final List<Map<String, dynamic>> sortedAlertsArray = [
       {
         //mmddyy: month, date, year
-        "Date": 11072024,
+        "Date": DateTime.now().day,
         "Title": "free houses",
         "Description": "giving away houses to homeless people",
-        "isEmergency": true
+        "Type": "Emergency"
       },
       {
-        "Date": 11072024,
+        "Date": DateTime.now().day + 2,
         "Title": "free apartments",
         "Description": "giving away apartments to homeless people",
-        "isEmergency": false
+        "Type": "Emergency"
       }
     ];
+
+    //parse into each individual ones to be put through days, week, and next week
+    int todayEvents = 0;
+    int thisWeekEvents = 0;
+    int nextWeekEvents = 0;
+
+    for (int i = 0; i > sortedAlertsArray.length; i++) {
+      if (sortedAlertsArray[i]["Date"] == DateTime.now().day) {
+        todayEvents++;
+      } else if (sortedAlertsArray[i]["Date"] >= DateTime.now().day && sortedAlertsArray[i]["Date"] <= DateTime.now().day + 7) {
+        thisWeekEvents++;
+      } else if (sortedAlertsArray[i]["Date"] == DateTime.now().day && sortedAlertsArray[i]["Date"] <= DateTime.now().day + 14) {
+        nextWeekEvents++;
+      }
+    }
+    
+
+    List<int> eventQuantities = [todayEvents, thisWeekEvents, nextWeekEvents];
+
     return Scaffold(
       backgroundColor: const Color(0xFFF4F4F4),
       appBar: PreferredSize(
@@ -246,74 +270,50 @@ class AlertPage extends StatelessWidget {
                 ),
               ),
             ),
-            Expanded(
-                child: Listener(
               //this listener class makes it so that we should be able to add new alerts in the back end
-              child: ListView.builder(
-                itemCount: datesShown,
-
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: 3,
                 //itembuilder that shows each date section
                 itemBuilder: (BuildContext context, int dateindex) {
-                  return ListView.builder(
-                      itemCount: dateindex, //placeholder value
+                  return Column(
+                  
+                    children: [
+                      Text(
+                        dateName[dateindex], 
+                        style: const TextStyle(
+                            color: Color(0xFF4D5166),
+                            fontFamily: "NotoSans",
+                            fontSize: 14,
+                          ),
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: eventQuantities[dateindex], //placeholder value
+                        //itemblder that shows each alert item in each date
+                        itemBuilder: (BuildContext context, int itemindex) {
 
-                      //itemblder that shows each alert item in each date
-                      itemBuilder: (BuildContext context, int itemindex) {
-                        return AlertItem(
-                          isEmergency: alertsArray[itemindex]["isEmergency"],
-                          alertTitle: alertsArray[itemindex]["Title"],
-                          alertContent: alertsArray[itemindex]["Description"],
-                        );
-                      });
+                          int itemsInQuantitiesList = 0;
+
+                          for (int i = 0; i < eventQuantities.length && i < dateindex; i++) {
+                            itemsInQuantitiesList = itemsInQuantitiesList + eventQuantities[i];
+                          }
+                          return Alert(
+                            alertBase: AlertBase(
+                              sortedAlertsArray[itemsInQuantitiesList]["Type"], 
+                              sortedAlertsArray[itemsInQuantitiesList]["Title"], 
+                              sortedAlertsArray[itemsInQuantitiesList]["Description"], 
+                              sortedAlertsArray[itemsInQuantitiesList]["Date"]
+                            )
+                          );
+                        }
+                      )
+                    ]
+                  );
                 },
-              ),
-            )),
+            ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-//https://stackoverflow.com/questions/64281024/how-to-create-a-wrapper-widget-and-pass-children-and-properties-to-it-in-flutter
-class AlertItem extends StatelessWidget {
-  const AlertItem({
-    super.key,
-    required this.isEmergency,
-    required this.alertContent,
-    required this.alertTitle,
-  });
-
-  //add date sections
-
-  final bool isEmergency;
-  final String alertContent;
-  final String alertTitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: (isEmergency) ? Colors.orange : Colors.cyan,
-        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-      ),
-      padding: const EdgeInsets.all(100.0),
-      alignment: Alignment.bottomLeft,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Text(
-              alertTitle,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Text(
-              alertContent,
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -6,6 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart' as lat_lng;
+import 'dart:convert';
+import 'dart:io';
+import 'locations.dart';
+import 'navigation.dart';
 
 class HelpsPage extends StatefulWidget {
   const HelpsPage({super.key});
@@ -23,8 +27,51 @@ class _HelpsPageState extends State<HelpsPage> {
   FilterModel filterModel = FilterModel();
 
   final MapController _mapController = MapController();
-  double curr_lat = 0;
-  double curr_long = 0;
+  double currLat = 0;
+  double currLong = 0;
+  int _selectedIndex = 0;
+
+
+    List<LocationModel> locations = [];
+
+    @override
+    void initState() {
+    super.initState();
+    _loadLocations();
+  }
+
+
+  Future<void> _loadLocations() async {
+    locations = await loadLocations(); 
+    setState(() {}); 
+  }
+
+  void activateSearch() {
+    setState(() {
+      filterModel.initializeSearches();
+      searchModel.showResults = true;
+      // filterModel.setChosenFilter('show search');
+    });
+  }
+
+  void closeSearch() {
+    setState(() {
+      filterModel.setChosenFilter("");
+      searchModel.showResults = false;
+    });
+  }
+
+  void updateSearch(value) {
+    setState(() {
+      if (value == '') {
+        filterModel.initializeSearches();
+      } else {
+        filterModel.searches.removeWhere((filter) {
+          return !filter.contains(value);
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,9 +118,10 @@ class _HelpsPageState extends State<HelpsPage> {
                 // lat_lng.LatLng current_location = lat_lng.LatLng(
                 //     snapshot.data!.latitude, snapshot.data!.longitude);
 
-                curr_lat = snapshot.data != null ? snapshot.data!.latitude : 0;
-                curr_long =
-                    snapshot.data != null ? snapshot.data!.longitude : 0;
+                currLat =
+                    snapshot.data != null ? snapshot.data!.latitude : currLat;
+                currLong =
+                    snapshot.data != null ? snapshot.data!.longitude : currLong;
                 return snapshot.connectionState == ConnectionState.done
                     ? FlutterMap(
                         options: MapOptions(
@@ -105,6 +153,7 @@ class _HelpsPageState extends State<HelpsPage> {
                     : const Center(child: CircularProgressIndicator());
               }),
 
+          
           Positioned(
             top: 0.7 * MediaQuery.of(context).size.height,
             left: 0.05 * MediaQuery.of(context).size.width,
@@ -118,7 +167,7 @@ class _HelpsPageState extends State<HelpsPage> {
             ),
           ),
 
-                    DraggableScrollableSheet(
+            DraggableScrollableSheet(
             initialChildSize: _sheetPosition,
             minChildSize: 0.2,
             maxChildSize: 0.8,
@@ -135,69 +184,31 @@ class _HelpsPageState extends State<HelpsPage> {
                         });
                       },
                     ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text.rich(
-                              TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: 'We found ',
-                                    style: TextStyle(
-                                      fontSize: 15.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: '3 Shelter Locations',
-                                    style: TextStyle(
-                                      fontSize: 15.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color.fromARGB(255, 106, 17, 122),
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: ' within 2 miles',
-                                    style: TextStyle(
-                                      fontSize: 15.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Icon(
-                            Icons.info_outline,
-                            size: 28.0,
-                            color: Color.fromARGB(255, 120, 119, 119),
-                          ),
-                        ],
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        'We found ${locations.length} Shelter Locations Nearby',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
+
                     Expanded(
                       child: ListView.builder(
                         controller: scrollController,
                         padding: EdgeInsets.zero,
                         itemCount: locations.length,
                         itemBuilder: (context, index) {
-
-                          // testing  for now
-                          final isOpen = index % 2 == 0; 
-
-                          //testing for now
+                          final location = locations[index];
+                          final isOpen = location.isOpen;
                           final services = ['Laundry', 'Support', 'Shower'];
+
+                          final distance = LocationModel.calculateDistance(currLat, currLong, location.coordinates.latitude, location.coordinates.longitude);
                           
                           return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 16.0),
+                            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                             child: Container(
                               padding: const EdgeInsets.all(16.0),
                               decoration: BoxDecoration(
@@ -218,8 +229,7 @@ class _HelpsPageState extends State<HelpsPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         location.name,
@@ -235,11 +245,8 @@ class _HelpsPageState extends State<HelpsPage> {
                                           vertical: 4.0,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: isOpen
-                                              ? Colors.green
-                                              : Colors.red,
-                                          borderRadius:
-                                              BorderRadius.circular(20.0),
+                                          color: isOpen ? Colors.green : Colors.red,
+                                          borderRadius: BorderRadius.circular(20.0),
                                         ),
                                         child: Text(
                                           isOpen ? 'OPEN' : 'CLOSED',
@@ -257,8 +264,7 @@ class _HelpsPageState extends State<HelpsPage> {
                                   const SizedBox(height: 40.0),
                                   Row(
                                     children: [
-                                      Icon(Icons.directions_walk,
-                                          color: Colors.black54),
+                                      Icon(Icons.directions_walk, color: Colors.black54),
                                       SizedBox(width: 8),
                                       Text(
                                         //will make dynamic soon
@@ -287,16 +293,14 @@ class _HelpsPageState extends State<HelpsPage> {
                                       return Chip(
                                         label: Text(
                                           service,
-                                          style: const TextStyle(
-                                              color: Colors.black),
+                                          style: const TextStyle(color: Colors.black),
                                         ),
                                         backgroundColor: Colors.white,
                                         shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20.0)),
+                                          borderRadius: BorderRadius.circular(20.0)
+                                        ),
                                         side: BorderSide.none,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 1.0, horizontal: 2.0),
+                                        padding: const EdgeInsets.symmetric(vertical: 1.0, horizontal: 2.0), 
                                       );
                                     }).toList(),
                                   ),

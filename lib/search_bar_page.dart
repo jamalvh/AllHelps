@@ -34,7 +34,6 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
       onChanged: (value) {
         setState(() {
           widget.updateSearch(value);
-          print(filterModel.searches);
         });
       },
       onTapOutside: (event) {

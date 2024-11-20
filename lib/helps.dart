@@ -18,7 +18,7 @@ class HelpsPage extends StatefulWidget {
 }
 
 class _HelpsPageState extends State<HelpsPage> {
-  double _sheetPosition = 0.5;
+  double _sheetPosition = 0.4;
   final double _dragSensitivity = 600;
 
   SearchModel searchModel = SearchModel();
@@ -63,14 +63,20 @@ class _HelpsPageState extends State<HelpsPage> {
     });
   }
 
-  void updateSearch(value) {
+  void updateSearch(String value) {
     setState(() {
       if (value == '') {
         filterModel.initializeSearches();
       } else {
-        filterModel.searches.removeWhere((filter) {
-          return !filter.contains(value);
-        });
+        // filterModel.searches.removeWhere((filter) {
+        //   return !filter.toLowerCase().contains(value.toLowerCase());
+        // });
+        filterModel.searches.clear();
+        for (String filter in filterModel.filters.keys.toList()) {
+          if (filter.toLowerCase().contains(value.toLowerCase())) {
+            filterModel.searches.add(filter);
+          }
+        }
       }
     });
   }
@@ -150,6 +156,7 @@ class _HelpsPageState extends State<HelpsPage> {
             options: MapOptions(
               initialCenter:
                   lat_lng.LatLng(currLat, currLong), // Current location
+              initialZoom: 15,
               minZoom: 0.5,
             ),
             mapController: _mapController,
@@ -201,12 +208,12 @@ class _HelpsPageState extends State<HelpsPage> {
           ),
           locationObtained
               ? Positioned(
-                  top: 0.7 * MediaQuery.of(context).size.height,
+                  bottom: _sheetPosition * MediaQuery.of(context).size.height,
                   left: 0.05 * MediaQuery.of(context).size.width,
                   child: FloatingActionButton(
                     onPressed: () {
                       _mapController.move(lat_lng.LatLng(currLat, currLong),
-                          13); // Default initial zoom of map is 13
+                          15); // Default initial zoom of map is 13
                     },
                     backgroundColor: Colors.white,
                     child: const Icon(Icons.near_me_rounded),
@@ -249,7 +256,6 @@ class _HelpsPageState extends State<HelpsPage> {
                           final location = locations[index];
                           final isOpen = location.isOpen;
                           final services = ['Laundry', 'Support', 'Shower'];
-                          print(currLat);
                           final distance = LocationModel.calculateDistance(
                               currLat,
                               currLong,
@@ -313,13 +319,14 @@ class _HelpsPageState extends State<HelpsPage> {
                                   const SizedBox(height: 40.0),
                                   Row(
                                     children: [
-                                      Icon(Icons.directions_walk,
+                                      const Icon(Icons.directions_walk,
                                           color: Colors.black54),
-                                      SizedBox(width: 8),
+                                      const SizedBox(width: 8),
                                       Text(
                                         //will make dynamic soon
                                         '24 Mins by walking (${distance.toStringAsFixed(1)} Miles Away)',
-                                        style: TextStyle(color: Colors.black54),
+                                        style: const TextStyle(
+                                            color: Colors.black54),
                                       ),
                                     ],
                                   ),

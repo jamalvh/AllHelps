@@ -52,11 +52,11 @@ class _HelpsPageState extends State<HelpsPage> {
     setState(() {
       filterModel.initializeSearches();
       searchModel.showResults = true;
-      // filterModel.setChosenFilter('show search');
     });
   }
 
-  void closeSearch() {
+  void closeSearch() async {
+    locations = await loadLocations();
     setState(() {
       filterModel.setChosenFilter("");
       searchModel.showResults = false;
@@ -68,9 +68,6 @@ class _HelpsPageState extends State<HelpsPage> {
       if (value == '') {
         filterModel.initializeSearches();
       } else {
-        // filterModel.searches.removeWhere((filter) {
-        //   return !filter.toLowerCase().contains(value.toLowerCase());
-        // });
         filterModel.searches.clear();
         for (String filter in filterModel.filters.keys.toList()) {
           if (filter.toLowerCase().contains(value.toLowerCase())) {
@@ -83,8 +80,9 @@ class _HelpsPageState extends State<HelpsPage> {
 
   void updateResults(topFilter) {
     setState(() {
-      locations
-          .removeWhere((location) => location.services.contains(topFilter));
+      locations.removeWhere((location) {
+        return !location.services.contains(topFilter);
+      });
     });
   }
 
@@ -141,6 +139,7 @@ class _HelpsPageState extends State<HelpsPage> {
               searchModel.showResults
                   ? SearchOptions(
                       searches: filterModel.searches,
+                      updateResults: updateResults,
                     )
                   : Container(),
             ],
@@ -248,127 +247,142 @@ class _HelpsPageState extends State<HelpsPage> {
                       ),
                     ),
                     Expanded(
-                      child: ListView.builder(
-                        controller: scrollController,
-                        padding: EdgeInsets.zero,
-                        itemCount: locations.length,
-                        itemBuilder: (context, index) {
-                          final location = locations[index];
-                          final isOpen = location.isOpen;
-                          final services = ['Laundry', 'Support', 'Shower'];
-                          final distance = LocationModel.calculateDistance(
-                              currLat,
-                              currLong,
-                              location.coordinates.latitude,
-                              location.coordinates.longitude);
+                      child: StatefulBuilder(builder: (context, setState) {
+                        return ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.zero,
+                          itemCount: locations.length,
+                          itemBuilder: (context, index) {
+                            final availableLocation = locations[index];
+                            final isOpen = availableLocation.isOpen;
+                            final services = ['Laundry', 'Support', 'Shower'];
+                            double distance = LocationModel.calculateDistance(
+                                currLat,
+                                currLong,
+                                availableLocation.coordinates.latitude,
+                                availableLocation.coordinates.longitude);
 
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 16.0),
-                            child: Container(
-                              padding: const EdgeInsets.all(16.0),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(12.0),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Colors.black12,
-                                    blurRadius: 4,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        location.name,
-                                        style: const TextStyle(
-                                          fontSize: 18.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12.0,
-                                          vertical: 4.0,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: isOpen
-                                              ? Colors.green
-                                              : Colors.red,
-                                          borderRadius:
-                                              BorderRadius.circular(20.0),
-                                        ),
-                                        child: Text(
-                                          isOpen ? 'OPEN' : 'CLOSED',
+                            location.onLocationChanged
+                                .listen((LocationData currentLocation) {
+                              setState(() {
+                                distance = LocationModel.calculateDistance(
+                                    currLat,
+                                    currLong,
+                                    availableLocation.coordinates.latitude,
+                                    availableLocation.coordinates.longitude);
+                              });
+                            });
+
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8.0, horizontal: 16.0),
+                              child: Container(
+                                padding: const EdgeInsets.all(16.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          availableLocation.name,
                                           style: const TextStyle(
-                                            color: Colors.white,
+                                            fontSize: 18.0,
                                             fontWeight: FontWeight.bold,
+                                            color: Colors.black87,
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-
-                                  const SizedBox(height: 40.0),
-                                  Row(
-                                    children: [
-                                      const Icon(Icons.directions_walk,
-                                          color: Colors.black54),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        //will make dynamic soon
-                                        '24 Mins by walking (${distance.toStringAsFixed(1)} Miles Away)',
-                                        style: const TextStyle(
-                                            color: Colors.black54),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8.0),
-                                  const Row(
-                                    children: [
-                                      Icon(Icons.timer, color: Colors.black54),
-                                      SizedBox(width: 8),
-                                      Text(
-                                        //will make dynamic soon
-                                        'Accept walk-in until 7:00 PM',
-                                        style: TextStyle(color: Colors.black54),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 12.0),
-                                  // Services Tags
-                                  Wrap(
-                                    spacing: 8.0,
-                                    children: services.map((service) {
-                                      return Chip(
-                                        label: Text(
-                                          service,
-                                          style: const TextStyle(
-                                              color: Colors.black),
-                                        ),
-                                        backgroundColor: Colors.white,
-                                        shape: RoundedRectangleBorder(
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12.0,
+                                            vertical: 4.0,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: isOpen
+                                                ? Colors.green
+                                                : Colors.red,
                                             borderRadius:
-                                                BorderRadius.circular(20.0)),
-                                        side: BorderSide.none,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 1.0, horizontal: 2.0),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ],
+                                                BorderRadius.circular(20.0),
+                                          ),
+                                          child: Text(
+                                            isOpen ? 'OPEN' : 'CLOSED',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 40.0),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.directions_walk,
+                                            color: Colors.black54),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          //will make dynamic soon
+                                          '24 Mins by walking (${distance.toStringAsFixed(1)} Miles Away)',
+                                          style: const TextStyle(
+                                              color: Colors.black54),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 8.0),
+                                    const Row(
+                                      children: [
+                                        Icon(Icons.timer,
+                                            color: Colors.black54),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          //will make dynamic soon
+                                          'Accept walk-in until 7:00 PM',
+                                          style:
+                                              TextStyle(color: Colors.black54),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12.0),
+                                    // Services Tags
+                                    Wrap(
+                                      spacing: 8.0,
+                                      children: services.map((service) {
+                                        return Chip(
+                                          label: Text(
+                                            service,
+                                            style: const TextStyle(
+                                                color: Colors.black),
+                                          ),
+                                          backgroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20.0)),
+                                          side: BorderSide.none,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 1.0, horizontal: 2.0),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
+                            );
+                          },
+                        );
+                      }),
                     ),
                   ],
                 ),

@@ -24,9 +24,10 @@ class LocationModel {
       services: List<String>.from(json['services']),
     );
   }
-  
-  static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-    const double earthRadius = 3961; 
+
+  static double calculateDistance(
+      double lat1, double lon1, double lat2, double lon2) {
+    const double earthRadius = 3961;
 
     double lat1Rad = _degToRad(lat1);
     double lon1Rad = _degToRad(lon1);
@@ -36,10 +37,11 @@ class LocationModel {
     double dlat = lat2Rad - lat1Rad;
     double dlon = lon2Rad - lon1Rad;
 
-    double a = sin(dlat / 2) * sin(dlat / 2) + cos(lat1Rad) * cos(lat2Rad) * sin(dlon / 2) * sin(dlon / 2);
+    double a = sin(dlat / 2) * sin(dlat / 2) +
+        cos(lat1Rad) * cos(lat2Rad) * sin(dlon / 2) * sin(dlon / 2);
     double c = 2 * atan2(sqrt(a), sqrt(1 - a));
 
-    return earthRadius * c; 
+    return earthRadius * c;
   }
 
   static double _degToRad(double deg) {
@@ -47,10 +49,13 @@ class LocationModel {
   }
 
   static List<LocationModel> filterLocationsByDistance(
-    List<LocationModel> locations, double currentLat, double currentLon, double maxDistance) {
+      List<LocationModel> locations,
+      double currentLat,
+      double currentLon,
+      double maxDistance) {
     return locations.where((location) {
-      double distance = calculateDistance(
-        currentLat, currentLon, location.coordinates.latitude, location.coordinates.longitude);
+      double distance = calculateDistance(currentLat, currentLon,
+          location.coordinates.latitude, location.coordinates.longitude);
       return distance <= maxDistance;
     }).toList();
   }
@@ -62,7 +67,9 @@ Future<List<LocationModel>> loadLocations() async {
         await rootBundle.loadString('lib/help_page_assets/locations.json');
     final List<dynamic> jsonData = json.decode(jsonString);
 
-    return jsonData.map((location) => LocationModel.fromJson(location)).toList();
+    return jsonData
+        .map((location) => LocationModel.fromJson(location))
+        .toList();
   } catch (e) {
     print("Error loading locations: $e");
     return [];

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 
 class SearchOptions extends StatefulWidget {
   final List<String> searches;
-  const SearchOptions({super.key, required this.searches});
+  final Function(String) updateResults;
+  const SearchOptions(
+      {super.key, required this.searches, required this.updateResults});
 
   @override
   State<SearchOptions> createState() => _SearchOptionsState();
@@ -27,6 +29,7 @@ Widget SearchOptionsWidget(List<String> searches) {
         title: TextButton(
           onPressed: () {
             filterModel.setChosenFilter(searches.elementAt(index));
+
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
               return const HelpsPage();
             }));

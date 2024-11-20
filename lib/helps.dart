@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:allhelps/navigation.dart';
 
 class HelpsPage extends StatefulWidget {
-  const HelpsPage({super.key});
+  HelpsPage({super.key});
 
   @override
   State<HelpsPage> createState() => _HelpsPageState();
@@ -28,14 +28,7 @@ class _HelpsPageState extends State<HelpsPage> {
           ),
         ],
       ),
-      bottomNavigationBar: MyNavigationBar(
-        currentPageIndex: _selectedIndex,
-        onItemTapped: (int index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        }
-      ),
+      
     );
   }
 }

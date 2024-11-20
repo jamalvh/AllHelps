@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:allhelps/navigation.dart';
 
 class MyPage extends StatefulWidget {
-  const MyPage({super.key});
+  MyPage({super.key});
 
   @override
   State<MyPage> createState() => _MyPageState();
@@ -27,14 +27,7 @@ class _MyPageState extends State<MyPage> {
           ),
         ],
       ),
-      bottomNavigationBar: MyNavigationBar(
-        currentPageIndex: _selectedIndex,
-        onItemTapped: (int index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        }
-      ),
+      
     );
   }
 }

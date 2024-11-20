@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:allhelps/navigation.dart';
 
 class AlertPage extends StatefulWidget {
-  const AlertPage({super.key});
+  AlertPage({super.key});
 
   @override
   State<AlertPage> createState() => _AlertPageState();
@@ -27,14 +27,7 @@ class _AlertPageState extends State<AlertPage> {
           ),
         ],
       ),
-      bottomNavigationBar: MyNavigationBar(
-        currentPageIndex: _selectedIndex,
-        onItemTapped: (int index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        }
-      ),
+      
     );
   }
 }

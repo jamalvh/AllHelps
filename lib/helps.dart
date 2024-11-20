@@ -136,19 +136,32 @@ class _HelpsPageState extends State<HelpsPage> {
                                 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                             userAgentPackageName: 'com.example.allhelps',
                           ),
-                          MarkerLayer(
+                           MarkerLayer(
                             markers: [
+                              // Current location marker
                               Marker(
-                                point: lat_lng.LatLng(snapshot.data!.latitude,
-                                    snapshot.data!.longitude),
+                                point: lat_lng.LatLng(snapshot.data!.latitude, snapshot.data!.longitude),
                                 width: 20,
                                 height: 20,
                                 child: Image.asset(
                                     'lib/help_page_assets/current_location_marker.png'),
                               ),
+                              // Shelter location markers
+                              ...locations.map((location) {
+                                return Marker(
+                                  point: lat_lng.LatLng(location.coordinates.latitude, location.coordinates.longitude),
+                                  width: 55,
+                                  height: 55,
+                                  child: Image.asset(
+                                      'lib/help_page_assets/shelter_marker.png'), 
+                                );
+                              }).toList(),
                             ],
-                          ),
+                            ),
                         ],
+
+                      
+
                       )
                     : const Center(child: CircularProgressIndicator());
               }),
@@ -200,6 +213,9 @@ class _HelpsPageState extends State<HelpsPage> {
                         controller: scrollController,
                         padding: EdgeInsets.zero,
                         itemCount: locations.length,
+
+
+
                         itemBuilder: (context, index) {
                           final location = locations[index];
                           final isOpen = location.isOpen;
@@ -309,6 +325,9 @@ class _HelpsPageState extends State<HelpsPage> {
                             ),
                           );
                         },
+
+
+
                       ),
                     ),
                   ],

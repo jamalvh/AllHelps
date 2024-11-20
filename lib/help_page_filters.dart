@@ -1,11 +1,18 @@
 import 'package:allhelps/filter_model.dart';
+import 'package:allhelps/search_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'search_bar_page.dart';
 
 class Filters extends StatefulWidget {
-  const Filters({super.key});
+  final Function closeSearch;
+  final Function activateSearch;
+  final Function(String) updateSearch;
+  const Filters(
+      {super.key,
+      required this.closeSearch,
+      required this.activateSearch,
+      required this.updateSearch});
 
   @override
   State<Filters> createState() => _FiltersState();
@@ -13,8 +20,11 @@ class Filters extends StatefulWidget {
 
 class _FiltersState extends State<Filters> {
   FilterModel filterModel = FilterModel();
+  SearchModel searchModel = SearchModel();
 
-  Set<String> chosenSubfilters = {''};
+  Set<String> chosenSubfilters = {
+    ''
+  }; // Local variable to keep track of chosen sub filters for a set filter
 
   List<Widget> renderTopFilters() {
     List<Widget> topFilters = [];
@@ -34,6 +44,7 @@ class _FiltersState extends State<Filters> {
             child: ElevatedButton(
               onPressed: () {
                 setState(() {
+                  chosenSubfilters = {''};
                   filterModel.setChosenFilter(categoryName);
                   // Conduct search
                 });
@@ -48,7 +59,7 @@ class _FiltersState extends State<Filters> {
               ),
               child: Row(children: [
                 FutureBuilder<bool>(
-                  future: assetExists(filename),
+                  future: filterModel.assetExists(filename),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       return snapshot.data == true
@@ -97,7 +108,6 @@ class _FiltersState extends State<Filters> {
             setState(() {
               if (categoryName == '') {
                 chosenSubfilters = {''};
-                filterModel.setChosenFilter('');
               } else {
                 if (chosenSubfilters.contains(categoryName)) {
                   chosenSubfilters.remove(categoryName);
@@ -122,7 +132,7 @@ class _FiltersState extends State<Filters> {
           ),
           child: Row(children: [
             FutureBuilder<bool>(
-              future: assetExists(filename),
+              future: filterModel.assetExists(filename),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   return snapshot.data == true
@@ -133,7 +143,7 @@ class _FiltersState extends State<Filters> {
                         )
                       : Container();
                 } else {
-                  return const CircularProgressIndicator();
+                  return const Center(child: CircularProgressIndicator());
                 }
               },
             ),
@@ -148,42 +158,17 @@ class _FiltersState extends State<Filters> {
         ));
   }
 
-  void handleSubfilter(String subFilter) {
-    if (subFilter == '') {
-      setState(() {
-        chosenSubfilters = {};
-        filterModel.setChosenFilter('');
-      });
-    } else {
-      setState(() {
-        chosenSubfilters.add(subFilter);
-      });
-    }
-  }
-
-  Future<bool> assetExists(String path) async {
-    try {
-      // Attempt to load the asset
-      await rootBundle.load(path);
-      return true; // Asset exists
-    } catch (e) {
-      return false; // Asset doesn't exist
-    }
-  }
-
-  void onUpdate() {
-    setState(() {
-      filterModel.setChosenFilter("");
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Row(
           children: [
-            Expanded(child: searchBarWidget(context, onUpdate)),
+            Expanded(
+                child: SearchBarWidget(
+                    closeSearch: widget.closeSearch,
+                    activateSearch: widget.activateSearch,
+                    updateSearch: widget.updateSearch)),
             filterModel.getChosenFilter() == ""
                 ? const SizedBox(
                     width: 10,
@@ -215,21 +200,6 @@ class _FiltersState extends State<Filters> {
                         ),
                       ],
                     ),
-                    // child: ListTile(
-                    //   minLeadingWidth: 0,
-                    //   minTileHeight: 0,
-                    //   title: IconButton(
-                    //     onPressed: () {},
-                    //     icon: const Icon(
-                    //       Icons.filter_alt_off_sharp,
-                    //       color: Colors.white,
-                    //     ),
-                    //   ),
-                    //   subtitle: const Text(
-                    //     'Filter',
-                    //     style: TextStyle(color: Colors.white, fontSize: 12),
-                    //   ),
-                    // )
                   )
                 : Container()
           ],
@@ -237,13 +207,15 @@ class _FiltersState extends State<Filters> {
         const SizedBox(
           height: 10,
         ),
-        SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: filterModel.getChosenFilter() == ""
-                  ? renderTopFilters()
-                  : renderSubFilters(filterModel.getChosenFilter()),
-            ))
+        searchModel.showResults
+            ? Container()
+            : SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: filterModel.getChosenFilter() == ""
+                      ? renderTopFilters()
+                      : renderSubFilters(filterModel.getChosenFilter()),
+                ))
       ],
     );
   }

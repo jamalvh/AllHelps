@@ -1,12 +1,11 @@
 import 'package:allhelps/filter_model.dart';
 import 'package:allhelps/help_page_filters.dart';
 import 'package:allhelps/search_model.dart';
+import 'package:allhelps/search_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart' as lat_lng;
-import 'dart:convert';
-import 'dart:io';
-import 'locations.dart';
 
 class HelpsPage extends StatefulWidget {
   const HelpsPage({super.key});
@@ -19,13 +18,6 @@ class _HelpsPageState extends State<HelpsPage> {
   double _sheetPosition = 0.5;
   final double _dragSensitivity = 600;
 
-  // SearchModel searchModel = SearchModel(
-  //     name: 'test',
-  //     isOpen: true,
-  //     location: const lat_lng.LatLng(42, 42),
-  //     filters: [],
-  //     timings: ''); //TODO: Real models
-
   SearchModel searchModel = SearchModel();
 
   FilterModel filterModel = FilterModel();
@@ -34,29 +26,38 @@ class _HelpsPageState extends State<HelpsPage> {
   double curr_lat = 0;
   double curr_long = 0;
 
-    List<LocationModel> locations = [];
-
-    @override
-    void initState() {
-    super.initState();
-    _loadLocations();
-  }
-
-
-  Future<void> _loadLocations() async {
-    locations = await loadLocations(); 
-    setState(() {}); 
-  }
-
-
   @override
   Widget build(BuildContext context) {
+    searchModel.location.onLocationChanged
+        .listen((LocationData currentLocation) {
+      if (currentLocation.latitude == currLat &&
+          currentLocation.longitude == currLong) return;
+    });
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        toolbarHeight: MediaQuery.of(context).size.height * 0.18,
-        title: const Filters(),
+        toolbarHeight: !searchModel.showResults
+            ? MediaQuery.of(context).size.height * 0.18
+            : MediaQuery.of(context).size.height,
+        flexibleSpace: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Filters(
+                    activateSearch: activateSearch,
+                    closeSearch: closeSearch,
+                    updateSearch: updateSearch),
+              ),
+              searchModel.showResults
+                  ? SearchOptions(
+                      searches: filterModel.searches,
+                    )
+                  : Container(),
+            ],
+          ),
+        ),
         backgroundColor: Colors.white,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -71,7 +72,8 @@ class _HelpsPageState extends State<HelpsPage> {
                 //     snapshot.data!.latitude, snapshot.data!.longitude);
 
                 curr_lat = snapshot.data != null ? snapshot.data!.latitude : 0;
-                curr_long = snapshot.data != null ? snapshot.data!.longitude : 0;
+                curr_long =
+                    snapshot.data != null ? snapshot.data!.longitude : 0;
                 return snapshot.connectionState == ConnectionState.done
                     ? FlutterMap(
                         options: MapOptions(
@@ -84,7 +86,7 @@ class _HelpsPageState extends State<HelpsPage> {
                           TileLayer(
                             urlTemplate:
                                 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            userAgentPackageName: 'com.example.app',
+                            userAgentPackageName: 'com.example.allhelps',
                           ),
                           MarkerLayer(
                             markers: [
@@ -100,7 +102,7 @@ class _HelpsPageState extends State<HelpsPage> {
                           ),
                         ],
                       )
-                    : const CircularProgressIndicator();
+                    : const Center(child: CircularProgressIndicator());
               }),
 
           Positioned(
@@ -108,7 +110,7 @@ class _HelpsPageState extends State<HelpsPage> {
             left: 0.05 * MediaQuery.of(context).size.width,
             child: FloatingActionButton(
               onPressed: () {
-                _mapController.move(lat_lng.LatLng(curr_lat, curr_long),
+                _mapController.move(lat_lng.LatLng(currLat, currLong),
                     13); // Default initial zoom of map is 13
               },
               backgroundColor: Colors.white,
@@ -116,7 +118,7 @@ class _HelpsPageState extends State<HelpsPage> {
             ),
           ),
 
-            DraggableScrollableSheet(
+                    DraggableScrollableSheet(
             initialChildSize: _sheetPosition,
             minChildSize: 0.2,
             maxChildSize: 0.8,
@@ -133,31 +135,69 @@ class _HelpsPageState extends State<HelpsPage> {
                         });
                       },
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'We found ${locations.length} Shelter Locations Nearby',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'We found ',
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: '3 Shelter Locations',
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color.fromARGB(255, 106, 17, 122),
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' within 2 miles',
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            Icons.info_outline,
+                            size: 28.0,
+                            color: Color.fromARGB(255, 120, 119, 119),
+                          ),
+                        ],
                       ),
                     ),
-
                     Expanded(
                       child: ListView.builder(
                         controller: scrollController,
                         padding: EdgeInsets.zero,
                         itemCount: locations.length,
                         itemBuilder: (context, index) {
-                          final location = locations[index];
-                          final isOpen = location.isOpen;
-                          final services = ['Laundry', 'Support', 'Shower'];
 
-                          final distance = LocationModel.calculateDistance(curr_lat, curr_long, location.coordinates.latitude, location.coordinates.longitude);
+                          // testing  for now
+                          final isOpen = index % 2 == 0; 
+
+                          //testing for now
+                          final services = ['Laundry', 'Support', 'Shower'];
                           
                           return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 16.0),
                             child: Container(
                               padding: const EdgeInsets.all(16.0),
                               decoration: BoxDecoration(
@@ -178,7 +218,8 @@ class _HelpsPageState extends State<HelpsPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         location.name,
@@ -194,8 +235,11 @@ class _HelpsPageState extends State<HelpsPage> {
                                           vertical: 4.0,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: isOpen ? Colors.green : Colors.red,
-                                          borderRadius: BorderRadius.circular(20.0),
+                                          color: isOpen
+                                              ? Colors.green
+                                              : Colors.red,
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
                                         ),
                                         child: Text(
                                           isOpen ? 'OPEN' : 'CLOSED',
@@ -213,7 +257,8 @@ class _HelpsPageState extends State<HelpsPage> {
                                   const SizedBox(height: 40.0),
                                   Row(
                                     children: [
-                                      Icon(Icons.directions_walk, color: Colors.black54),
+                                      Icon(Icons.directions_walk,
+                                          color: Colors.black54),
                                       SizedBox(width: 8),
                                       Text(
                                         //will make dynamic soon
@@ -242,14 +287,16 @@ class _HelpsPageState extends State<HelpsPage> {
                                       return Chip(
                                         label: Text(
                                           service,
-                                          style: const TextStyle(color: Colors.black),
+                                          style: const TextStyle(
+                                              color: Colors.black),
                                         ),
                                         backgroundColor: Colors.white,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(20.0)
-                                        ),
+                                            borderRadius:
+                                                BorderRadius.circular(20.0)),
                                         side: BorderSide.none,
-                                        padding: const EdgeInsets.symmetric(vertical: 1.0, horizontal: 2.0), 
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 1.0, horizontal: 2.0),
                                       );
                                     }).toList(),
                                   ),
@@ -267,6 +314,13 @@ class _HelpsPageState extends State<HelpsPage> {
           ),
         ],
       ),
+      bottomNavigationBar: MyNavigationBar(
+          currentPageIndex: _selectedIndex,
+          onItemTapped: (int index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          }),
     );
   }
 }

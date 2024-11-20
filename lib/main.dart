@@ -21,16 +21,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
       ),
       routes: {
-        '/': (context) => Scaffold(
-              body: Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/alert');
-                  },
-                  child: const Text('Go to Alert Page'),
-                ),
-              ),
-            ),
+        '/': (context) => MyHomePage(),
         '/helps': (context) => const HelpsPage(),
         '/alert': (context) => const AlertPage(),
         '/my': (context) => const MyPage(),

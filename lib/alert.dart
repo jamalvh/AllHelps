@@ -192,9 +192,6 @@ class AlertPage extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  Alert(
-                      alertBase: AlertBase("Event", "Clean up today",
-                          "Gonna do some cleaning up today", DateTime.now())),
                 ],
               ),
             ),
@@ -202,73 +199,74 @@ class AlertPage extends StatelessWidget {
         ),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            AlertSelector(
-              onSelectionChanged: (selections) {
-                print('Selected buttons: $selections');
-              },
-            ),
-            const SizedBox(height: 14),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: welcomeBG,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: welcomeBorder,
-                    width: 1,
-                  ),
-                ),
-                padding: const EdgeInsets.all(16),
+        child: Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              AlertSelector(
+                onSelectionChanged: (selections) {
+                  print('Selected buttons: $selections');
+                },
+              ),
+              const SizedBox(height: 14),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Welcome to the Alerts Board!',
-                      style: TextStyle(
-                        color: welcomeText,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    Alert(
+                      alertBase: AlertBase(
+                        type: AlertType.Welcome,
+                        header: 'Welcome to the Alerts Board!',
+                        message:
+                            'Missed a notification from us? No worries. They\'ll be right here waiting for you and for up to 14 days.',
+                        date: DateTime.now(),
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      'Missed a notification from us? No worries. They\'ll be right here waiting for you and for up to 14 days.',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
+                    Alert(
+                      alertBase: AlertBase(
+                        type: AlertType.Event,
+                        header: 'Clean up Event',
+                        message:
+                            'Join us for a community clean up event on Saturday',
+                        date: DateTime.now(),
+                      ),
+                    ),
+                    Alert(
+                      alertBase: AlertBase(
+                        type: AlertType.Safety,
+                        header: 'Severe Weather Warning',
+                        message:
+                            'Heavy rain and thunderstorms expected this afternoon. Stay safe and find a shelter nearby.',
+                        date: DateTime.now(),
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-            Expanded(
-                child: Listener(
-              //this listener class makes it so that we should be able to add new alerts in the back end
-              child: ListView.builder(
-                itemCount: datesShown,
+              Expanded(
+                  child: Listener(
+                //this listener class makes it so that we should be able to add new alerts in the back end
+                child: ListView.builder(
+                  itemCount: datesShown,
 
-                //itembuilder that shows each date section
-                itemBuilder: (BuildContext context, int dateindex) {
-                  return ListView.builder(
-                      itemCount: dateindex, //placeholder value
+                  //itembuilder that shows each date section
+                  itemBuilder: (BuildContext context, int dateindex) {
+                    return ListView.builder(
+                        itemCount: dateindex, //placeholder value
 
-                      //itemblder that shows each alert item in each date
-                      itemBuilder: (BuildContext context, int itemindex) {
-                        return AlertItem(
-                          isEmergency: alertsArray[itemindex]["isEmergency"],
-                          alertTitle: alertsArray[itemindex]["Title"],
-                          alertContent: alertsArray[itemindex]["Description"],
-                        );
-                      });
-                },
-              ),
-            )),
-          ],
+                        //itemblder that shows each alert item in each date
+                        itemBuilder: (BuildContext context, int itemindex) {
+                          return AlertItem(
+                            isEmergency: alertsArray[itemindex]["isEmergency"],
+                            alertTitle: alertsArray[itemindex]["Title"],
+                            alertContent: alertsArray[itemindex]["Description"],
+                          );
+                        });
+                  },
+                ),
+              )),
+            ],
+          ),
         ),
       ),
     );

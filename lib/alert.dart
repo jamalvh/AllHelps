@@ -59,30 +59,16 @@ class AlertSelector extends StatefulWidget {
 }
 
 class _AlertSelectorState extends State<AlertSelector> {
-  List<bool> selectedButtons = [false, false, false, false];
-  bool allSelected = false;
+  int selectedIndex = 0; // 0 = All, 1 = Event, 2 = Resources, 3 = Safety
 
-  void toggleAll() {
+  void selectButton(int index) {
     setState(() {
-      allSelected = !allSelected;
-      selectedButtons = List.filled(4, allSelected);
-      widget.onSelectionChanged(selectedButtons);
+      selectedIndex = index;
+      List<bool> selections = List.filled(4, false);
+      selections[index] = true;
+      widget.onSelectionChanged(selections);
     });
   }
-
-  void toggleButton(int index) {
-    setState(() {
-      selectedButtons[index] = !selectedButtons[index];
-      if (!selectedButtons[index]) {
-        allSelected = false;
-      } else if (selectedButtons.every((element) => element)) {
-        allSelected = true;
-      }
-      widget.onSelectionChanged(selectedButtons);
-    });
-  }
-
-  static const double size = 8.0; // Changed from 10.0 to 8.0
 
   @override
   Widget build(BuildContext context) {
@@ -100,29 +86,29 @@ class _AlertSelectorState extends State<AlertSelector> {
                 CustomIconButton(
                   icon: Icons.forum,
                   label: 'All',
-                  isSelected: allSelected,
-                  onPressed: toggleAll,
+                  isSelected: selectedIndex == 0,
+                  onPressed: () => selectButton(0),
                 ),
-                const SizedBox(width: size),
+                const SizedBox(width: 8),
                 CustomIconButton(
                   icon: Icons.event,
                   label: 'Event',
-                  isSelected: selectedButtons[1],
-                  onPressed: () => toggleButton(1),
+                  isSelected: selectedIndex == 1,
+                  onPressed: () => selectButton(1),
                 ),
-                const SizedBox(width: size),
+                const SizedBox(width: 8),
                 CustomIconButton(
                   icon: Icons.favorite,
                   label: 'Resources',
-                  isSelected: selectedButtons[2],
-                  onPressed: () => toggleButton(2),
+                  isSelected: selectedIndex == 2,
+                  onPressed: () => selectButton(2),
                 ),
-                const SizedBox(width: size),
+                const SizedBox(width: 8),
                 CustomIconButton(
                   icon: Icons.security,
                   label: 'Safety',
-                  isSelected: selectedButtons[3],
-                  onPressed: () => toggleButton(3),
+                  isSelected: selectedIndex == 3,
+                  onPressed: () => selectButton(3),
                 ),
               ],
             ),
@@ -133,34 +119,78 @@ class _AlertSelectorState extends State<AlertSelector> {
   }
 }
 
-class AlertPage extends StatelessWidget {
+class AlertPage extends StatefulWidget {
   const AlertPage({super.key});
 
-  final Color mainColor = const Color(0xFF6359ca);
-  final bool isEmergency = true; // Placeholder
-  final int itemCount = 5;
-  final Color welcomeText = const Color(0xFF3d3a8d);
-  final Color welcomeBG = const Color.fromRGBO(237, 244, 255, 1);
-  final Color welcomeBorder = const Color.fromRGBO(220, 220, 224, 1);
-  final int datesShown = 14;
+  @override
+  State<AlertPage> createState() => _AlertPageState();
+}
+
+class _AlertPageState extends State<AlertPage> {
+  List<Map<String, dynamic>> filteredAlerts = [];
+  List<bool> selectedFilters = [false, false, false, false];
+
+  final List<Map<String, dynamic>> alertsArray = [
+    {
+      "date": "2024-07-11",
+      "title": "Free Houses",
+      "description": "Giving away houses to homeless people",
+      "type": "Event",
+    },
+    {
+      "date": "2024-07-11",
+      "title": "Free Apartments",
+      "description": "Giving away apartments to homeless people",
+      "type": "Safety",
+    }
+  ];
+
+  AlertType _getAlertType(String type) {
+    switch (type) {
+      case "Event":
+        return AlertType.Event;
+      case "Safety":
+        return AlertType.Safety;
+      case "Resources":
+        return AlertType.Resources;
+      default:
+        return AlertType.Welcome;
+    }
+  }
+
+  AlertBase _convertToAlertBase(Map<String, dynamic> alert) {
+    return AlertBase(
+      type: _getAlertType(alert["type"]),
+      header: alert["title"],
+      message: alert["description"],
+      date: DateTime.parse(alert["date"]),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    filteredAlerts = alertsArray;
+  }
+
+  void updateFilters(List<bool> selections) {
+    setState(() {
+      selectedFilters = selections;
+      if (selections[0]) {
+        filteredAlerts = alertsArray;
+      } else {
+        filteredAlerts = alertsArray.where((alert) {
+          if (selections[1] && alert["type"] == "Event") return true;
+          if (selections[2] && alert["type"] == "Resources") return true;
+          if (selections[3] && alert["type"] == "Safety") return true;
+          return false;
+        }).toList();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> alertsArray = [
-      {
-        //mmddyy: month, date, year
-        "Date": 11072024,
-        "Title": "free houses",
-        "Description": "giving away houses to homeless people",
-        "isEmergency": true
-      },
-      {
-        "Date": 11072024,
-        "Title": "free apartments",
-        "Description": "giving away apartments to homeless people",
-        "isEmergency": false
-      }
-    ];
     return Scaffold(
       backgroundColor: const Color(0xFFF4F4F4),
       appBar: PreferredSize(
@@ -199,74 +229,23 @@ class AlertPage extends StatelessWidget {
         ),
       ),
       body: Center(
-        child: Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              AlertSelector(
-                onSelectionChanged: (selections) {
-                  print('Selected buttons: $selections');
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            AlertSelector(
+              onSelectionChanged: updateFilters,
+            ),
+            const SizedBox(height: 14),
+            Expanded(
+              child: ListView.builder(
+                itemCount: filteredAlerts.length,
+                itemBuilder: (context, index) {
+                  return Alert(
+                      alertBase: _convertToAlertBase(filteredAlerts[index]));
                 },
               ),
-              const SizedBox(height: 14),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  children: [
-                    Alert(
-                      alertBase: AlertBase(
-                        type: AlertType.Welcome,
-                        header: 'Welcome to the Alerts Board!',
-                        message:
-                            'Missed a notification from us? No worries. They\'ll be right here waiting for you and for up to 14 days.',
-                        date: DateTime.now(),
-                      ),
-                    ),
-                    Alert(
-                      alertBase: AlertBase(
-                        type: AlertType.Event,
-                        header: 'Clean up Event',
-                        message:
-                            'Join us for a community clean up event on Saturday',
-                        date: DateTime.now(),
-                      ),
-                    ),
-                    Alert(
-                      alertBase: AlertBase(
-                        type: AlertType.Safety,
-                        header: 'Severe Weather Warning',
-                        message:
-                            'Heavy rain and thunderstorms expected this afternoon. Stay safe and find a shelter nearby.',
-                        date: DateTime.now(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                  child: Listener(
-                //this listener class makes it so that we should be able to add new alerts in the back end
-                child: ListView.builder(
-                  itemCount: datesShown,
-
-                  //itembuilder that shows each date section
-                  itemBuilder: (BuildContext context, int dateindex) {
-                    return ListView.builder(
-                        itemCount: dateindex, //placeholder value
-
-                        //itemblder that shows each alert item in each date
-                        itemBuilder: (BuildContext context, int itemindex) {
-                          return AlertItem(
-                            isEmergency: alertsArray[itemindex]["isEmergency"],
-                            alertTitle: alertsArray[itemindex]["Title"],
-                            alertContent: alertsArray[itemindex]["Description"],
-                          );
-                        });
-                  },
-                ),
-              )),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

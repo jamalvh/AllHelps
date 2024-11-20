@@ -28,54 +28,51 @@ class Alert extends StatelessWidget {
             width: 1,
           ),
         ),
-        child: Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize
-                .min, // This ensures the column takes the minimum vertical space required
-            children: [
-              Row(
-                children: [
-                  if (alertBase._type == AlertType.Safety)
-                    const Icon(
-                      Icons.warning_amber,
-                      color: Colors.red,
-                    ),
-                  Text(
-                    alertBase.header!,
-                    style: TextStyle(
-                      color: alertBase._type == AlertType.Safety
-                          ? alertBase._safetyText
-                          : alertBase._type == AlertType.Welcome
-                              ? alertBase.welcomeText
-                              : Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                if (alertBase._type == AlertType.Safety)
+                  const Icon(
+                    Icons.warning_amber,
+                    color: Colors.red,
                   ),
-                  const Spacer(),
-                  Text(
-                    formattedDate,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 13.0,
-                      fontWeight: alertBase._type == AlertType.Safety
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                    ),
+                Text(
+                  alertBase.header!,
+                  style: TextStyle(
+                    color: alertBase._type == AlertType.Safety
+                        ? alertBase._safetyText
+                        : alertBase._type == AlertType.Welcome
+                            ? alertBase.welcomeText
+                            : Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Text(
-                alertBase.message!,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
                 ),
+                const Spacer(),
+                Text(
+                  formattedDate,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 13.0,
+                    fontWeight: alertBase._type == AlertType.Safety
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              alertBase.message!,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 14,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -97,12 +94,16 @@ class AlertBase {
   final Color _safetyBG = const Color.fromRGBO(255, 241, 184, 1);
 
   // Constructor
-  AlertBase(
-      {AlertType? type, String? header, String? message, DateTime? date}) {
+  AlertBase({
+    AlertType? type,
+    String? header,
+    String? message,
+    DateTime? date,
+  }) {
     _type = type;
-    _header = 'Welcome to the App!';
-    _message = 'We are excited to have you on board!';
-    _date = DateTime.now();
+    _header = header ?? 'Welcome to the App!';
+    _message = message ?? 'We are excited to have you on board!';
+    _date = date ?? DateTime.now();
   }
 
   // Getter methods

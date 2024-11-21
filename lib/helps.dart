@@ -79,6 +79,7 @@ class _HelpsPageState extends State<HelpsPage> {
   }
 
   void updateResults(topFilter) {
+    print(topFilter);
     setState(() {
       locations.removeWhere((location) {
         return !location.services.contains(topFilter);
@@ -118,6 +119,9 @@ class _HelpsPageState extends State<HelpsPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (filterModel.chosenFilter.isNotEmpty) {
+      updateResults(filterModel.chosenFilter);
+    }
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(

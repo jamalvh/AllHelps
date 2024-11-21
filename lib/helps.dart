@@ -341,7 +341,7 @@ class _HelpsPageState extends State<HelpsPage> {
                                         const SizedBox(width: 8),
                                         Text(
                                           //will make dynamic soon
-                                          '24 Mins by walking (${distance.toStringAsFixed(1)} Miles Away)',
+                                           '${LocationModel.estimateWalkingTime(distance)} mins by walking (${distance.toStringAsFixed(1)} miles away)',
                                           style: const TextStyle(
                                               color: Colors.black54),
                                         ),

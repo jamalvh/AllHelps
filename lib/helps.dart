@@ -48,6 +48,8 @@ class _HelpsPageState extends State<HelpsPage> {
     setState(() {});
   }
 
+  
+
   void activateSearch() {
     setState(() {
       filterModel.initializeSearches();
@@ -249,12 +251,12 @@ class _HelpsPageState extends State<HelpsPage> {
                     Expanded(
                       child: StatefulBuilder(builder: (context, setState) {
                         return ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
+                          //physics: const NeverScrollableScrollPhysics(),
                           padding: EdgeInsets.zero,
                           itemCount: locations.length,
                           itemBuilder: (context, index) {
                             final availableLocation = locations[index];
-                            final isOpen = availableLocation.isOpen;
+                            //final isOpen = availableLocation.isOpen;
                             final services = ['Laundry', 'Support', 'Shower'];
                             double distance = LocationModel.calculateDistance(
                                 currLat,
@@ -279,7 +281,7 @@ class _HelpsPageState extends State<HelpsPage> {
                               child: Container(
                                 padding: const EdgeInsets.all(16.0),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[300],
+                                  color:  Colors.grey[300],
                                   borderRadius: BorderRadius.circular(12.0),
                                   boxShadow: const [
                                     BoxShadow(
@@ -290,37 +292,33 @@ class _HelpsPageState extends State<HelpsPage> {
                                   ],
                                 ),
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          availableLocation.name,
-                                          style: const TextStyle(
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 12.0,
-                                            vertical: 4.0,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: isOpen
-                                                ? Colors.green
-                                                : Colors.red,
-                                            borderRadius:
-                                                BorderRadius.circular(20.0),
-                                          ),
-                                          child: Text(
-                                            isOpen ? 'OPEN' : 'CLOSED',
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                availableLocation.name,
+                                                style: const TextStyle(
+                                                  fontSize: 18.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(
+                                                  horizontal: 12.0,
+                                                  vertical: 4.0,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: availableLocation.isOpenNow() ? Colors.green : Colors.red,
+                                                  borderRadius: BorderRadius.circular(20.0),
+                                                ),
+                                                child: Text(
+                                                  availableLocation.isOpenNow() ? 'OPEN' : 'CLOSED',
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                         ),
@@ -342,16 +340,13 @@ class _HelpsPageState extends State<HelpsPage> {
                                       ],
                                     ),
                                     const SizedBox(height: 8.0),
-                                    const Row(
+                                    Row(
                                       children: [
-                                        Icon(Icons.timer,
-                                            color: Colors.black54),
-                                        SizedBox(width: 8),
+                                        const Icon(Icons.timer, color: Colors.black54),
+                                        const SizedBox(width: 8),
                                         Text(
-                                          //will make dynamic soon
-                                          'Accept walk-in until 7:00 PM',
-                                          style:
-                                              TextStyle(color: Colors.black54),
+                                          'Accept walk-in until ${LocationModel.formatTimeTo12Hour(availableLocation.closeTime)}',
+                                          style: const TextStyle(color: Colors.black54),
                                         ),
                                       ],
                                     ),

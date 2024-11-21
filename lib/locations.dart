@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:latlong2/latlong.dart' as lat_lng;
 import 'dart:math';
@@ -6,21 +7,60 @@ import 'dart:math';
 class LocationModel {
   final String name;
   final lat_lng.LatLng coordinates;
-  final bool isOpen;
+  final String openTime;
+  final String closeTime;
   final List<String> services;
 
   LocationModel({
     required this.name,
     required this.coordinates,
-    required this.isOpen,
+    required this.openTime,
+    required this.closeTime,
     required this.services,
   });
+
+
+  static TimeOfDay _parseTime(String time) {
+    final parts = time.split(':');
+    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+  }
+
+bool isOpenNow() {
+  final now = TimeOfDay.now();
+  final open = _parseTime(openTime);
+  final close = _parseTime(closeTime);
+
+  int nowMinutes = now.hour * 60 + now.minute;
+  int openMinutes = open.hour * 60 + open.minute;
+  int closeMinutes = close.hour * 60 + close.minute;
+
+  if (closeMinutes < openMinutes) {
+    return nowMinutes >= openMinutes || nowMinutes <= closeMinutes;
+  }
+  return nowMinutes >= openMinutes && nowMinutes <= closeMinutes;
+}
+
+
+static String formatTimeTo12Hour(String time) {
+  final parsedTime = _parseTime(time);
+  final hour = parsedTime.hour;
+  final minute = parsedTime.minute;
+
+  final period = hour >= 12 ? 'PM' : 'AM';
+  final formattedHour = hour % 12 == 0 ? 12 : hour % 12;
+  final formattedMinute = minute.toString().padLeft(2, '0');
+
+  return '$formattedHour:$formattedMinute $period';
+}
+
+
 
   factory LocationModel.fromJson(Map<String, dynamic> json) {
     return LocationModel(
       name: json['name'],
       coordinates: lat_lng.LatLng(json['latitude'], json['longitude']),
-      isOpen: json['isOpen'],
+      openTime: json['openTime'],
+      closeTime: json['closeTime'],
       services: List<String>.from(json['services']),
     );
   }
@@ -75,3 +115,5 @@ Future<List<LocationModel>> loadLocations() async {
     return [];
   }
 }
+
+

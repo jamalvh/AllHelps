@@ -3,24 +3,27 @@
     "name": "Joes Pizza Shelter",
     "latitude": 42.2750,
     "longitude": -83.7356,
-    "isOpen": true,
     "type" : "Food",
+    "openTime": "08:00",
+    "closeTime": "20:00",
     "services": ["Food", "Shelter", "Medical"]
   },
   {
     "name": "Shelter B",
     "latitude": 42.3610,
     "longitude": -71.0570,
-    "isOpen": false,
     "type" : "Medical",
+    "openTime": "01:00",
+    "closeTime": "7:00",
     "services": ["Shower", "Support"]
   },
   {
     "name": "Shelter C",
     "latitude": 42.3622,
     "longitude": -71.0595,
-    "isOpen": true,
     "type" : "Shelter",
+    "openTime": "12:00",
+    "closeTime": "15:00",
     "services": ["Laundry", "Counseling"]
   }
 ]

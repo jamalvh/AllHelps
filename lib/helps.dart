@@ -258,7 +258,7 @@ class _HelpsPageState extends State<HelpsPage> {
                           itemCount: locations.length,
                           itemBuilder: (context, index) {
                             final availableLocation = locations[index];
-                            final isOpen = availableLocation.isOpen;
+                            //final isOpen = availableLocation.isOpen;
                             final services = ['Laundry', 'Support', 'Shower'];
                             double distance = LocationModel.calculateDistance(
                                 currLat,
@@ -314,14 +314,16 @@ class _HelpsPageState extends State<HelpsPage> {
                                             vertical: 4.0,
                                           ),
                                           decoration: BoxDecoration(
-                                            color: isOpen
+                                            color: availableLocation.isOpenNow()
                                                 ? Colors.green
                                                 : Colors.red,
                                             borderRadius:
                                                 BorderRadius.circular(20.0),
                                           ),
                                           child: Text(
-                                            isOpen ? 'OPEN' : 'CLOSED',
+                                            availableLocation.isOpenNow()
+                                                ? 'OPEN'
+                                                : 'CLOSED',
                                             style: const TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
@@ -346,16 +348,15 @@ class _HelpsPageState extends State<HelpsPage> {
                                       ],
                                     ),
                                     const SizedBox(height: 8.0),
-                                    const Row(
+                                    Row(
                                       children: [
-                                        Icon(Icons.timer,
+                                        const Icon(Icons.timer,
                                             color: Colors.black54),
-                                        SizedBox(width: 8),
+                                        const SizedBox(width: 8),
                                         Text(
-                                          //will make dynamic soon
-                                          'Accept walk-in until 7:00 PM',
-                                          style:
-                                              TextStyle(color: Colors.black54),
+                                          'Accept walk-in until ${LocationModel.formatTimeTo12Hour(availableLocation.closeTime)}',
+                                          style: const TextStyle(
+                                              color: Colors.black54),
                                         ),
                                       ],
                                     ),

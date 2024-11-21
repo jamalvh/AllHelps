@@ -53,6 +53,12 @@ static String formatTimeTo12Hour(String time) {
   return '$formattedHour:$formattedMinute $period';
 }
 
+static int estimateWalkingTime(double distanceInMiles) {
+  const double walkingSpeedMph = 3.0; 
+  double timeInHours = distanceInMiles / walkingSpeedMph;
+  int timeInMinutes = (timeInHours * 60).round();
+  return timeInMinutes;
+}
 
 
   factory LocationModel.fromJson(Map<String, dynamic> json) {

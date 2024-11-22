@@ -16,7 +16,8 @@ class _SearchOptionsState extends State<SearchOptions> {
   FilterModel filterModel = FilterModel();
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.98,
         child: ListView.builder(
       itemBuilder: (context, index) {
         String filename =

@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:allhelps/alert_base_class.dart';
+import 'package:allhelps/filter_model.dart';
+import 'package:allhelps/search_model.dart';
+import 'package:allhelps/locations.dart';
+import 'package:allhelps/search_bar_page.dart';
+import 'package:allhelps/search_options.dart';
 
 class MyHomePage extends StatefulWidget {
   final Function(int) onIndexChanged;
@@ -12,11 +17,47 @@ class MyHomePage extends StatefulWidget {
 
 // No changes needed in _MyHomePageState
 class _MyHomePageState extends State<MyHomePage> {
-  // void _onItemTapped(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-  // }
+  FilterModel filterModel = FilterModel();
+  SearchModel searchModel = SearchModel();
+  List<LocationModel> locations = [];
+
+  void activateSearch() {
+    setState(() {
+      filterModel.initializeSearches();
+      searchModel.showResults = true;
+    });
+  }
+
+  void closeSearch() async {
+    locations = await loadLocations();
+    setState(() {
+      filterModel.setChosenFilter("");
+      searchModel.showResults = false;
+    });
+  }
+
+  void updateSearch(String value) {
+    setState(() {
+      if (value == '') {
+        filterModel.initializeSearches();
+      } else {
+        filterModel.searches.clear();
+        for (String filter in filterModel.filters.keys.toList()) {
+          if (filter.toLowerCase().contains(value.toLowerCase())) {
+            filterModel.searches.add(filter);
+          }
+        }
+      }
+    });
+  }
+
+  void updateResults(String topFilter) {
+    setState(() {
+      locations.removeWhere((location) {
+        return !location.services.contains(topFilter);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,41 +74,42 @@ class _MyHomePageState extends State<MyHomePage> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: ListView(
+        child: SingleChildScrollView(
           padding: EdgeInsets.zero,
-          children: [
-            const Header(),
-            Column(
-              children: [
-                const SizedBox(height: 114), // TODO: Replace this with Search Bar
-                //SearchBar(), // renderd by the helps team, we will use the same search bar
-                HelpsRow(onIndexChanged: widget.onIndexChanged),
-                const SizedBox(
-                  height: 10,
+          child: Column(
+            children: [
+              const Header(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: SearchBarWidget(
+                  activateSearch: activateSearch,
+                  closeSearch: closeSearch,
+                  updateSearch: updateSearch,
+                  updateResults: updateResults,
                 ),
-                //GuideButton(),
-                const SizedBox(
-                  height: 40,
+              ),
+              if (searchModel.showResults)
+                SearchOptions(
+                  searches: filterModel.searches,
+                  updateResults: updateResults,
                 ),
-                Alert(
-                  alertBase: AlertBase(
-                    type: AlertType.Safety,
-                    header: 'Severe Weather Warning',
-                    message:
-                        'A severe thunderstorm is expected in your area. Stay indoors and avoid unnecessary travel.',
-                    date: DateTime.now(),
-                  ),
+              HelpsRow(onIndexChanged: widget.onIndexChanged),
+              const SizedBox(height: 10),
+              // GuideButton(),
+              const SizedBox(height: 40),
+              Alert(
+                alertBase: AlertBase(
+                  type: AlertType.Safety,
+                  header: 'Severe Weather Warning',
+                  message: 'A severe thunderstorm is expected in your area. Stay indoors and avoid unnecessary travel.',
+                  date: DateTime.now(),
                 ),
-                const SizedBox(
-                  height: 40,
-                ),
-                EmergencyRow(onIndexChanged: widget.onIndexChanged),
-                const SizedBox(
-                  height: 200,
-                )
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(height: 40),
+              EmergencyRow(onIndexChanged: widget.onIndexChanged),
+              const SizedBox(height: 200),
+            ],
+          ),
         ),
       ),
     );

@@ -7,7 +7,7 @@ import 'package:allhelps/search_bar_page.dart';
 import 'package:allhelps/search_options.dart';
 
 class MyHomePage extends StatefulWidget {
-  final Function(int) onIndexChanged;
+  final Function(int, {String? filter}) onIndexChanged;
 
   const MyHomePage({Key? key, required this.onIndexChanged}) : super(key: key);
 
@@ -151,7 +151,7 @@ class Header extends StatelessWidget {
 
 // Widget for Helps Row
 class HelpsRow extends StatelessWidget {
-  final Function(int) onIndexChanged;
+  final Function(int, {String? filter}) onIndexChanged;
 
   const HelpsRow({super.key, required this.onIndexChanged});
 
@@ -181,7 +181,7 @@ class HelpsRow extends StatelessWidget {
                   text: "Searching for Food",
                   imageURL: "assets/images/helps_food_icon.png",
                   onTap: () {
-                    onIndexChanged(1); // Switch to HelpsPage
+                    onIndexChanged(1, filter: "Food"); // Switch to HelpsPage
                   }),
               HelpsButton(
                   color1: const Color(0xFF50714A),
@@ -189,7 +189,7 @@ class HelpsRow extends StatelessWidget {
                   text: "Looking for Shelter",
                   imageURL: "assets/images/helps_shelter_icon.png",
                   onTap: () {
-                    onIndexChanged(1);
+                    onIndexChanged(1, filter: "Shelter");
                   }),
               HelpsButton(
                   color1: const Color(0xFF4F77C0),
@@ -197,7 +197,7 @@ class HelpsRow extends StatelessWidget {
                   text: "Get Medical Relief",
                   imageURL: "assets/images/helps_medicine_icon.png",
                   onTap: () {
-                    onIndexChanged(1);
+                    onIndexChanged(1, filter: "Medical");
                   })
             ],
           ))
@@ -287,7 +287,7 @@ class HelpsButton extends StatelessWidget {
 
 // Widget for Emergency Row
 class EmergencyRow extends StatelessWidget {
-  final Function(int) onIndexChanged;
+  final Function(int, {String? filter}) onIndexChanged;
 
   const EmergencyRow({super.key, required this.onIndexChanged});
 
@@ -423,7 +423,7 @@ class EmergencyButton extends StatelessWidget {
 
 // Widget for GuideButton
 class GuideButton extends StatelessWidget {
-  final Function(int) onIndexChanged;
+  final Function(int, {String? filter}) onIndexChanged;
 
   const GuideButton({super.key, required this.onIndexChanged});
 

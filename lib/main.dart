@@ -1,8 +1,10 @@
+import 'package:allhelps/filter_model.dart';
 import 'package:flutter/material.dart';
 import 'package:allhelps/alert.dart';
 import 'package:allhelps/helps.dart';
 import 'package:allhelps/home.dart';
 import 'package:allhelps/my.dart';
+import 'package:allhelps/help_page_filters.dart';
 
 
 void main() {
@@ -17,10 +19,17 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int selectedIndex = 0;
 
+  FilterModel filterModel = FilterModel();
+
+
+
   // Callback to change the selected index
-  void onIndexChanged(int index) {
+  void onIndexChanged(int index, {String? filter}) {
     setState(() {
       selectedIndex = index;
+      if (index == 1 && filter != null) {
+        filterModel.setChosenFilter(filter);
+      }
     });
   }
 

@@ -264,7 +264,7 @@ class _HelpsPageState extends State<HelpsPage> {
 
                             location.onLocationChanged
                                 .listen((LocationData currentLocation) {
-                              setState(() {});
+                              // setState(() {});
                             });
 
                             return Padding(
@@ -326,25 +326,22 @@ class _HelpsPageState extends State<HelpsPage> {
                                     const SizedBox(height: 40.0),
                                     Row(
                                       children: [
-                                        FutureBuilder(future: LocationModel.calculateDistance(currLat, currLong, searchModel.locations[index].coordinates.latitude, searchModel.locations[index].coordinates.longitude), builder: (context, snapshot) {
-                                            if (snapshot.connectionState == ConnectionState.done) {
-                                              return Text(snapshot.data.toString());
-                                            } else {
-                                              return const CircularProgressIndicator();
+                                        const Icon(Icons.directions_walk,
+                                            color: Colors.black54),
+                                        const SizedBox(width: 8),
+                                        FutureBuilder(future: searchModel.locations[index].calculateDistance(currLat, currLong, searchModel.locations[index].coordinates.latitude, searchModel.locations[index].coordinates.longitude),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState == ConnectionState.done) {
+                                            if (snapshot.data == -1){
+                                              return const Text('Navigation server failure');
+                                            }else{
+                                              return Text('${snapshot.data!.toStringAsFixed(1)} miles away', style: const TextStyle(color: Colors.black54));
                                             }
-                                          }),
+                                          } else {
+                                            return const CircularProgressIndicator();
+                                          }
+                                        }),
                                   ],),
-                                    //     const Icon(Icons.directions_walk,
-                                    //         color: Colors.black54),
-                                    //     const SizedBox(width: 8),
-                                    //     Text(
-                                    //       //will make dynamic soon
-                                    //       '${LocationModel.estimateWalkingTime(searchModel.locations[index].distance)} mins by walking (${searchModel.locations[index].distance.toStringAsFixed(1)} miles away)',
-                                    //       style: const TextStyle(
-                                    //           color: Colors.black54),
-                                    //     ),
-                                    //   ],
-                                    // ),
                                     const SizedBox(height: 8.0),
                                     Row(
                                       children: [

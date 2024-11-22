@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:latlong2/latlong.dart' as lat_lng;
 import 'package:http/http.dart' as http;
-import 'dart:math';
 
 class LocationModel {
   final String name;
@@ -12,6 +11,7 @@ class LocationModel {
   final String closeTime;
   final List<String> services;
   late double distance;
+  bool hasDistance = false;
 
   LocationModel({
     required this.name,
@@ -89,28 +89,28 @@ class LocationModel {
   //   return earthRadius * c;
   // }
 
-  static Future<double> calculateDistance(double lat1, double long1, double lat2, double long2) async {
-    final response = await http.get(Uri.parse('http://router.project-osrm.org/route/v1/foot/$lat1,$long1;$lat2,$long2?overview=false'));
+  Future<double> calculateDistance(double lat1, double long1, double lat2, double long2) async {
+    if (hasDistance){
+      return distance;
+    }
+    final response = await http.get(Uri.parse('http://router.project-osrm.org/route/v1/foot/$long1,$lat1;$long2,$lat2?overview=false'));
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
       final result = await jsonDecode(response.body) as Map<String, dynamic>;
-      print(result['routes'][0]['distance']);
-      if (result['code'] == 'ok') {
-        return result['routes'][0]['distance'];
+      if (result['code'] == 'Ok') {
+        hasDistance = true;
+        distance = result['routes'][0]['distance'] / 1609.34;
+        return distance;
       }else{
-        throw Exception('Connection successful but navigation doesn\'t respond with a distance');
+        return -1;
       }
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Unable to connect to navigation server');
+      return -1;
     }
   }
 
-  static double _degToRad(double deg) {
-    return deg * (pi / 180.0);
-  }
+  // static double _degToRad(double deg) {
+  //   return deg * (pi / 180.0);
+  // }
 
   List<LocationModel> filterLocationsByDistance (
       List<LocationModel> locations,

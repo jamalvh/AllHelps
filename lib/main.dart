@@ -16,7 +16,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   final List<Widget> pages = [
     MyHomePage(),
     HelpsPage(),
@@ -26,24 +25,39 @@ class _MyAppState extends State<MyApp> {
 
   final List<NavigationDestination> destinations = [
     NavigationDestination(
-      icon: Image.asset('assets/images/Home.png', height: 40),
-      selectedIcon: Image.asset('assets/images/Home_selected.png', height: 40),
+      icon: Center(
+        child: Image.asset('assets/images/Home.png', height: 40),
+      ),
+      selectedIcon: Center(
+        child: Image.asset('assets/images/Home_selected.png', height: 40),
+      ),
       label: '',
     ),
     NavigationDestination(
-      icon: Image.asset('assets/images/Helps.png', height: 40),
-      selectedIcon: Image.asset('assets/images/Helps_selected.png', height: 40),
+      icon: Center(
+        child: Image.asset('assets/images/Helps.png', height: 40),
+      ),
+      selectedIcon: Center(
+        child: Image.asset('assets/images/Helps_selected.png', height: 40),
+      ),
       label: '',
     ),
     NavigationDestination(
-      icon: Image.asset('assets/images/Alert.png', height: 40),
-      selectedIcon: Image.asset('assets/images/Alert_selected.png', height: 40),
+      icon: Center(
+        child: Image.asset('assets/images/Alert.png', height: 40),
+      ),
+      selectedIcon: Center(
+        child: Image.asset('assets/images/Alert_selected.png', height: 40),
+      ),
       label: '',
-      
     ),
     NavigationDestination(
-      icon: Image.asset('assets/images/My.png', height: 40),
-      selectedIcon: Image.asset('assets/images/My_selected.png', height: 40),
+      icon: Center(
+        child: Image.asset('assets/images/My.png', height: 40),
+      ),
+      selectedIcon: Center(
+        child: Image.asset('assets/images/My_selected.png', height: 40),
+      ),
       label: '',
     ),
   ];
@@ -52,20 +66,52 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: Colors.white, // Background color for app
       ),
       home: Scaffold(
-        body: pages[selectedIndex],
-        bottomNavigationBar: NavigationBar(
-          destinations: destinations,
-          selectedIndex: selectedIndex,
-          onDestinationSelected: (index) {
-            setState(() {
-              selectedIndex = index;
-            });
-          },
+        body: Stack(
+          children: [
+            pages[selectedIndex], // App content behind NavigationBar
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                height: 110,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFAFAFA), // Your navbar color
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      spreadRadius: 1,
+                      offset: Offset(0, -2), // Subtle shadow effect
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                  child: NavigationBar(
+                    backgroundColor:
+                        Colors.transparent, // Matches container color
+                    destinations: destinations,
+                    selectedIndex: selectedIndex,
+                    onDestinationSelected: (index) {
+                      setState(() {
+                        selectedIndex = index;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
-        
       ),
       routes: {
         '/home': (context) => MyHomePage(),

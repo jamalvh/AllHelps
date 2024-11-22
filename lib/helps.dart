@@ -31,8 +31,6 @@ class _HelpsPageState extends State<HelpsPage> {
   bool locationObtained = false;
   int _selectedIndex = 0;
 
-  // List<LocationModel> locations = [];
-
   Location location = Location();
   late LocationData locationData;
 

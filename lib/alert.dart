@@ -6,6 +6,7 @@ class AlertPage extends StatefulWidget {
   @override
   State<AlertPage> createState() => _AlertPageState();
 }
+
 class _AlertPageState extends State<AlertPage> {
   @override
   Widget build(BuildContext context) {

@@ -35,6 +35,10 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  provider:
+  location: ^7.0.1
   google_maps_flutter: ^2.9.0
   flutter_svg: ^2.0.11
   intl: ^0.20.0
@@ -64,6 +68,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - lib/help_page_assets/
     - assets/images/header_image.png
     - assets/images/helps_food_icon.png
     - assets/images/helps_medicine_icon.png

@@ -10,7 +10,7 @@ class LocationModel {
   final String openTime;
   final String closeTime;
   final List<String> services;
-  late double distance;
+  late double distance = -1;
   bool hasDistance = false;
 
   LocationModel({
@@ -60,6 +60,10 @@ class LocationModel {
     return timeInMinutes;
   }
 
+  void clearDistance(){
+    hasDistance = false;
+  }
+
   factory LocationModel.fromJson(Map<String, dynamic> json) {
     return LocationModel(
       name: json['name'],
@@ -97,6 +101,7 @@ class LocationModel {
     if (response.statusCode == 200) {
       final result = await jsonDecode(response.body) as Map<String, dynamic>;
       if (result['code'] == 'Ok') {
+        print('distance updated');
         hasDistance = true;
         distance = result['routes'][0]['distance'] / 1609.34;
         return distance;

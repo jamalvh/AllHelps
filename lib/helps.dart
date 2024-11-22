@@ -142,6 +142,7 @@ class _HelpsPageState extends State<HelpsPage> {
                   ? SearchOptions(
                       searches: filterModel.searches,
                       updateResults: updateResults,
+                      searchModel: searchModel,
                     )
                   : Container(),
             ],
@@ -332,10 +333,10 @@ class _HelpsPageState extends State<HelpsPage> {
                                         FutureBuilder(future: searchModel.locations[index].calculateDistance(currLat, currLong, searchModel.locations[index].coordinates.latitude, searchModel.locations[index].coordinates.longitude),
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState == ConnectionState.done) {
-                                            if (snapshot.data == -1){
+                                            if (snapshot.data == -1 && searchModel.locations[index].distance == -1){
                                               return const Text('Navigation server failure');
                                             }else{
-                                              return Text('${snapshot.data!.toStringAsFixed(1)} miles away', style: const TextStyle(color: Colors.black54));
+                                              return Text('${searchModel.locations[index].hasDistance ? '': '(OLD VALUE) '} ${searchModel.locations[index].distance.toStringAsFixed(1)} miles away', style: const TextStyle(color: Colors.black54));
                                             }
                                           } else {
                                             return const CircularProgressIndicator();

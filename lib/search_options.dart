@@ -27,7 +27,7 @@ class _SearchOptionsState extends State<SearchOptions> {
               filterModel.setChosenFilter(widget.searches.elementAt(index));
               widget.updateResults(filterModel.chosenFilter);
               Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                return const HelpsPage();
+                return HelpsPage();
               }));
             },
             child: Row(children: [

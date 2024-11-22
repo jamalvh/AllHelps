@@ -43,7 +43,7 @@ class _SearchOptionsState extends State<SearchOptions> {
                           )
                         : Container();
                   } else {
-                    return const CircularProgressIndicator();
+                    return Container();
                   }
                 },
               ),

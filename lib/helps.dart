@@ -194,7 +194,6 @@ class _HelpsPageState extends State<HelpsPage> {
                           ),
                           // Shelter location markers
                           ...searchModel.locations.map((location) {
-                            print(location.services);
                             return Marker(
                               point: lat_lng.LatLng(
                                   location.coordinates.latitude,
@@ -211,192 +210,278 @@ class _HelpsPageState extends State<HelpsPage> {
               })
             ],
           ),
-          locationObtained
-              ? Positioned(
-                  bottom: _sheetPosition * MediaQuery.of(context).size.height,
-                  left: 0.05 * MediaQuery.of(context).size.width,
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      _mapController.move(lat_lng.LatLng(currLat, currLong),
-                          15); // Default initial zoom of map is 13
-                    },
-                    backgroundColor: Colors.white,
-                    child: const Icon(Icons.near_me_rounded),
-                  ),
-                )
-              : Container(),
-          DraggableScrollableSheet(
-            initialChildSize: _sheetPosition,
-            minChildSize: 0.2,
-            maxChildSize: 0.8,
-            builder: (context, scrollController) {
-              return ColoredBox(
-                color: Colors.white,
-                child: Column(
+          StatefulBuilder(builder: (context, setState) {
+            return DraggableScrollableSheet(
+              initialChildSize: _sheetPosition,
+              minChildSize: 0.2,
+              maxChildSize: 0.8,
+              builder: (context, scrollController) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Grabber(
-                      onVerticalDragUpdate: (details) {
-                        setState(() {
-                          _sheetPosition -= details.delta.dy / _dragSensitivity;
-                          _sheetPosition = _sheetPosition.clamp(0.2, 0.8);
-                        });
-                      },
+                    locationObtained
+                        ? Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: SizedBox(
+                              height: 44,
+                              width: 44,
+                              child: FloatingActionButton(
+                                onPressed: () {
+                                  _mapController.move(
+                                      lat_lng.LatLng(currLat, currLong),
+                                      15); // Default initial zoom of map is 13
+                                },
+                                backgroundColor: Colors.white,
+                                child: const Icon(Icons.near_me_rounded),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    const SizedBox(
+                      height: 10,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'We found ${searchModel.locations.length} Shelter Locations Nearby',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: ColoredBox(
+                        color: Colors.white,
+                        child: Column(
+                          children: [
+                            Grabber(
+                              onVerticalDragUpdate: (details) {
+                                setState(() {
+                                  _sheetPosition -=
+                                      details.delta.dy / _dragSensitivity;
+                                  _sheetPosition =
+                                      _sheetPosition.clamp(0.2, 0.8);
+                                });
+                              },
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text.rich(TextSpan(children: [
+                                    const TextSpan(
+                                        text: 'We found ',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold)),
+                                    TextSpan(
+                                        text: filterModel.chosenFilter.isEmpty
+                                            ? '${searchModel.locations.length} Releifs'
+                                            : '${searchModel.locations.length} ${filterModel.chosenFilter} Locations',
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            decoration:
+                                                TextDecoration.underline,
+                                            color: Colors.deepPurple)),
+                                    TextSpan(
+                                        text: filterModel.chosenFilter.isEmpty
+                                            ? ' nearby'
+                                            : ' within 2 miles',
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ))
+                                  ])),
+                                  const Spacer(),
+                                  Tooltip(
+                                    message:
+                                        'These are the nearest shelters based on your current location',
+                                    decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    textStyle: const TextStyle(
+                                        color: Colors.white, fontSize: 14),
+                                    preferBelow:
+                                        false, // Display the tooltip above the widget
+                                    showDuration: const Duration(
+                                        seconds:
+                                            2), // Time the tooltip remains visible
+                                    waitDuration:
+                                        const Duration(milliseconds: 500),
+                                    child: const Icon(
+                                      Icons.info_outline,
+                                      size: 24,
+                                    ), // Time to wait before showing
+                                  )
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child:
+                                  StatefulBuilder(builder: (context, setState) {
+                                return ListView.builder(
+                                  // physics: const NeverScrollableScrollPhysics(),
+                                  padding: EdgeInsets.zero,
+                                  itemCount: searchModel.locations.length,
+                                  itemBuilder: (context, index) {
+                                    final availableLocation =
+                                        searchModel.locations[index];
+                                    //final isOpen = availableLocation.isOpen;
+                                    final services = [
+                                      'Laundry',
+                                      'Support',
+                                      'Shower'
+                                    ];
+                                    double distance =
+                                        LocationModel.calculateDistance(
+                                            currLat,
+                                            currLong,
+                                            availableLocation
+                                                .coordinates.latitude,
+                                            availableLocation
+                                                .coordinates.longitude);
+
+                                    location.onLocationChanged
+                                        .listen((LocationData currentLocation) {
+                                      setState(() {
+                                        distance =
+                                            LocationModel.calculateDistance(
+                                                currLat,
+                                                currLong,
+                                                availableLocation
+                                                    .coordinates.latitude,
+                                                availableLocation
+                                                    .coordinates.longitude);
+                                      });
+                                    });
+
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0, horizontal: 16.0),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(16.0),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[300],
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
+                                          boxShadow: const [
+                                            BoxShadow(
+                                              color: Colors.black12,
+                                              blurRadius: 4,
+                                              offset: Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  availableLocation.name,
+                                                  style: const TextStyle(
+                                                    fontSize: 18.0,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black87,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    horizontal: 12.0,
+                                                    vertical: 4.0,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: availableLocation
+                                                            .isOpenNow()
+                                                        ? Colors.green
+                                                        : Colors.red,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20.0),
+                                                  ),
+                                                  child: Text(
+                                                    availableLocation
+                                                            .isOpenNow()
+                                                        ? 'OPEN'
+                                                        : 'CLOSED',
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+
+                                            const SizedBox(height: 40.0),
+                                            Row(
+                                              children: [
+                                                const Icon(
+                                                    Icons.directions_walk,
+                                                    color: Colors.black54),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  //will make dynamic soon
+                                                  '${LocationModel.estimateWalkingTime(distance)} mins by walking (${distance.toStringAsFixed(1)} miles away)',
+                                                  style: const TextStyle(
+                                                      color: Colors.black54),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 8.0),
+                                            Row(
+                                              children: [
+                                                const Icon(Icons.timer,
+                                                    color: Colors.black54),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  'Accept walk-in until ${LocationModel.formatTimeTo12Hour(availableLocation.closeTime)}',
+                                                  style: const TextStyle(
+                                                      color: Colors.black54),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 12.0),
+                                            // Services Tags
+                                            Wrap(
+                                              spacing: 8.0,
+                                              children: services.map((service) {
+                                                return Chip(
+                                                  label: Text(
+                                                    service,
+                                                    style: const TextStyle(
+                                                        color: Colors.black),
+                                                  ),
+                                                  backgroundColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20.0)),
+                                                  side: BorderSide.none,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 1.0,
+                                                      horizontal: 2.0),
+                                                );
+                                              }).toList(),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              }),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: StatefulBuilder(builder: (context, setState) {
-                        return ListView.builder(
-                          // physics: const NeverScrollableScrollPhysics(),
-                          padding: EdgeInsets.zero,
-                          itemCount: searchModel.locations.length,
-                          itemBuilder: (context, index) {
-                            final availableLocation =
-                                searchModel.locations[index];
-                            //final isOpen = availableLocation.isOpen;
-                            final services = ['Laundry', 'Support', 'Shower'];
-                            double distance = LocationModel.calculateDistance(
-                                currLat,
-                                currLong,
-                                availableLocation.coordinates.latitude,
-                                availableLocation.coordinates.longitude);
-
-                            location.onLocationChanged
-                                .listen((LocationData currentLocation) {
-                              setState(() {
-                                distance = LocationModel.calculateDistance(
-                                    currLat,
-                                    currLong,
-                                    availableLocation.coordinates.latitude,
-                                    availableLocation.coordinates.longitude);
-                              });
-                            });
-
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 8.0, horizontal: 16.0),
-                              child: Container(
-                                padding: const EdgeInsets.all(16.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 4,
-                                      offset: Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          availableLocation.name,
-                                          style: const TextStyle(
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 12.0,
-                                            vertical: 4.0,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: availableLocation.isOpenNow()
-                                                ? Colors.green
-                                                : Colors.red,
-                                            borderRadius:
-                                                BorderRadius.circular(20.0),
-                                          ),
-                                          child: Text(
-                                            availableLocation.isOpenNow()
-                                                ? 'OPEN'
-                                                : 'CLOSED',
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    const SizedBox(height: 40.0),
-                                    Row(
-                                      children: [
-                                        const Icon(Icons.directions_walk,
-                                            color: Colors.black54),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          //will make dynamic soon
-                                          '${LocationModel.estimateWalkingTime(distance)} mins by walking (${distance.toStringAsFixed(1)} miles away)',
-                                          style: const TextStyle(
-                                              color: Colors.black54),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    Row(
-                                      children: [
-                                        const Icon(Icons.timer,
-                                            color: Colors.black54),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          'Accept walk-in until ${LocationModel.formatTimeTo12Hour(availableLocation.closeTime)}',
-                                          style: const TextStyle(
-                                              color: Colors.black54),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 12.0),
-                                    // Services Tags
-                                    Wrap(
-                                      spacing: 8.0,
-                                      children: services.map((service) {
-                                        return Chip(
-                                          label: Text(
-                                            service,
-                                            style: const TextStyle(
-                                                color: Colors.black),
-                                          ),
-                                          backgroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20.0)),
-                                          side: BorderSide.none,
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 1.0, horizontal: 2.0),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      }),
-                    ),
                   ],
-                ),
-              );
-            },
-          ),
+                );
+              },
+            );
+          }),
         ],
       ),
       bottomNavigationBar: MyNavigationBar(
@@ -424,14 +509,14 @@ class Grabber extends StatelessWidget {
       onVerticalDragUpdate: onVerticalDragUpdate,
       child: Container(
         width: double.infinity,
-        color: Colors.grey[300],
+        color: Colors.white,
         child: Center(
           child: Container(
             margin: const EdgeInsets.symmetric(vertical: 8.0),
             width: 32.0,
-            height: 4.0,
+            height: 5.0,
             decoration: BoxDecoration(
-              color: Colors.grey[600],
+              color: Colors.grey[300],
               borderRadius: BorderRadius.circular(8.0),
             ),
           ),

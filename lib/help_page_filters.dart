@@ -73,7 +73,7 @@ class _FiltersState extends State<Filters> {
                             )
                           : Container();
                     } else {
-                      return const CircularProgressIndicator();
+                      return Container();
                     }
                   },
                 ),

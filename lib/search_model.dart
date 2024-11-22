@@ -13,7 +13,7 @@ class SearchModel {
   bool isOpen = false;
   late lat_lng.LatLng latLng;
   List<String> filters = [];
-  String timings = "";
+  // String timings = "";
   // Location location = Location();
   // late LocationData locationData;
   bool showResults = false;

@@ -31,8 +31,6 @@ class _HelpsPageState extends State<HelpsPage> {
   bool locationObtained = false;
   int _selectedIndex = 0;
 
-  // List<LocationModel> locations = [];
-
   Location location = Location();
   late LocationData locationData;
 
@@ -144,6 +142,7 @@ class _HelpsPageState extends State<HelpsPage> {
                   ? SearchOptions(
                       searches: filterModel.searches,
                       updateResults: updateResults,
+                      searchModel: searchModel,
                     )
                   : Container(),
             ],
@@ -326,28 +325,28 @@ class _HelpsPageState extends State<HelpsPage> {
                                       'Support',
                                       'Shower'
                                     ];
-                                    double distance =
-                                        LocationModel.calculateDistance(
-                                            currLat,
-                                            currLong,
-                                            availableLocation
-                                                .coordinates.latitude,
-                                            availableLocation
-                                                .coordinates.longitude);
+                                    // double distance =
+                                    //     LocationModel.calculateDistance(
+                                    //         currLat,
+                                    //         currLong,
+                                    //         availableLocation
+                                    //             .coordinates.latitude,
+                                    //         availableLocation
+                                    //             .coordinates.longitude);
 
-                                    location.onLocationChanged
-                                        .listen((LocationData currentLocation) {
-                                      setState(() {
-                                        distance =
-                                            LocationModel.calculateDistance(
-                                                currLat,
-                                                currLong,
-                                                availableLocation
-                                                    .coordinates.latitude,
-                                                availableLocation
-                                                    .coordinates.longitude);
-                                      });
-                                    });
+                                    // location.onLocationChanged
+                                    //     .listen((LocationData currentLocation) {
+                                    //   setState(() {
+                                    //     distance =
+                                    //         LocationModel.calculateDistance(
+                                    //             currLat,
+                                    //             currLong,
+                                    //             availableLocation
+                                    //                 .coordinates.latitude,
+                                    //             availableLocation
+                                    //                 .coordinates.longitude);
+                                    //   });
+                                    // });
 
                                     return Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -420,12 +419,48 @@ class _HelpsPageState extends State<HelpsPage> {
                                                     Icons.directions_walk,
                                                     color: Colors.black54),
                                                 const SizedBox(width: 8),
-                                                Text(
-                                                  //will make dynamic soon
-                                                  '${LocationModel.estimateWalkingTime(distance)} mins by walking (${distance.toStringAsFixed(1)} miles away)',
-                                                  style: const TextStyle(
-                                                      color: Colors.black54),
-                                                ),
+                                                FutureBuilder(
+                                                    future: searchModel
+                                                        .locations[index]
+                                                        .calculateDistance(
+                                                            currLat,
+                                                            currLong,
+                                                            searchModel
+                                                                .locations[
+                                                                    index]
+                                                                .coordinates
+                                                                .latitude,
+                                                            searchModel
+                                                                .locations[
+                                                                    index]
+                                                                .coordinates
+                                                                .longitude),
+                                                    builder:
+                                                        (context, snapshot) {
+                                                      if (snapshot
+                                                              .connectionState ==
+                                                          ConnectionState
+                                                              .done) {
+                                                        if (snapshot.data ==
+                                                                -1 &&
+                                                            searchModel
+                                                                    .locations[
+                                                                        index]
+                                                                    .distance ==
+                                                                -1) {
+                                                          return const Text(
+                                                              'Navigation server failure');
+                                                        } else {
+                                                          return Text(
+                                                              '${searchModel.locations[index].hasDistance ? '' : '(OLD VALUE) '} ${searchModel.locations[index].distance.toStringAsFixed(1)} miles away',
+                                                              style: const TextStyle(
+                                                                  color: Colors
+                                                                      .black54));
+                                                        }
+                                                      } else {
+                                                        return const CircularProgressIndicator();
+                                                      }
+                                                    }),
                                               ],
                                             ),
                                             const SizedBox(height: 8.0),

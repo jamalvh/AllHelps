@@ -1,12 +1,14 @@
 import 'package:allhelps/filter_model.dart';
 import 'package:allhelps/helps.dart';
+import 'package:allhelps/search_model.dart';
 import 'package:flutter/material.dart';
 
 class SearchOptions extends StatefulWidget {
   final List<String> searches;
   final Function(String) updateResults;
+  final SearchModel searchModel;
   const SearchOptions(
-      {super.key, required this.searches, required this.updateResults});
+      {super.key, required this.searches, required this.updateResults, required this.searchModel});
 
   @override
   State<SearchOptions> createState() => _SearchOptionsState();
@@ -24,6 +26,7 @@ class _SearchOptionsState extends State<SearchOptions> {
         return ListTile(
           title: TextButton(
             onPressed: () {
+              for (var location in widget.searchModel.locations) {location.clearDistance();}
               filterModel.setChosenFilter(widget.searches.elementAt(index));
               widget.updateResults(filterModel.chosenFilter);
               Navigator.of(context).push(MaterialPageRoute(builder: (context) {

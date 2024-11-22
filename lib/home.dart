@@ -36,17 +36,17 @@ class _MyHomePageState extends State<MyHomePage> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            Header(),
+            const Header(),
             Column(
               children: [
-                SizedBox(height: 114), // TODO: Replace this with Search Bar
+                const SizedBox(height: 114), // TODO: Replace this with Search Bar
                 //SearchBar(), // renderd by the helps team, we will use the same search bar
-                HelpsRow(),
-                SizedBox(
+                HelpsRow(onIndexChanged: widget.onIndexChanged),
+                const SizedBox(
                   height: 10,
                 ),
                 //GuideButton(),
-                SizedBox(
+                const SizedBox(
                   height: 40,
                 ),
                 Alert(
@@ -58,11 +58,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     date: DateTime.now(),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 40,
                 ),
-                EmergencyRow(),
-                SizedBox(
+                EmergencyRow(onIndexChanged: widget.onIndexChanged),
+                const SizedBox(
                   height: 200,
                 )
               ],

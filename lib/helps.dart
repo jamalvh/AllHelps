@@ -261,21 +261,10 @@ class _HelpsPageState extends State<HelpsPage> {
                                 searchModel.locations[index];
                             //final isOpen = availableLocation.isOpen;
                             final services = ['Laundry', 'Support', 'Shower'];
-                            double distance = LocationModel.calculateDistance(
-                                currLat,
-                                currLong,
-                                availableLocation.coordinates.latitude,
-                                availableLocation.coordinates.longitude);
 
                             location.onLocationChanged
                                 .listen((LocationData currentLocation) {
-                              setState(() {
-                                distance = LocationModel.calculateDistance(
-                                    currLat,
-                                    currLong,
-                                    availableLocation.coordinates.latitude,
-                                    availableLocation.coordinates.longitude);
-                              });
+                              setState(() {});
                             });
 
                             return Padding(
@@ -337,17 +326,25 @@ class _HelpsPageState extends State<HelpsPage> {
                                     const SizedBox(height: 40.0),
                                     Row(
                                       children: [
-                                        const Icon(Icons.directions_walk,
-                                            color: Colors.black54),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          //will make dynamic soon
-                                          '${LocationModel.estimateWalkingTime(distance)} mins by walking (${distance.toStringAsFixed(1)} miles away)',
-                                          style: const TextStyle(
-                                              color: Colors.black54),
-                                        ),
-                                      ],
-                                    ),
+                                        FutureBuilder(future: LocationModel.calculateDistance(currLat, currLong, searchModel.locations[index].coordinates.latitude, searchModel.locations[index].coordinates.longitude), builder: (context, snapshot) {
+                                            if (snapshot.connectionState == ConnectionState.done) {
+                                              return Text(snapshot.data.toString());
+                                            } else {
+                                              return const CircularProgressIndicator();
+                                            }
+                                          }),
+                                  ],),
+                                    //     const Icon(Icons.directions_walk,
+                                    //         color: Colors.black54),
+                                    //     const SizedBox(width: 8),
+                                    //     Text(
+                                    //       //will make dynamic soon
+                                    //       '${LocationModel.estimateWalkingTime(searchModel.locations[index].distance)} mins by walking (${searchModel.locations[index].distance.toStringAsFixed(1)} miles away)',
+                                    //       style: const TextStyle(
+                                    //           color: Colors.black54),
+                                    //     ),
+                                    //   ],
+                                    // ),
                                     const SizedBox(height: 8.0),
                                     Row(
                                       children: [

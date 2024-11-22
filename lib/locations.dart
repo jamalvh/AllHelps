@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:latlong2/latlong.dart' as lat_lng;
+import 'package:http/http.dart' as http;
 import 'dart:math';
 
 class LocationModel {
@@ -68,23 +69,41 @@ class LocationModel {
     );
   }
 
-  static double calculateDistance(
-      double lat1, double lon1, double lat2, double lon2) {
-    const double earthRadius = 3961;
+  // static double calculateDistance(
+  //     double lat1, double lon1, double lat2, double lon2) {
+  //   const double earthRadius = 3961;
 
-    double lat1Rad = _degToRad(lat1);
-    double lon1Rad = _degToRad(lon1);
-    double lat2Rad = _degToRad(lat2);
-    double lon2Rad = _degToRad(lon2);
+  //   double lat1Rad = _degToRad(lat1);
+  //   double lon1Rad = _degToRad(lon1);
+  //   double lat2Rad = _degToRad(lat2);
+  //   double lon2Rad = _degToRad(lon2);
 
-    double dlat = lat2Rad - lat1Rad;
-    double dlon = lon2Rad - lon1Rad;
+  //   double dlat = lat2Rad - lat1Rad;
+  //   double dlon = lon2Rad - lon1Rad;
 
-    double a = sin(dlat / 2) * sin(dlat / 2) +
-        cos(lat1Rad) * cos(lat2Rad) * sin(dlon / 2) * sin(dlon / 2);
-    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+  //   double a = sin(dlat / 2) * sin(dlat / 2) +
+  //       cos(lat1Rad) * cos(lat2Rad) * sin(dlon / 2) * sin(dlon / 2);
+  //   double c = 2 * atan2(sqrt(a), sqrt(1 - a));
 
-    return earthRadius * c;
+  //   return earthRadius * c;
+  // }
+
+  static Future<double> calculateDistance(double lat1, double long1, double lat2, double long2) async {
+    final response = await http.get(Uri.parse('http://router.project-osrm.org/route/v1/driving/$lat1,$long1;$lat2,$long2?overview=false'));
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      final result = await jsonDecode(response.body) as Map<String, dynamic>;
+      if (result['code'] == 'ok') {
+        return await result['routes'][0]['distance'];
+      }else{
+        throw Exception('Connection successful but navigation doesn\'t respond with a distance');
+      }
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Unable to connect to navigation server');
+    }
   }
 
   static double _degToRad(double deg) {

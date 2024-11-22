@@ -52,7 +52,6 @@ class LocationModel {
   }
 
   static int estimateWalkingTime(double distanceInMiles) {
-    print(distanceInMiles);
     const double walkingSpeedMph = 3.0;
     double timeInHours = distanceInMiles / walkingSpeedMph;
     int timeInMinutes = (timeInHours * 60).round();

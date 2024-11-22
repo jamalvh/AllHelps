@@ -119,8 +119,6 @@ class _HelpsPageState extends State<HelpsPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(currLat);
-    print(currLong);
     if (filterModel.chosenFilter.isNotEmpty) {
       updateResults(filterModel.chosenFilter);
     }
@@ -196,16 +194,17 @@ class _HelpsPageState extends State<HelpsPage> {
                           ),
                           // Shelter location markers
                           ...searchModel.locations.map((location) {
+                            print(location.services);
                             return Marker(
                               point: lat_lng.LatLng(
                                   location.coordinates.latitude,
                                   location.coordinates.longitude),
                               width: 55,
                               height: 55,
-                              child: Image.asset(
-                                  'lib/help_page_assets/shelter_marker.png'),
+                              child: Image.asset(filterModel
+                                  .getMarkerIcon(location.services[0])),
                             );
-                          }).toList(),
+                          })
                         ],
                       )
                     : Container();

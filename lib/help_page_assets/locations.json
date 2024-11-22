@@ -10,20 +10,20 @@
   },
   {
     "name": "Shelter B",
-    "latitude": 42.3610,
-    "longitude": -71.0570,
+    "latitude": 42.2751,
+    "longitude": -83.7359,
     "type" : "Medical",
     "openTime": "01:00",
     "closeTime": "7:00",
-    "services": ["Shower", "Support"]
+    "services": ["Resources", "Support"]
   },
   {
     "name": "Shelter C",
-    "latitude": 42.3622,
-    "longitude": -71.0595,
+    "latitude": 42.2749,
+    "longitude": -83.7352,
     "type" : "Shelter",
     "openTime": "12:00",
     "closeTime": "15:00",
-    "services": ["Laundry", "Counseling"]
+    "services": ["Medical", "Support"]
   }
 ]

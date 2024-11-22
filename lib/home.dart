@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
+  final Function(int) onIndexChanged;
+
+  const MyHomePage({Key? key, required this.onIndexChanged}) : super(key: key);
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
+// No changes needed in _MyHomePageState
 class _MyHomePageState extends State<MyHomePage> {
   // void _onItemTapped(int index) {
   //   setState(() {
@@ -29,24 +34,18 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         child: ListView(
           padding: EdgeInsets.zero,
-          children: const [
-            Header(),
+          children: [
+            const Header(),
             Column(
               children: [
-                SizedBox(height: 80), // TODO: Replace this with Search Bar
-                //SearchBar(), // renderd by the helps team, we will use the same search bar
-                HelpsRow(),
-                SizedBox(
-                  height: 10,
-                ),
-                GuideButton(),
-                SizedBox(
-                  height: 80,
-                ),
-                EmergencyRow(),
-                SizedBox(
-                  height: 200,
-                )
+                const SizedBox(height: 80), // Keep const here
+                // Pass the onIndexChanged callback to child widgets
+                HelpsRow(onIndexChanged: widget.onIndexChanged),
+                const SizedBox(height: 10),
+                GuideButton(onIndexChanged: widget.onIndexChanged),
+                const SizedBox(height: 80),
+                EmergencyRow(onIndexChanged: widget.onIndexChanged),
+                const SizedBox(height: 200),
               ],
             ),
           ],
@@ -56,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// Widget for header
+// Widget for header remains unchanged
 class Header extends StatelessWidget {
   const Header({super.key});
 
@@ -91,7 +90,9 @@ class Header extends StatelessWidget {
 
 // Widget for Helps Row
 class HelpsRow extends StatelessWidget {
-  const HelpsRow({super.key});
+  final Function(int) onIndexChanged;
+
+  const HelpsRow({super.key, required this.onIndexChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -112,13 +113,14 @@ class HelpsRow extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              // Home Page is index 0, Helps Page is index 1
               HelpsButton(
                   color1: const Color(0xFFE57701),
                   color2: const Color(0xFFFFB15E),
                   text: "Searching for Food",
                   imageURL: "assets/images/helps_food_icon.png",
                   onTap: () {
-                    Navigator.pushNamed(context, '/helps');
+                    onIndexChanged(1); // Switch to HelpsPage
                   }),
               HelpsButton(
                   color1: const Color(0xFF50714A),
@@ -126,7 +128,7 @@ class HelpsRow extends StatelessWidget {
                   text: "Looking for Shelter",
                   imageURL: "assets/images/helps_shelter_icon.png",
                   onTap: () {
-                    Navigator.pushNamed(context, '/helps');
+                    onIndexChanged(1);
                   }),
               HelpsButton(
                   color1: const Color(0xFF4F77C0),
@@ -134,7 +136,7 @@ class HelpsRow extends StatelessWidget {
                   text: "Get Medical Relief",
                   imageURL: "assets/images/helps_medicine_icon.png",
                   onTap: () {
-                    Navigator.pushNamed(context, '/helps');
+                    onIndexChanged(1);
                   })
             ],
           ))
@@ -142,13 +144,13 @@ class HelpsRow extends StatelessWidget {
   }
 }
 
-// Widget for Helps Button
+// Widget for Helps Button remains unchanged
 class HelpsButton extends StatelessWidget {
   final Color color1;
   final Color color2;
   final String text;
   final String imageURL;
-  final VoidCallback? onTap; // Add this line
+  final VoidCallback? onTap; // No change needed
 
   const HelpsButton({
     super.key,
@@ -156,7 +158,7 @@ class HelpsButton extends StatelessWidget {
     required this.color2,
     required this.text,
     required this.imageURL,
-    this.onTap, // And this line
+    this.onTap,
   });
 
   @override
@@ -175,7 +177,7 @@ class HelpsButton extends StatelessWidget {
               radius: 1.2,
             ),
           ),
-          // Add a ripple effect when button is clicked
+          // Ripple effect
           child: InkWell(
             onTap: onTap,
             splashColor: color2.withOpacity(1),
@@ -224,7 +226,9 @@ class HelpsButton extends StatelessWidget {
 
 // Widget for Emergency Row
 class EmergencyRow extends StatelessWidget {
-  const EmergencyRow({super.key});
+  final Function(int) onIndexChanged;
+
+  const EmergencyRow({super.key, required this.onIndexChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -252,14 +256,14 @@ class EmergencyRow extends StatelessWidget {
                     text: "Reach out anytime for support",
                     imageURL: "assets/images/24-hours-line.png",
                     onTap: () {
-                      Navigator.pushNamed(context, '/helps');
+                      onIndexChanged(2); // Switch to AlertPage
                     }),
                 EmergencyButton(
                     title: "Local outreach team",
                     text: "Connect with your local agency",
                     imageURL: "assets/images/phone-fill.png",
                     onTap: () {
-                      Navigator.pushNamed(context, '/helps');
+                      onIndexChanged(2);
                     }),
               ],
             ))
@@ -268,19 +272,19 @@ class EmergencyRow extends StatelessWidget {
   }
 }
 
-// Widget for Emergency Buttons
+// Widget for Emergency Buttons remains unchanged
 class EmergencyButton extends StatelessWidget {
   final String title;
   final String text;
   final String imageURL;
-  final VoidCallback? onTap; // Add this line
+  final VoidCallback? onTap; // No change needed
 
   const EmergencyButton({
     super.key,
     required this.title,
     required this.text,
     required this.imageURL,
-    this.onTap, // And this line
+    this.onTap,
   });
 
   @override
@@ -298,7 +302,8 @@ class EmergencyButton extends StatelessWidget {
                     color: Colors.grey.shade300,
                     width: 1.0,
                   ),
-                  borderRadius: BorderRadius.circular(14.0), // Uniform radius
+                  borderRadius:
+                      BorderRadius.circular(14.0), // Uniform radius
                 ),
                 child: SizedBox(
                   width: 180,
@@ -355,8 +360,11 @@ class EmergencyButton extends StatelessWidget {
   }
 }
 
+// Widget for GuideButton
 class GuideButton extends StatelessWidget {
-  const GuideButton({super.key});
+  final Function(int) onIndexChanged;
+
+  const GuideButton({super.key, required this.onIndexChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -367,7 +375,7 @@ class GuideButton extends StatelessWidget {
             color: Colors.white,
             child: InkWell(
               onTap: () {
-                Navigator.pushNamed(context, '/helps');
+                onIndexChanged(1); // Switch to HelpsPage
               },
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -375,7 +383,8 @@ class GuideButton extends StatelessWidget {
                     color: Colors.grey.shade300,
                     width: 1.0,
                   ),
-                  borderRadius: BorderRadius.circular(14.0), // Uniform radius
+                  borderRadius:
+                      BorderRadius.circular(14.0), // Uniform radius
                 ),
                 child: SizedBox(
                   width: 365,

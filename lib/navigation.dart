@@ -53,7 +53,7 @@ class MyNavigationBar extends StatelessWidget {
                   label: 'My'),
             ],
             currentIndex: currentPageIndex,
-            selectedItemColor: Color(0xFF6359CA),
+            selectedItemColor: const Color(0xFF6359CA),
             showSelectedLabels: false,
             showUnselectedLabels: false,
             onTap: (index) {

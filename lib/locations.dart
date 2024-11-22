@@ -19,47 +19,45 @@ class LocationModel {
     required this.services,
   });
 
-
   static TimeOfDay _parseTime(String time) {
     final parts = time.split(':');
     return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
   }
 
-bool isOpenNow() {
-  final now = TimeOfDay.now();
-  final open = _parseTime(openTime);
-  final close = _parseTime(closeTime);
+  bool isOpenNow() {
+    final now = TimeOfDay.now();
+    final open = _parseTime(openTime);
+    final close = _parseTime(closeTime);
 
-  int nowMinutes = now.hour * 60 + now.minute;
-  int openMinutes = open.hour * 60 + open.minute;
-  int closeMinutes = close.hour * 60 + close.minute;
+    int nowMinutes = now.hour * 60 + now.minute;
+    int openMinutes = open.hour * 60 + open.minute;
+    int closeMinutes = close.hour * 60 + close.minute;
 
-  if (closeMinutes < openMinutes) {
-    return nowMinutes >= openMinutes || nowMinutes <= closeMinutes;
+    if (closeMinutes < openMinutes) {
+      return nowMinutes >= openMinutes || nowMinutes <= closeMinutes;
+    }
+    return nowMinutes >= openMinutes && nowMinutes <= closeMinutes;
   }
-  return nowMinutes >= openMinutes && nowMinutes <= closeMinutes;
-}
 
+  static String formatTimeTo12Hour(String time) {
+    final parsedTime = _parseTime(time);
+    final hour = parsedTime.hour;
+    final minute = parsedTime.minute;
 
-static String formatTimeTo12Hour(String time) {
-  final parsedTime = _parseTime(time);
-  final hour = parsedTime.hour;
-  final minute = parsedTime.minute;
+    final period = hour >= 12 ? 'PM' : 'AM';
+    final formattedHour = hour % 12 == 0 ? 12 : hour % 12;
+    final formattedMinute = minute.toString().padLeft(2, '0');
 
-  final period = hour >= 12 ? 'PM' : 'AM';
-  final formattedHour = hour % 12 == 0 ? 12 : hour % 12;
-  final formattedMinute = minute.toString().padLeft(2, '0');
+    return '$formattedHour:$formattedMinute $period';
+  }
 
-  return '$formattedHour:$formattedMinute $period';
-}
-
-static int estimateWalkingTime(double distanceInMiles) {
-  const double walkingSpeedMph = 3.0; 
-  double timeInHours = distanceInMiles / walkingSpeedMph;
-  int timeInMinutes = (timeInHours * 60).round();
-  return timeInMinutes;
-}
-
+  static int estimateWalkingTime(double distanceInMiles) {
+    print(distanceInMiles);
+    const double walkingSpeedMph = 3.0;
+    double timeInHours = distanceInMiles / walkingSpeedMph;
+    int timeInMinutes = (timeInHours * 60).round();
+    return timeInMinutes;
+  }
 
   factory LocationModel.fromJson(Map<String, dynamic> json) {
     return LocationModel(
@@ -121,5 +119,3 @@ Future<List<LocationModel>> loadLocations() async {
     return [];
   }
 }
-
-

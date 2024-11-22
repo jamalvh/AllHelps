@@ -31,7 +31,7 @@ class _HelpsPageState extends State<HelpsPage> {
   bool locationObtained = false;
   int _selectedIndex = 0;
 
-  List<LocationModel> locations = [];
+  // List<LocationModel> locations = [];
 
   Location location = Location();
   late LocationData locationData;
@@ -44,7 +44,7 @@ class _HelpsPageState extends State<HelpsPage> {
   }
 
   Future<void> _loadLocations() async {
-    locations = await loadLocations();
+    searchModel.locations = await loadLocations();
     setState(() {});
   }
 
@@ -56,7 +56,7 @@ class _HelpsPageState extends State<HelpsPage> {
   }
 
   void closeSearch() async {
-    locations = await loadLocations();
+    searchModel.locations = await loadLocations();
     setState(() {
       filterModel.setChosenFilter("");
       searchModel.showResults = false;
@@ -79,9 +79,8 @@ class _HelpsPageState extends State<HelpsPage> {
   }
 
   void updateResults(topFilter) {
-    print(topFilter);
     setState(() {
-      locations.removeWhere((location) {
+      searchModel.locations.removeWhere((location) {
         return !location.services.contains(topFilter);
       });
     });
@@ -114,11 +113,14 @@ class _HelpsPageState extends State<HelpsPage> {
       locationObtained = true;
       currLat = locationData.latitude!;
       currLong = locationData.longitude!;
+      _mapController.move(lat_lng.LatLng(currLat, currLong), 15);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    print(currLat);
+    print(currLong);
     if (filterModel.chosenFilter.isNotEmpty) {
       updateResults(filterModel.chosenFilter);
     }
@@ -180,6 +182,7 @@ class _HelpsPageState extends State<HelpsPage> {
                         : currLong;
                   });
                 });
+
                 return locationObtained
                     ? MarkerLayer(
                         markers: [
@@ -192,7 +195,7 @@ class _HelpsPageState extends State<HelpsPage> {
                                 'lib/help_page_assets/current_location_marker.png'),
                           ),
                           // Shelter location markers
-                          ...locations.map((location) {
+                          ...searchModel.locations.map((location) {
                             return Marker(
                               point: lat_lng.LatLng(
                                   location.coordinates.latitude,
@@ -243,7 +246,7 @@ class _HelpsPageState extends State<HelpsPage> {
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
-                        'We found ${locations.length} Shelter Locations Nearby',
+                        'We found ${searchModel.locations.length} Shelter Locations Nearby',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -253,11 +256,12 @@ class _HelpsPageState extends State<HelpsPage> {
                     Expanded(
                       child: StatefulBuilder(builder: (context, setState) {
                         return ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
+                          // physics: const NeverScrollableScrollPhysics(),
                           padding: EdgeInsets.zero,
-                          itemCount: locations.length,
+                          itemCount: searchModel.locations.length,
                           itemBuilder: (context, index) {
-                            final availableLocation = locations[index];
+                            final availableLocation =
+                                searchModel.locations[index];
                             //final isOpen = availableLocation.isOpen;
                             final services = ['Laundry', 'Support', 'Shower'];
                             double distance = LocationModel.calculateDistance(

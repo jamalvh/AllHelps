@@ -7,8 +7,6 @@ class MyPage extends StatefulWidget {
   State<MyPage> createState() => _MyPageState();
 }
 class _MyPageState extends State<MyPage> {
-  int _selectedIndex = 3;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

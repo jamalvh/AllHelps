@@ -7,8 +7,6 @@ class HelpsPage extends StatefulWidget {
   State<HelpsPage> createState() => _HelpsPageState();
 }
 class _HelpsPageState extends State<HelpsPage> {
- int _selectedIndex = 1;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

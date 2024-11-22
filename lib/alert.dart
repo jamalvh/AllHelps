@@ -7,8 +7,6 @@ class AlertPage extends StatefulWidget {
   State<AlertPage> createState() => _AlertPageState();
 }
 class _AlertPageState extends State<AlertPage> {
-  int _selectedIndex = 2;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

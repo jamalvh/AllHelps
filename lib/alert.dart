@@ -184,12 +184,15 @@ class _AlertPageState extends State<AlertPage> {
     List<Map<String, String>> sortedArray = [];
      Map<String, String> temp;
 
-    //sorts the dates
+    //sorts the dates, no errors
     for (int i = 0; i < alertsArray.length; i++) {
       //[lower, upper], date: yyyy-mm-dd hh:mm:ss 1234(year) 5(space) 67(month) 8(space) 9(10)(date) 11(space) (12)(13) (hour) 14 (colon) (15)(16) minutes, anymore than that is unneeded
       //so substring(9, 11) ("coincidence?! I think Not!")
+      print(int.parse(alertsArray[i]["date"]!.substring(9, 11)));
+      print("\n"); 
       if (int.parse(alertsArray[i]["date"]!.substring(9, 11)) >= dateRange[0] && int.parse(alertsArray[i]["date"]!.substring(9, 11)) <= dateRange[1]) {
         sortedArray.add(alertsArray[i]);
+        print(alertsArray[i]);
       }
     }
 
@@ -197,6 +200,8 @@ class _AlertPageState extends State<AlertPage> {
     for (int curr = 0; curr < alertsArray.length-1; curr++) {
       for (int next = 1; next < alertsArray.length; next++) {
         //compare hours first then minutes
+        print("poop \n");
+        print([curr, next]);
         if (
           int.parse(alertsArray[curr]["date"]!.substring(12, 14)) >= int.parse(alertsArray[next]["date"]!.substring(13, 14))
           ||
@@ -204,7 +209,12 @@ class _AlertPageState extends State<AlertPage> {
           &&
           int.parse(alertsArray[curr]["date"]!.substring(15, 17)) >= int.parse(alertsArray[next]["date"]!.substring(15, 17)))
           ) {
+            //this is the issue, temp is being bad, and idk what its doing
+             //error is trying to access curr from the array, its not allowing access for some reason
+            print(alertsArray[curr]);
             temp = alertsArray[curr];
+            print(temp);
+
             alertsArray[curr] = alertsArray[next];
             alertsArray[next] = temp;
         } 
@@ -222,9 +232,9 @@ class _AlertPageState extends State<AlertPage> {
   @override
   void initState() {
     super.initState();
-    today = dateTimeSortArray([0, 0], alertsArray);
-    thisWeek = dateTimeSortArray([1, 7], alertsArray);
-    pastEvents = dateTimeSortArray([14, -1], alertsArray);
+    //today = dateTimeSortArray([0, 0], alertsArray);
+    //thisWeek = dateTimeSortArray([1, 7], alertsArray);
+    //pastEvents = dateTimeSortArray([14, -1], alertsArray);
     dateFilteredAlerts = [today, thisWeek, pastEvents];
     filteredAlerts = alertsArray;
   }
@@ -345,6 +355,8 @@ class _AlertPageState extends State<AlertPage> {
                         return Alert(
                           //skips the items that have already been displayed, displays items that are in that range of time
                           alertBase: _convertToAlertBase(dateFilteredAlerts[index][itemIndex])
+                          //alertBase: _convertToAlertBase(filteredAlerts[itemIndex])
+
                         );
                     } 
                   )

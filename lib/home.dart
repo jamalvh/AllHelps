@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:allhelps/alert_base_class.dart';
 
 class MyHomePage extends StatefulWidget {
   final Function(int) onIndexChanged;
@@ -35,17 +36,35 @@ class _MyHomePageState extends State<MyHomePage> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const Header(),
+            Header(),
             Column(
               children: [
-                const SizedBox(height: 80), // Keep const here
-                // Pass the onIndexChanged callback to child widgets
-                HelpsRow(onIndexChanged: widget.onIndexChanged),
-                const SizedBox(height: 10),
-                GuideButton(onIndexChanged: widget.onIndexChanged),
-                const SizedBox(height: 80),
-                EmergencyRow(onIndexChanged: widget.onIndexChanged),
-                const SizedBox(height: 200),
+                SizedBox(height: 114), // TODO: Replace this with Search Bar
+                //SearchBar(), // renderd by the helps team, we will use the same search bar
+                HelpsRow(),
+                SizedBox(
+                  height: 10,
+                ),
+                //GuideButton(),
+                SizedBox(
+                  height: 40,
+                ),
+                Alert(
+                  alertBase: AlertBase(
+                    type: AlertType.Safety,
+                    header: 'Severe Weather Warning',
+                    message:
+                        'A severe thunderstorm is expected in your area. Stay indoors and avoid unnecessary travel.',
+                    date: DateTime.now(),
+                  ),
+                ),
+                SizedBox(
+                  height: 40,
+                ),
+                EmergencyRow(),
+                SizedBox(
+                  height: 200,
+                )
               ],
             ),
           ],

@@ -140,13 +140,13 @@ class _AlertPageState extends State<AlertPage> {
   //using military time: 0-24, will be sorted through a function
   final List<Map<String, String>> alertsArray = [
     {
-      "date": "2024-07-11 00:37:00",
+      "date": "2024-11-20 00:37:00",
       "title": "Free Houses",
       "description": "Giving away houses to homeless people",
       "type": "Event",
     },
     {
-      "date": "2024-07-15 18:43:00",
+      "date": "2024-11-25 18:43:00",
       "title": "Free Apartments",
       "description": "Giving away apartments to homeless people",
       "type": "Safety",
@@ -277,6 +277,7 @@ class _AlertPageState extends State<AlertPage> {
     }
 
     List<int> eventQuantities = [todayEvents, thisWeekEvents, pastWeeksEvents];
+    print(dateFilteredAlerts[0][0]);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F4F4),
@@ -340,22 +341,33 @@ class _AlertPageState extends State<AlertPage> {
                       ),
                     ),
                   ListView.builder(
-
                     shrinkWrap: true,
                     itemCount: eventQuantities[index],
                     itemBuilder: (BuildContext context, int itemIndex) {
-                      
+
+                      //for some reason this part of the code isn't running, prob cus the eventQuantities, check that next
+                      print(dateFilteredAlerts[index][itemIndex]);
+
                       //var index is the listview we're in, dateName[index] gives the section we're in
                       //and section[index] should give the corresponding lists required for this, filtered[index].length should be the item count
-
-                      //note to self that all the filters were in place when the data pulled from the backend was being sorted
-
+                      //if the thing exists, return this, else return a default alert
+                      if (dateFilteredAlerts[index][itemIndex] != null) {
                         return Alert(
-                          //skips the items that have already been displayed, displays items that are in that range of time
                           alertBase: _convertToAlertBase(dateFilteredAlerts[index][itemIndex])
                           //alertBase: _convertToAlertBase(filteredAlerts[itemIndex])
-
+                        
                         );
+                      } else { 
+                        //if there is no event for that day, this is not used due to the num times this function gets run, figure a way out to put a default thing in or get rid of it entirely
+                        return Alert(
+                          alertBase: _convertToAlertBase({
+                            "date": "Unavailable",
+                            "title": "Nothing Yet",
+                            "description": " ",
+                            "type": "Event",
+                          }));
+                          //alertBase: _convertToAlertBase(filteredAlerts[itemIndex])
+                      }
                     } 
                   )
                 ]

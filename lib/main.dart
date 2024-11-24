@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:allhelps/alert.dart';
 import 'package:allhelps/helps.dart';
 import 'package:allhelps/home.dart';
-import 'package:allhelps/help_page_filters.dart';
-
 
 void main() {
   runApp(MyApp());
@@ -19,8 +17,6 @@ class _MyAppState extends State<MyApp> {
   int selectedIndex = 0;
 
   FilterModel filterModel = FilterModel();
-
-
 
   // Callback to change the selected index
   void onIndexChanged(int index, {String? filter}) {

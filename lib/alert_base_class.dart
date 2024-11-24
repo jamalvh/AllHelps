@@ -34,11 +34,13 @@ class Alert extends StatelessWidget {
           children: [
             Row(
               children: [
-                if (alertBase._type == AlertType.Safety)
+                if (alertBase._type == AlertType.Safety) ...[
                   const Icon(
                     Icons.warning_amber,
                     color: Colors.red,
                   ),
+                  const SizedBox(width: 6),
+                ],
                 Text(
                   alertBase.header!,
                   style: TextStyle(
@@ -52,16 +54,15 @@ class Alert extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                Text(
-                  formattedDate,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 13.0,
-                    fontWeight: alertBase._type == AlertType.Safety
-                        ? FontWeight.bold
-                        : FontWeight.normal,
+                if (alertBase._type != AlertType.Welcome)
+                  Text(
+                    getRelativeTime(alertBase.date!),
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 13.0,
+                      fontWeight: FontWeight.normal,
+                    ),
                   ),
-                ),
               ],
             ),
             const SizedBox(height: 10),
@@ -76,6 +77,50 @@ class Alert extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String getRelativeTime(DateTime date) {
+    final now = DateTime.now();
+    var difference = date.difference(now);
+
+    if (difference.isNegative == false) {
+      if (difference.inDays >= 7) {
+        final weeks = (difference.inDays / 7).floor();
+        return 'in $weeks ${weeks == 1 ? 'week' : 'weeks'}';
+      } else if (difference.inDays > 0) {
+        return 'in ${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'}';
+      } else if (difference.inHours > 0) {
+        return 'in ${difference.inHours} ${difference.inHours == 1 ? 'hr' : 'hrs'}';
+      } else if (difference.inMinutes > 0) {
+        return 'in ${difference.inMinutes} ${difference.inMinutes == 1 ? 'min' : 'mins'}';
+      } else if (difference.inSeconds > 30) {
+        return 'in ${difference.inSeconds} secs';
+      } else {
+        return 'now';
+      }
+    }
+
+    difference = now.difference(date);
+    if (difference.inDays >= 7) {
+      final weeks = (difference.inDays / 7).floor();
+      return weeks == 1 ? '1 week ago' : '$weeks weeks ago';
+    } else if (difference.inDays > 0) {
+      return difference.inDays == 1
+          ? '1 day ago'
+          : '${difference.inDays} days ago';
+    } else if (difference.inHours > 0) {
+      return difference.inHours == 1
+          ? '1 hr ago'
+          : '${difference.inHours} hrs ago';
+    } else if (difference.inMinutes > 0) {
+      return difference.inMinutes == 1
+          ? '1 min ago'
+          : '${difference.inMinutes} mins ago';
+    } else if (difference.inSeconds > 30) {
+      return '${difference.inSeconds} secs ago';
+    } else {
+      return 'just now';
+    }
   }
 }
 
@@ -103,7 +148,7 @@ class AlertBase {
     _type = type;
     _header = header ?? 'Welcome to the App!';
     _message = message ?? 'We are excited to have you on board!';
-    _date = date ?? DateTime.now();
+    _date = type == AlertType.Welcome ? null : (date ?? DateTime.now());
   }
 
   // Getter methods

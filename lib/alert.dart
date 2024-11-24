@@ -158,7 +158,49 @@ class _AlertPageState extends State<AlertPage> {
       "title": "Free Food",
       "description": "Giving away food to homeless people",
       "type": "Safety",
-    }
+    },
+    {
+      "date": "2024-11-21 18:43:00",
+      "title": "Free Food",
+      "description": "Giving away food to homeless people",
+      "type": "Safety",
+    },
+    {
+      "date": "2024-11-20 18:43:00",
+      "title": "Free Food",
+      "description": "Giving away food to homeless people",
+      "type": "Safety",
+    },
+    {
+      "date": "2024-11-19 18:43:00",
+      "title": "Free Food",
+      "description": "Giving away food to homeless people",
+      "type": "Safety",
+    },
+    {
+      "date": "2024-11-18 18:43:00",
+      "title": "Free Food",
+      "description": "Giving away food to homeless people",
+      "type": "Safety",
+    },
+    {
+      "date": "2024-11-17 18:43:00",
+      "title": "Free Food",
+      "description": "Giving away food to homeless people",
+      "type": "Safety",
+    },
+    {
+      "date": "2024-11-16 18:43:00",
+      "title": "Free Food",
+      "description": "Giving away food to homeless people",
+      "type": "Safety",
+    },
+    {
+      "date": "2024-11-15 18:43:00",
+      "title": "Free Food",
+      "description": "Giving away food to homeless people",
+      "type": "Safety",
+    },
   ];
 
   //takes out the times out of each index to use in parcing our data

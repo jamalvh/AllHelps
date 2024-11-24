@@ -379,72 +379,72 @@ class _AlertPageState extends State<AlertPage> {
           ),
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AlertSelector(
-              onSelectionChanged: updateFilters,
-            ),
-            const SizedBox(height: 14),
-            Alert(
-              alertBase: AlertBase(
-                type: AlertType.Welcome,
-                header: "Welcome to our platform!",
-                message:
-                    "Missed a notification from us? No worries. They'll be right here waiting for you for up to 14 days.",
-                date: DateTime.now(),
-              ),
-            ),
-            const SizedBox(height: 14),
-            ListView.builder(
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              itemCount: 3,
-              itemBuilder: (context, index) {
-                // Skip rendering if there are no events in this section
-                if (dateFilteredAlerts[index].isEmpty) {
-                  return const SizedBox.shrink();
-                }
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16),
-                      child: Text(
-                        dateName[index],
-                        style: const TextStyle(
-                          color: Color(0xFF4D5166),
-                          fontFamily: "NotoSans",
-                          fontSize: 14,
-                        ),
-                      ),
+      body: Column(
+        children: [
+          AlertSelector(
+            onSelectionChanged: updateFilters,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 14),
+                  Alert(
+                    alertBase: AlertBase(
+                      type: AlertType.Welcome,
+                      header: "Welcome to our platform!",
+                      message:
+                          "Missed a notification from us? No worries. They'll be right here waiting for you for up to 14 days.",
+                      date: DateTime.now(),
                     ),
-                    const SizedBox(height: 10),
-                    ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: dateFilteredAlerts[index].length,
-                        itemBuilder: (BuildContext context, int itemIndex) {
+                  ),
+                  const SizedBox(height: 14),
+                  ...List.generate(3, (index) {
+                    if (dateFilteredAlerts[index].isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: Text(
+                            dateName[index],
+                            style: const TextStyle(
+                              color: Color(0xFF4D5166),
+                              fontFamily: "NotoSans",
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        ...dateFilteredAlerts[index]
+                            .asMap()
+                            .entries
+                            .map((entry) {
+                          final itemIndex = entry.key;
+                          final alert = entry.value;
                           return Column(
                             children: [
-                              Alert(
-                                  alertBase: _convertToAlertBase(
-                                      dateFilteredAlerts[index][itemIndex])),
+                              Alert(alertBase: _convertToAlertBase(alert)),
                               if (itemIndex <
                                   dateFilteredAlerts[index].length - 1)
                                 const SizedBox(height: 10),
                             ],
                           );
-                        }),
-                    const SizedBox(height: 10),
-                  ],
-                );
-              },
+                        }).toList(),
+                        const SizedBox(height: 10),
+                      ],
+                    );
+                  }),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

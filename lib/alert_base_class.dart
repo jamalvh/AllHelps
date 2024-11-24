@@ -34,11 +34,13 @@ class Alert extends StatelessWidget {
           children: [
             Row(
               children: [
-                if (alertBase._type == AlertType.Safety)
+                if (alertBase._type == AlertType.Safety) ...[
                   const Icon(
                     Icons.warning_amber,
                     color: Colors.red,
                   ),
+                  const SizedBox(width: 6),
+                ],
                 Text(
                   alertBase.header!,
                   style: TextStyle(

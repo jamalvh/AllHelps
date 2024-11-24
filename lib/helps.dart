@@ -150,7 +150,9 @@ class _HelpsPageState extends State<HelpsPage> {
         ),
         backgroundColor: Colors.white,
         shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20))),
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20))),
       ),
       body: Stack(
         children: [

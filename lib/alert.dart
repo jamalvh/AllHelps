@@ -130,7 +130,7 @@ class _AlertPageState extends State<AlertPage> {
   List<Map<String, String>> filteredAlerts = [];
   List<bool> selectedFilters = [false, false, false, false];
 
-  final List<String> dateName = ["Today", "This Week", "Last Week"];
+  final List<String> dateName = ["TODAY", "THIS WEEK", "LAST WEEK"];
 
   List<List<int>> showTimeLimit = [
     [0, 0],

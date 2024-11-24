@@ -57,12 +57,10 @@ class Alert extends StatelessWidget {
                 if (alertBase._type != AlertType.Welcome)
                   Text(
                     getRelativeTime(alertBase.date!),
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.black,
                       fontSize: 13.0,
-                      fontWeight: alertBase._type == AlertType.Safety
-                          ? FontWeight.bold
-                          : FontWeight.normal,
+                      fontWeight: FontWeight.normal,
                     ),
                   ),
               ],

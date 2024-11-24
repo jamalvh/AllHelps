@@ -29,9 +29,7 @@ class _SearchOptionsState extends State<SearchOptions> {
               for (var location in widget.searchModel.locations) {location.clearDistance();}
               filterModel.setChosenFilter(widget.searches.elementAt(index));
               widget.updateResults(filterModel.chosenFilter);
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                return const HelpsPage();
-              }));
+              Navigator.pushNamed(context, '/help');
             },
             child: Row(children: [
               FutureBuilder<bool>(

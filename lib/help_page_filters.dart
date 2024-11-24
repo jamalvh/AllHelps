@@ -9,12 +9,16 @@ class Filters extends StatefulWidget {
   final Function activateSearch;
   final Function(String) updateSearch;
   final Function(String) updateResults;
-  const Filters(
-      {super.key,
-      required this.closeSearch,
-      required this.activateSearch,
-      required this.updateSearch,
-      required this.updateResults});
+  final Function(double) filterLocationsByWalkingTime;
+
+  const Filters({
+    super.key,
+    required this.closeSearch,
+    required this.activateSearch,
+    required this.updateSearch,
+    required this.updateResults,
+    required this.filterLocationsByWalkingTime,
+  });
 
   @override
   State<Filters> createState() => _FiltersState();
@@ -26,7 +30,7 @@ class _FiltersState extends State<Filters> {
 
   Set<String> chosenSubfilters = {
     ''
-  }; // Local variable to keep track of chosen sub filters for a set filter
+  }; // Local variable to keep track of chosen subfilters for a set filter
 
   List<Widget> renderTopFilters() {
     List<Widget> topFilters = [];
@@ -42,25 +46,25 @@ class _FiltersState extends State<Filters> {
     return Row(
       children: [
         Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-            child: ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  chosenSubfilters = {''};
-                  filterModel.setChosenFilter(categoryName);
-                  // Conduct search
-                  widget.updateResults(categoryName);
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  side: const BorderSide(color: Colors.black12, width: 1),
-                ),
-                backgroundColor: Colors.transparent,
-                elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          child: ElevatedButton(
+            onPressed: () {
+              setState(() {
+                chosenSubfilters = {''};
+                filterModel.setChosenFilter(categoryName);
+                widget.updateResults(categoryName); // Conduct search
+              });
+            },
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+                side: const BorderSide(color: Colors.black12, width: 1),
               ),
-              child: Row(children: [
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            ),
+            child: Row(
+              children: [
                 FutureBuilder<bool>(
                   future: filterModel.assetExists(filename),
                   builder: (context, snapshot) {
@@ -84,8 +88,10 @@ class _FiltersState extends State<Filters> {
                   categoryName,
                   style: const TextStyle(fontSize: 14),
                 ),
-              ]),
-            )),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -94,8 +100,8 @@ class _FiltersState extends State<Filters> {
     List<Widget> subFilters = [];
     subFilters
         .add(renderSubFilter('', filterModel.getSubLevelImage('Clear filter')));
-    subFilters.add(
-        renderSubFilter('Distance', filterModel.getSubLevelImage('Distance')));
+    subFilters.add(renderSubFilter(
+        'Distance', filterModel.getSubLevelImage('Distance')));
     filterModel.filters[topCategory]?.forEach((subCategory) {
       subFilters.add(renderSubFilter(
           subCategory, filterModel.getSubLevelImage(subCategory)));
@@ -105,9 +111,12 @@ class _FiltersState extends State<Filters> {
 
   Widget renderSubFilter(categoryName, filename) {
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5),
-        child: ElevatedButton(
-          onPressed: () {
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: ElevatedButton(
+        onPressed: () {
+          if (categoryName == 'Distance') {
+            _showDistanceModal(context);
+          } else {
             setState(() {
               if (categoryName == '') {
                 chosenSubfilters = {''};
@@ -119,21 +128,25 @@ class _FiltersState extends State<Filters> {
                 }
               }
             });
-          },
-          style: ElevatedButton.styleFrom(
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-                side: BorderSide(
-                    color: chosenSubfilters.contains(categoryName)
-                        ? Colors.indigo.shade300
-                        : Colors.black12,
-                    width: 1)),
-            backgroundColor: chosenSubfilters.contains(categoryName)
-                ? Colors.indigo.shade100
-                : Colors.white,
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+            side: BorderSide(
+              color: chosenSubfilters.contains(categoryName)
+                  ? Colors.indigo.shade300
+                  : Colors.black12,
+              width: 1,
+            ),
           ),
-          child: Row(children: [
+          backgroundColor: chosenSubfilters.contains(categoryName)
+              ? Colors.indigo.shade100
+              : Colors.white,
+        ),
+        child: Row(
+          children: [
             FutureBuilder<bool>(
               future: filterModel.assetExists(filename),
               builder: (context, snapshot) {
@@ -157,8 +170,107 @@ class _FiltersState extends State<Filters> {
               categoryName,
               style: const TextStyle(fontSize: 14),
             ),
-          ]),
-        ));
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showDistanceModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          height: 400,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Location Based on Distance',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Walking time',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  _buildWalkingTimeButton(context, 5),
+                  _buildWalkingTimeButton(context, 20),
+                  _buildWalkingTimeButton(context, 30),
+                  _buildWalkingTimeButton(context, 60),
+                ],
+              ),
+              const Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[200],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    icon: const Icon(Icons.cancel, color: Colors.blue),
+                    label: const Text(
+                      'Cancel',
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    icon: const Icon(Icons.check_circle, color: Colors.white),
+                    label: const Text(
+                      'Apply',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildWalkingTimeButton(BuildContext context, double time) {
+    return OutlinedButton(
+      onPressed: () {
+        widget.filterLocationsByWalkingTime(time);
+        Navigator.of(context).pop();
+      },
+
+
+
+      
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25),
+        ),
+      ),
+      child: Text(
+        '< $time mins',
+        style: const TextStyle(fontSize: 14),
+      ),
+    );
   }
 
   @override
@@ -168,22 +280,23 @@ class _FiltersState extends State<Filters> {
         Row(
           children: [
             Expanded(
-                child: SearchBarWidget(
-                    closeSearch: widget.closeSearch,
-                    activateSearch: widget.activateSearch,
-                    updateSearch: widget.updateSearch,
-                    updateResults: widget.updateResults)),
+              child: SearchBarWidget(
+                closeSearch: widget.closeSearch,
+                activateSearch: widget.activateSearch,
+                updateSearch: widget.updateSearch,
+                updateResults: widget.updateResults,
+              ),
+            ),
             filterModel.getChosenFilter() == ""
-                ? const SizedBox(
-                    width: 10,
-                  )
+                ? const SizedBox(width: 10)
                 : Container(),
             filterModel.getChosenFilter() == ""
                 ? Container(
                     alignment: Alignment.topCenter,
                     decoration: BoxDecoration(
-                        color: Colors.indigo.shade400,
-                        borderRadius: BorderRadius.circular(10)),
+                      color: Colors.indigo.shade400,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     width: 0.15 * MediaQuery.of(context).size.width,
                     height: 0.075 * MediaQuery.of(context).size.height,
                     child: Column(
@@ -205,12 +318,10 @@ class _FiltersState extends State<Filters> {
                       ],
                     ),
                   )
-                : Container()
+                : Container(),
           ],
         ),
-        const SizedBox(
-          height: 10,
-        ),
+        const SizedBox(height: 10),
         searchModel.showResults
             ? Container()
             : SingleChildScrollView(
@@ -219,7 +330,8 @@ class _FiltersState extends State<Filters> {
                   children: filterModel.getChosenFilter() == ""
                       ? renderTopFilters()
                       : renderSubFilters(filterModel.getChosenFilter()),
-                ))
+                ),
+              ),
       ],
     );
   }

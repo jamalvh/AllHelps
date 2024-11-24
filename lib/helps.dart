@@ -84,6 +84,19 @@ class _HelpsPageState extends State<HelpsPage> {
     });
   }
 
+  void filterLocationsByWalkingTime(maxMinutes) {
+     setState((){
+      searchModel.locations.removeWhere((location) {
+       final walkingTime = LocationModel.estimateWalkingTime(location.distance);
+         print(maxMinutes);
+       return walkingTime > maxMinutes;
+        });
+  });
+    
+}
+
+
+
   Future<void> getCurrentLocation() async {
     bool serviceEnabled;
     PermissionStatus permissionGranted;
@@ -136,7 +149,8 @@ class _HelpsPageState extends State<HelpsPage> {
                     activateSearch: activateSearch,
                     closeSearch: closeSearch,
                     updateSearch: updateSearch,
-                    updateResults: updateResults),
+                    updateResults: updateResults,
+                    filterLocationsByWalkingTime: filterLocationsByWalkingTime),
               ),
               searchModel.showResults
                   ? SearchOptions(

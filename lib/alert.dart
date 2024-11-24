@@ -129,10 +129,14 @@ class AlertPage extends StatefulWidget {
 class _AlertPageState extends State<AlertPage> {
   List<Map<String, String>> filteredAlerts = [];
   List<bool> selectedFilters = [false, false, false, false];
-  
+
   final List<String> dateName = ["Today", "This Week", "Last Week"];
 
-  List<List<int>> showTimeLimit = [[0, 0], [1, 7], [14, -1]];
+  List<List<int>> showTimeLimit = [
+    [0, 0],
+    [1, 7],
+    [14, -1]
+  ];
 
   //dates are in yyyy-mm-dd hh:mm:ss
   //hours: 0-24
@@ -159,7 +163,7 @@ class _AlertPageState extends State<AlertPage> {
 
   //takes out the times out of each index to use in parcing our data
   //only used for comparison as of the moment
-  final List<DateTime> sortedAlertsArrayTimes =  [];
+  final List<DateTime> sortedAlertsArrayTimes = [];
 
   AlertType _getAlertType(String type) {
     switch (type) {
@@ -183,15 +187,16 @@ class _AlertPageState extends State<AlertPage> {
     );
   }
 
-    //sorts arrays in each date so that each date is in chronological order w/ respec to time in the date range
-  List<Map<String, String>> dateTimeSortArray(List<int> dateRange, List<Map<String, String>> alertsArray) {
+  //sorts arrays in each date so that each date is in chronological order w/ respec to time in the date range
+  List<Map<String, String>> dateTimeSortArray(
+      List<int> dateRange, List<Map<String, String>> alertsArray) {
     List<Map<String, String>> sortedArray = [];
     Map<String, String> temp;
     int currHour;
     int nextHour;
     int currMinute;
     int nextMinute;
-    int currDate; 
+    int currDate;
 
     for (int i = 0; i < alertsArray.length; i++) {
       //[lowerBound, upperBound]
@@ -204,73 +209,93 @@ class _AlertPageState extends State<AlertPage> {
       }
       print(i);
     }
-    if (sortedArray.isEmpty) {
-      sortedArray = [{
-          "date": "9999-99-99 00:00:00",
-          "title": "Nothing Yet",
-          "description": "Unavailable",
-          "type": "Event",
-        }
-      ];
-      return sortedArray;
-    }
-    for (int curr = 0; curr < sortedArray.length-1; curr++) {
+    // if (sortedArray.isEmpty) {
+    //   sortedArray = [
+    //     {
+    //       "date": "9999-99-99 00:00:00",
+    //       "title": "Nothing Yet",
+    //       "description": "Unavailable",
+    //       "type": "Event",
+    //     }
+    //   ];
+    //   return sortedArray;
+    // }
+    for (int curr = 0; curr < sortedArray.length - 1; curr++) {
       for (int next = 1; next < sortedArray.length; next++) {
-
         currHour = int.parse(sortedArray[curr]["date"]!.substring(11, 13));
         nextHour = int.parse(sortedArray[next]["date"]!.substring(11, 13));
         currMinute = int.parse(sortedArray[curr]["date"]!.substring(14, 16));
         nextMinute = int.parse(sortedArray[next]["date"]!.substring(11, 13));
 
-        if (currHour <= nextHour || (currHour == nextHour && currMinute <= nextMinute)) {
-            //this is the issue, temp is being bad, and idk what its doing
-             //error is trying to access curr from the array, its not allowing access for some reason
-            temp = sortedArray[curr];
-            sortedArray[curr] = sortedArray[next];
-            sortedArray[next] = temp;
-        } 
+        if (currHour <= nextHour ||
+            (currHour == nextHour && currMinute <= nextMinute)) {
+          //this is the issue, temp is being bad, and idk what its doing
+          //error is trying to access curr from the array, its not allowing access for some reason
+          temp = sortedArray[curr];
+          sortedArray[curr] = sortedArray[next];
+          sortedArray[next] = temp;
+        }
       }
     }
     return sortedArray;
   }
 
-  List<Map<String, String>> today = []; 
-  List<Map<String, String>> thisWeek = []; 
-  List<Map<String, String>> pastEvents = []; 
+  List<Map<String, String>> today = [];
+  List<Map<String, String>> thisWeek = [];
+  List<Map<String, String>> pastEvents = [];
 
   List<List<Map<String, String>>> dateFilteredAlerts = [];
   List<int> eventQuantities = [];
 
-  @override
-  void initState() {
-    super.initState();
-    today = dateTimeSortArray([DateTime.now().day, DateTime.now().day], alertsArray);
-    thisWeek = dateTimeSortArray([DateTime.now().day+1, DateTime.now().day+7], alertsArray);
-    pastEvents = dateTimeSortArray([DateTime.now().day-14, DateTime.now().day-1], alertsArray);
-    dateFilteredAlerts = [today, thisWeek, pastEvents];
-
-    filteredAlerts = alertsArray;
-  }
-
   void updateFilters(List<bool> selections) {
     setState(() {
       selectedFilters = selections;
+      // First filter by type
+      List<Map<String, String>> typeFilteredAlerts;
       if (selections[0]) {
-        filteredAlerts = alertsArray;
+        typeFilteredAlerts = alertsArray;
       } else {
-        filteredAlerts = alertsArray.where((alert) {
+        typeFilteredAlerts = alertsArray.where((alert) {
           if (selections[1] && alert["type"] == "Event") return true;
           if (selections[2] && alert["type"] == "Resources") return true;
           if (selections[3] && alert["type"] == "Safety") return true;
           return false;
         }).toList();
       }
+
+      // Then update the date-filtered lists with the type-filtered results
+      today = dateTimeSortArray(
+          [DateTime.now().day, DateTime.now().day], typeFilteredAlerts);
+      thisWeek = dateTimeSortArray(
+          [DateTime.now().day + 1, DateTime.now().day + 7], typeFilteredAlerts);
+      pastEvents = dateTimeSortArray(
+          [DateTime.now().day - 14, DateTime.now().day - 1],
+          typeFilteredAlerts);
+      dateFilteredAlerts = [today, thisWeek, pastEvents];
+
+      // Update filteredAlerts for compatibility
+      filteredAlerts = typeFilteredAlerts;
     });
   }
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    // Initialize with all alerts
+    today = dateTimeSortArray(
+        [DateTime.now().day, DateTime.now().day], alertsArray);
+    thisWeek = dateTimeSortArray(
+        [DateTime.now().day + 1, DateTime.now().day + 7], alertsArray);
+    pastEvents = dateTimeSortArray(
+        [DateTime.now().day - 14, DateTime.now().day - 1], alertsArray);
+    dateFilteredAlerts = [today, thisWeek, pastEvents];
 
+    filteredAlerts = alertsArray;
+    selectedFilters[0] = true; // Set "All" as initially selected
+  }
+
+  @override
+  Widget build(BuildContext context) {
     for (int i = 0; i < alertsArray.length; i++) {
       sortedAlertsArrayTimes.add(DateTime.parse(alertsArray[i]["date"]!));
     }
@@ -314,9 +339,9 @@ class _AlertPageState extends State<AlertPage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start, 
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-           children: [
+          children: [
             AlertSelector(
               onSelectionChanged: updateFilters,
             ),
@@ -325,30 +350,28 @@ class _AlertPageState extends State<AlertPage> {
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
               itemCount: 3,
-
               itemBuilder: (context, index) {
-                return Column(
-                children: [
+                return Column(children: [
                   Align(
                     alignment: const Alignment(-0.97, 0),
                     child: Text(
-                      dateName[index], 
+                      dateName[index],
                       style: const TextStyle(
-                          color: Color(0xFF4D5166),
-                          fontFamily: "NotoSans",
-                          fontSize: 14,
-                        ),
+                        color: Color(0xFF4D5166),
+                        fontFamily: "NotoSans",
+                        fontSize: 14,
                       ),
+                    ),
                   ),
                   ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: dateFilteredAlerts[index].length,
-                    itemBuilder: (BuildContext context, int itemIndex) {
-                      return 
-                        Alert(
-                        alertBase: _convertToAlertBase(dateFilteredAlerts[index][itemIndex])
-                        //alertBase: _convertToAlertBase(filteredAlerts[itemIndex])
-                      );
+                      shrinkWrap: true,
+                      itemCount: dateFilteredAlerts[index].length,
+                      itemBuilder: (BuildContext context, int itemIndex) {
+                        return Alert(
+                            alertBase: _convertToAlertBase(
+                                dateFilteredAlerts[index][itemIndex])
+                            //alertBase: _convertToAlertBase(filteredAlerts[itemIndex])
+                            );
                         //TODO: put in when I'm filtering and there's nothing in the thing
                         /*return Alert(
                           alertBase: _convertToAlertBase({
@@ -359,10 +382,8 @@ class _AlertPageState extends State<AlertPage> {
                             }
                           )
                         );*/
-                    } 
-                  )
-                ]
-                );
+                      })
+                ]);
               },
             ),
           ],

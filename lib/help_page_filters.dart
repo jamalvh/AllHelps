@@ -333,21 +333,6 @@ void _showDistanceModal(BuildContext context) {
   );
 }
 
-
-/*
-
-           _buildWalkingTimeButton(context, 5, isLeft: true),
-                            _buildWalkingTimeButton(context, 20, isLeft: false),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildWalkingTimeButton(context, 30, isLeft: true),
-                            _buildWalkingTimeButton(context, 60, isLeft: false),
-*/
-
 Widget _buildWalkingTimeButton(BuildContext context, double time, {bool isLeft = false}) {
   return Expanded(
     child: OutlinedButton(

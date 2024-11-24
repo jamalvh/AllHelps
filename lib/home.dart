@@ -1,19 +1,63 @@
 import 'package:flutter/material.dart';
-import 'package:allhelps/navigation.dart';
+import 'package:allhelps/alert_base_class.dart';
+import 'package:allhelps/filter_model.dart';
+import 'package:allhelps/search_model.dart';
+import 'package:allhelps/locations.dart';
+import 'package:allhelps/search_bar_page.dart';
+import 'package:allhelps/search_options.dart';
 
 class MyHomePage extends StatefulWidget {
+  final Function(int, {String? filter}) onIndexChanged;
+
+  const MyHomePage({Key? key, required this.onIndexChanged}) : super(key: key);
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
+// No changes needed in _MyHomePageState
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0;
+  FilterModel filterModel = FilterModel();
+  SearchModel searchModel = SearchModel();
+  List<LocationModel> locations = [];
 
-  // void _onItemTapped(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-  // }
+  void activateSearch() {
+    setState(() {
+      filterModel.initializeSearches();
+      searchModel.showResults = true;
+    });
+  }
+
+  void closeSearch() async {
+    locations = await loadLocations();
+    setState(() {
+      filterModel.setChosenFilter("");
+      searchModel.showResults = false;
+    });
+  }
+
+  void updateSearch(String value) {
+    setState(() {
+      if (value == '') {
+        filterModel.initializeSearches();
+      } else {
+        filterModel.searches.clear();
+        for (String filter in filterModel.filters.keys.toList()) {
+          if (filter.toLowerCase().contains(value.toLowerCase())) {
+            filterModel.searches.add(filter);
+          }
+        }
+      }
+    });
+  }
+
+  void updateResults(String topFilter) {
+    setState(() {
+      locations.removeWhere((location) {
+        return !location.services.contains(topFilter);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,43 +74,56 @@ class _MyHomePageState extends State<MyHomePage> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: ListView(
+        child: SingleChildScrollView(
           padding: EdgeInsets.zero,
-          children: const [
-            Header(),
-            Column(
-              children: [
-                SizedBox(height: 80), // TODO: Replace this with Search Bar
-                //SearchBar(), // renderd by the helps team, we will use the same search bar
-                HelpsRow(),
-                SizedBox(
-                  height: 10,
+          child: Column(
+            children: [
+              const Header(),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: SearchBarWidget(
+                  activateSearch: activateSearch,
+                  closeSearch: closeSearch,
+                  updateSearch: updateSearch,
+                  updateResults: updateResults,
                 ),
-                GuideButton(),
-                SizedBox(
-                  height: 80,
+              ),
+              if (searchModel.showResults)
+                SearchOptions(
+                  searchModel: searchModel,
+                  searches: filterModel.searches,
+                  updateResults: updateResults,
                 ),
-                EmergencyRow(),
-                SizedBox(
-                  height: 200,
-                )
-              ],
-            ),
-          ],
+              const SizedBox(height: 40),
+              HelpsRow(onIndexChanged: widget.onIndexChanged),
+              const SizedBox(height: 40),
+              GestureDetector(
+                onTap: () {
+                  widget.onIndexChanged(2);
+                },
+                child: Alert(
+                  alertBase: AlertBase(
+                    type: AlertType.Safety,
+                    header: 'Severe Weather Warning',
+                    message:
+                        'A severe thunderstorm is expected in your area. Stay indoors and avoid unnecessary travel.',
+                    date: DateTime.now(),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
+              EmergencyRow(onIndexChanged: widget.onIndexChanged),
+              const SizedBox(height: 200),
+            ],
+          ),
         ),
       ),
-      bottomNavigationBar: MyNavigationBar(
-          currentPageIndex: _selectedIndex,
-          onItemTapped: (int index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          }),
     );
   }
 }
 
-// Widget for header
+// Widget for header remains unchanged
 class Header extends StatelessWidget {
   const Header({super.key});
 
@@ -101,7 +158,9 @@ class Header extends StatelessWidget {
 
 // Widget for Helps Row
 class HelpsRow extends StatelessWidget {
-  const HelpsRow({super.key});
+  final Function(int, {String? filter}) onIndexChanged;
+
+  const HelpsRow({super.key, required this.onIndexChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -122,13 +181,14 @@ class HelpsRow extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              // Home Page is index 0, Helps Page is index 1
               HelpsButton(
                   color1: const Color(0xFFE57701),
                   color2: const Color(0xFFFFB15E),
                   text: "Searching for Food",
                   imageURL: "assets/images/helps_food_icon.png",
                   onTap: () {
-                    Navigator.pushNamed(context, '/helps');
+                    onIndexChanged(1, filter: "Food"); // Switch to HelpsPage
                   }),
               HelpsButton(
                   color1: const Color(0xFF50714A),
@@ -136,7 +196,7 @@ class HelpsRow extends StatelessWidget {
                   text: "Looking for Shelter",
                   imageURL: "assets/images/helps_shelter_icon.png",
                   onTap: () {
-                    Navigator.pushNamed(context, '/helps');
+                    onIndexChanged(1, filter: "Shelter");
                   }),
               HelpsButton(
                   color1: const Color(0xFF4F77C0),
@@ -144,7 +204,7 @@ class HelpsRow extends StatelessWidget {
                   text: "Get Medical Relief",
                   imageURL: "assets/images/helps_medicine_icon.png",
                   onTap: () {
-                    Navigator.pushNamed(context, '/helps');
+                    onIndexChanged(1, filter: "Medical");
                   })
             ],
           ))
@@ -152,13 +212,13 @@ class HelpsRow extends StatelessWidget {
   }
 }
 
-// Widget for Helps Button
+// Widget for Helps Button remains unchanged
 class HelpsButton extends StatelessWidget {
   final Color color1;
   final Color color2;
   final String text;
   final String imageURL;
-  final VoidCallback? onTap; // Add this line
+  final VoidCallback? onTap; // No change needed
 
   const HelpsButton({
     super.key,
@@ -166,7 +226,7 @@ class HelpsButton extends StatelessWidget {
     required this.color2,
     required this.text,
     required this.imageURL,
-    this.onTap, // And this line
+    this.onTap,
   });
 
   @override
@@ -185,7 +245,7 @@ class HelpsButton extends StatelessWidget {
               radius: 1.2,
             ),
           ),
-          // Add a ripple effect when button is clicked
+          // Ripple effect
           child: InkWell(
             onTap: onTap,
             splashColor: color2.withOpacity(1),
@@ -234,7 +294,9 @@ class HelpsButton extends StatelessWidget {
 
 // Widget for Emergency Row
 class EmergencyRow extends StatelessWidget {
-  const EmergencyRow({super.key});
+  final Function(int, {String? filter}) onIndexChanged;
+
+  const EmergencyRow({super.key, required this.onIndexChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -262,14 +324,14 @@ class EmergencyRow extends StatelessWidget {
                     text: "Reach out anytime for support",
                     imageURL: "assets/images/24-hours-line.png",
                     onTap: () {
-                      Navigator.pushNamed(context, '/helps');
+                      onIndexChanged(2); // Switch to AlertPage
                     }),
                 EmergencyButton(
                     title: "Local outreach team",
                     text: "Connect with your local agency",
                     imageURL: "assets/images/phone-fill.png",
                     onTap: () {
-                      Navigator.pushNamed(context, '/helps');
+                      onIndexChanged(2);
                     }),
               ],
             ))
@@ -278,19 +340,19 @@ class EmergencyRow extends StatelessWidget {
   }
 }
 
-// Widget for Emergency Buttons
+// Widget for Emergency Buttons remains unchanged
 class EmergencyButton extends StatelessWidget {
   final String title;
   final String text;
   final String imageURL;
-  final VoidCallback? onTap; // Add this line
+  final VoidCallback? onTap; // No change needed
 
   const EmergencyButton({
     super.key,
     required this.title,
     required this.text,
     required this.imageURL,
-    this.onTap, // And this line
+    this.onTap,
   });
 
   @override
@@ -365,8 +427,11 @@ class EmergencyButton extends StatelessWidget {
   }
 }
 
+// Widget for GuideButton
 class GuideButton extends StatelessWidget {
-  const GuideButton({super.key});
+  final Function(int, {String? filter}) onIndexChanged;
+
+  const GuideButton({super.key, required this.onIndexChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -377,7 +442,7 @@ class GuideButton extends StatelessWidget {
             color: Colors.white,
             child: InkWell(
               onTap: () {
-                Navigator.pushNamed(context, '/helps');
+                onIndexChanged(1); // Switch to HelpsPage
               },
               child: DecoratedBox(
                 decoration: BoxDecoration(

@@ -8,10 +8,9 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart' as lat_lng;
 import 'locations.dart';
-import 'navigation.dart';
 
 class HelpsPage extends StatefulWidget {
-  const HelpsPage({super.key});
+  HelpsPage({super.key});
 
   @override
   State<HelpsPage> createState() => _HelpsPageState();
@@ -29,7 +28,6 @@ class _HelpsPageState extends State<HelpsPage> {
   double currLat = 36.129920;
   double currLong = -115.116680;
   bool locationObtained = false;
-  int _selectedIndex = 0;
 
   Location location = Location();
   late LocationData locationData;
@@ -529,13 +527,6 @@ class _HelpsPageState extends State<HelpsPage> {
           }),
         ],
       ),
-      bottomNavigationBar: MyNavigationBar(
-          currentPageIndex: _selectedIndex,
-          onItemTapped: (int index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          }),
     );
   }
 }

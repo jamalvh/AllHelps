@@ -8,10 +8,9 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart' as lat_lng;
 import 'locations.dart';
-import 'navigation.dart';
 
 class HelpsPage extends StatefulWidget {
-  const HelpsPage({super.key});
+  HelpsPage({super.key});
 
   @override
   State<HelpsPage> createState() => _HelpsPageState();
@@ -26,10 +25,9 @@ class _HelpsPageState extends State<HelpsPage> {
   FilterModel filterModel = FilterModel();
 
   final MapController _mapController = MapController();
-  double currLat = 42.279;
-  double currLong = -83.732;
+  double currLat = 36.129920;
+  double currLong = -115.116680;
   bool locationObtained = false;
-  int _selectedIndex = 0;
 
   Location location = Location();
   late LocationData locationData;
@@ -164,7 +162,9 @@ class _HelpsPageState extends State<HelpsPage> {
         ),
         backgroundColor: Colors.white,
         shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20))),
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20))),
       ),
       body: Stack(
         children: [
@@ -224,331 +224,323 @@ class _HelpsPageState extends State<HelpsPage> {
             ],
           ),
           StatefulBuilder(builder: (context, setState) {
-            return DraggableScrollableSheet(
-              initialChildSize: _sheetPosition,
-              minChildSize: 0.2,
-              maxChildSize: 0.8,
-              builder: (context, scrollController) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    locationObtained
-                        ? Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: SizedBox(
-                              height: 44,
-                              width: 44,
-                              child: FloatingActionButton(
-                                onPressed: () {
-                                  _mapController.move(
-                                      lat_lng.LatLng(currLat, currLong),
-                                      15); // Default initial zoom of map is 13
-                                },
-                                backgroundColor: Colors.white,
-                                child: const Icon(Icons.near_me_rounded),
+            return RefreshIndicator(
+              onRefresh: () {
+                setState(
+                  () {
+                    for (int index = 0;
+                        index < searchModel.locations.length;
+                        index++) {
+                      searchModel.locations[index].clearDistance();
+                    }
+                  },
+                );
+
+                return Future.delayed(Duration.zero);
+              },
+              child: DraggableScrollableSheet(
+                initialChildSize: _sheetPosition,
+                minChildSize: 0.2,
+                maxChildSize: 0.8,
+                builder: (context, scrollController) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      locationObtained
+                          ? Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: SizedBox(
+                                height: 44,
+                                width: 44,
+                                child: FloatingActionButton(
+                                  onPressed: () {
+                                    _mapController.move(
+                                        lat_lng.LatLng(currLat, currLong),
+                                        15); // Default initial zoom of map is 13
+                                  },
+                                  backgroundColor: Colors.white,
+                                  child: const Icon(Icons.near_me_rounded),
+                                ),
                               ),
-                            ),
-                          )
-                        : Container(),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Expanded(
-                      child: ColoredBox(
-                        color: Colors.white,
-                        child: Column(
-                          children: [
-                            Grabber(
-                              onVerticalDragUpdate: (details) {
-                                setState(() {
-                                  _sheetPosition -=
-                                      details.delta.dy / _dragSensitivity;
-                                  _sheetPosition =
-                                      _sheetPosition.clamp(0.2, 0.8);
-                                });
-                              },
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width:
-                                        0.8 * MediaQuery.of(context).size.width,
-                                    child: Text.rich(
-                                        overflow: TextOverflow.clip,
-                                        softWrap: true,
-                                        TextSpan(children: [
-                                          const TextSpan(
-                                              text: 'We found ',
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold)),
-                                          TextSpan(
-                                              text: filterModel
-                                                      .chosenFilter.isEmpty
-                                                  ? '${searchModel.locations.length} Releifs'
-                                                  : '${searchModel.locations.length} ${filterModel.chosenFilter} Locations',
-                                              style: const TextStyle(
+                            )
+                          : Container(),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Expanded(
+                        child: ColoredBox(
+                          color: Colors.white,
+                          child: Column(
+                            children: [
+                              Grabber(
+                                onVerticalDragUpdate: (details) {
+                                  setState(() {
+                                    _sheetPosition -=
+                                        details.delta.dy / _dragSensitivity;
+                                    _sheetPosition =
+                                        _sheetPosition.clamp(0.2, 0.8);
+                                  });
+                                },
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: 0.8 *
+                                          MediaQuery.of(context).size.width,
+                                      child: Text.rich(
+                                          overflow: TextOverflow.clip,
+                                          softWrap: true,
+                                          TextSpan(children: [
+                                            const TextSpan(
+                                                text: 'We found ',
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            TextSpan(
+                                                text: filterModel
+                                                        .chosenFilter.isEmpty
+                                                    ? '${searchModel.locations.length} Releifs'
+                                                    : '${searchModel.locations.length} ${filterModel.chosenFilter} Locations',
+                                                style: const TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    decoration: TextDecoration
+                                                        .underline,
+                                                    color: Colors.deepPurple)),
+                                            TextSpan(
+                                                text: filterModel
+                                                        .chosenFilter.isEmpty
+                                                    ? ' nearby'
+                                                    : ' within 2 miles',
+                                                style: const TextStyle(
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold,
-                                                  decoration:
-                                                      TextDecoration.underline,
-                                                  color: Colors.deepPurple)),
-                                          TextSpan(
-                                              text: filterModel
-                                                      .chosenFilter.isEmpty
-                                                  ? ' nearby'
-                                                  : ' within 2 miles',
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                              ))
-                                        ])),
-                                  ),
-                                  const Spacer(),
-                                  Tooltip(
-                                    message:
-                                        'These are the nearest shelters based on your current location',
-                                    decoration: BoxDecoration(
-                                      color: Colors.black,
-                                      borderRadius: BorderRadius.circular(10),
+                                                ))
+                                          ])),
                                     ),
-                                    textStyle: const TextStyle(
-                                        color: Colors.white, fontSize: 14),
-                                    preferBelow:
-                                        false, // Display the tooltip above the widget
-                                    showDuration: const Duration(
-                                        seconds:
-                                            2), // Time the tooltip remains visible
-                                    waitDuration:
-                                        const Duration(milliseconds: 500),
-                                    child: const Icon(
-                                      Icons.info_outline,
-                                      size: 24,
-                                    ), // Time to wait before showing
-                                  )
-                                ],
+                                    const Spacer(),
+                                    Tooltip(
+                                      message:
+                                          'These are the nearest shelters based on your current location',
+                                      decoration: BoxDecoration(
+                                        color: Colors.black,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      textStyle: const TextStyle(
+                                          color: Colors.white, fontSize: 14),
+                                      preferBelow:
+                                          false, // Display the tooltip above the widget
+                                      showDuration: const Duration(
+                                          seconds:
+                                              2), // Time the tooltip remains visible
+                                      waitDuration:
+                                          const Duration(milliseconds: 500),
+                                      child: const Icon(
+                                        Icons.info_outline,
+                                        size: 24,
+                                      ), // Time to wait before showing
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                            Expanded(
-                              child:
-                                  StatefulBuilder(builder: (context, setState) {
-                                return ListView.builder(
-                                  // physics: const NeverScrollableScrollPhysics(),
-                                  padding: EdgeInsets.zero,
-                                  itemCount: searchModel.locations.length,
-                                  itemBuilder: (context, index) {
-                                    final availableLocation =
-                                        searchModel.locations[index];
-                                    //final isOpen = availableLocation.isOpen;
-                                    final services = [
-                                      'Laundry',
-                                      'Support',
-                                      'Shower'
-                                    ];
-                                    // double distance =
-                                    //     LocationModel.calculateDistance(
-                                    //         currLat,
-                                    //         currLong,
-                                    //         availableLocation
-                                    //             .coordinates.latitude,
-                                    //         availableLocation
-                                    //             .coordinates.longitude);
+                              Expanded(
+                                child: StatefulBuilder(
+                                    builder: (context, setState) {
+                                  return ListView.builder(
+                                    // physics: const NeverScrollableScrollPhysics(),
+                                    padding: EdgeInsets.zero,
+                                    itemCount: searchModel.locations.length,
+                                    itemBuilder: (context, index) {
+                                      final availableLocation =
+                                          searchModel.locations[index];
+                                      //final isOpen = availableLocation.isOpen;
+                                      final services = [
+                                        'Laundry',
+                                        'Support',
+                                        'Shower'
+                                      ];
 
-                                    // location.onLocationChanged
-                                    //     .listen((LocationData currentLocation) {
-                                    //   setState(() {
-                                    //     distance =
-                                    //         LocationModel.calculateDistance(
-                                    //             currLat,
-                                    //             currLong,
-                                    //             availableLocation
-                                    //                 .coordinates.latitude,
-                                    //             availableLocation
-                                    //                 .coordinates.longitude);
-                                    //   });
-                                    // });
-
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0, horizontal: 16.0),
-                                      child: Container(
-                                        padding: const EdgeInsets.all(16.0),
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey[300],
-                                          borderRadius:
-                                              BorderRadius.circular(12.0),
-                                          boxShadow: const [
-                                            BoxShadow(
-                                              color: Colors.black12,
-                                              blurRadius: 4,
-                                              offset: Offset(0, 2),
-                                            ),
-                                          ],
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  availableLocation.name,
-                                                  style: const TextStyle(
-                                                    fontSize: 18.0,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black87,
-                                                  ),
-                                                ),
-                                                Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                    horizontal: 12.0,
-                                                    vertical: 4.0,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    color: availableLocation
-                                                            .isOpenNow()
-                                                        ? Colors.green
-                                                        : Colors.red,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20.0),
-                                                  ),
-                                                  child: Text(
-                                                    availableLocation
-                                                            .isOpenNow()
-                                                        ? 'OPEN'
-                                                        : 'CLOSED',
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0, horizontal: 16.0),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(16.0),
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[300],
+                                            borderRadius:
+                                                BorderRadius.circular(12.0),
+                                            boxShadow: const [
+                                              BoxShadow(
+                                                color: Colors.black12,
+                                                blurRadius: 4,
+                                                offset: Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    availableLocation.name,
                                                     style: const TextStyle(
-                                                      color: Colors.white,
+                                                      fontSize: 18.0,
                                                       fontWeight:
                                                           FontWeight.bold,
+                                                      color: Colors.black87,
                                                     ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-
-                                            const SizedBox(height: 40.0),
-                                            Row(
-                                              children: [
-                                                const Icon(
-                                                    Icons.directions_walk,
-                                                    color: Colors.black54),
-                                                const SizedBox(width: 8),
-                                                FutureBuilder(
-                                                    future: searchModel
-                                                        .locations[index]
-                                                        .calculateDistance(
-                                                            currLat,
-                                                            currLong,
-                                                            searchModel
-                                                                .locations[
-                                                                    index]
-                                                                .coordinates
-                                                                .latitude,
-                                                            searchModel
-                                                                .locations[
-                                                                    index]
-                                                                .coordinates
-                                                                .longitude),
-                                                    builder:
-                                                        (context, snapshot) {
-                                                      if (snapshot
-                                                              .connectionState ==
-                                                          ConnectionState
-                                                              .done) {
-                                                        if (snapshot.data ==
-                                                                -1 &&
-                                                            searchModel
-                                                                    .locations[
-                                                                        index]
-                                                                    .distance ==
-                                                                -1) {
-                                                          return const Text(
-                                                              'Navigation server failure');
-                                                        } else {
-                                                          return Text(
-                                                              '${LocationModel.estimateWalkingTime(searchModel.locations[index].distance)} mins by walking (${searchModel.locations[index].hasDistance ? '' : '(OLD VALUE)'}${searchModel.locations[index].distance.toStringAsFixed(1)} miles)',
-                                                              style: const TextStyle(
-                                                                  color: Colors
-                                                                      .black54));
-                                                        }
-                                                      } else {
-                                                        return const CircularProgressIndicator();
-                                                      }
-                                                    }),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 8.0),
-                                            Row(
-                                              children: [
-                                                const Icon(Icons.timer,
-                                                    color: Colors.black54),
-                                                const SizedBox(width: 8),
-                                                Text(
-                                                  'Accept walk-in until ${LocationModel.formatTimeTo12Hour(availableLocation.closeTime)}',
-                                                  style: const TextStyle(
-                                                      color: Colors.black54),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 12.0),
-                                            // Services Tags
-                                            Wrap(
-                                              spacing: 8.0,
-                                              children: services.map((service) {
-                                                return Chip(
-                                                  label: Text(
-                                                    service,
-                                                    style: const TextStyle(
-                                                        color: Colors.black),
-                                                  ),
-                                                  backgroundColor: Colors.white,
-                                                  shape: RoundedRectangleBorder(
+                                                  Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                      horizontal: 12.0,
+                                                      vertical: 4.0,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      color: availableLocation
+                                                              .isOpenNow()
+                                                          ? Colors.green
+                                                          : Colors.red,
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              20.0)),
-                                                  side: BorderSide.none,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 1.0,
-                                                      horizontal: 2.0),
-                                                );
-                                              }).toList(),
-                                            ),
-                                          ],
+                                                              20.0),
+                                                    ),
+                                                    child: Text(
+                                                      availableLocation
+                                                              .isOpenNow()
+                                                          ? 'OPEN'
+                                                          : 'CLOSED',
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+
+                                              const SizedBox(height: 40.0),
+                                              Row(
+                                                children: [
+                                                  const Icon(
+                                                      Icons.directions_walk,
+                                                      color: Colors.black54),
+                                                  const SizedBox(width: 8),
+                                                  FutureBuilder(
+                                                      future: searchModel
+                                                          .locations[index]
+                                                          .calculateDistance(
+                                                              currLat,
+                                                              currLong,
+                                                              searchModel
+                                                                  .locations[
+                                                                      index]
+                                                                  .coordinates
+                                                                  .latitude,
+                                                              searchModel
+                                                                  .locations[
+                                                                      index]
+                                                                  .coordinates
+                                                                  .longitude),
+                                                      builder:
+                                                          (context, snapshot) {
+                                                        if (snapshot
+                                                                .connectionState ==
+                                                            ConnectionState
+                                                                .done) {
+                                                          if (snapshot.data ==
+                                                                  -1 &&
+                                                              searchModel
+                                                                      .locations[
+                                                                          index]
+                                                                      .distance ==
+                                                                  -1) {
+                                                            return const Text(
+                                                                'Navigation server failure');
+                                                          } else {
+                                                            return Text(
+                                                                '${LocationModel.estimateWalkingTime(searchModel.locations[index].distance)} mins by walking (${searchModel.locations[index].hasDistance ? '' : '(OLD VALUE)'}${searchModel.locations[index].distance.toStringAsFixed(1)} miles)',
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .black54));
+                                                          }
+                                                        } else {
+                                                          return const CircularProgressIndicator();
+                                                        }
+                                                      }),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 8.0),
+                                              Row(
+                                                children: [
+                                                  const Icon(Icons.timer,
+                                                      color: Colors.black54),
+                                                  const SizedBox(width: 8),
+                                                  Text(
+                                                    'Accept walk-in until ${LocationModel.formatTimeTo12Hour(availableLocation.closeTime)}',
+                                                    style: const TextStyle(
+                                                        color: Colors.black54),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 12.0),
+                                              // Services Tags
+                                              Wrap(
+                                                spacing: 8.0,
+                                                children:
+                                                    services.map((service) {
+                                                  return Chip(
+                                                    label: Text(
+                                                      service,
+                                                      style: const TextStyle(
+                                                          color: Colors.black),
+                                                    ),
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20.0)),
+                                                    side: BorderSide.none,
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 1.0,
+                                                        horizontal: 2.0),
+                                                  );
+                                                }).toList(),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              }),
-                            ),
-                          ],
+                                      );
+                                    },
+                                  );
+                                }),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              },
+                    ],
+                  );
+                },
+              ),
             );
           }),
         ],
       ),
-      bottomNavigationBar: MyNavigationBar(
-          currentPageIndex: _selectedIndex,
-          onItemTapped: (int index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          }),
     );
   }
 }

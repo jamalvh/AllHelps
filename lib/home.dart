@@ -1,103 +1,166 @@
 import 'package:flutter/material.dart';
-import 'package:allhelps/navigation.dart';
+import 'package:allhelps/alert_base_class.dart';
+import 'package:allhelps/filter_model.dart';
+import 'package:allhelps/search_model.dart';
+import 'package:allhelps/locations.dart';
+import 'package:allhelps/search_bar_page.dart';
+import 'package:allhelps/search_options.dart';
 
 class MyHomePage extends StatefulWidget {
+  final Function(int, {String? filter}) onIndexChanged;
+
+  const MyHomePage({Key? key, required this.onIndexChanged}) : super(key: key);
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
+// No changes needed in _MyHomePageState
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0;
+  FilterModel filterModel = FilterModel();
+  SearchModel searchModel = SearchModel();
+  List<LocationModel> locations = [];
 
-  // void _onItemTapped(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-  // }
+  void activateSearch() {
+    setState(() {
+      filterModel.initializeSearches();
+      searchModel.showResults = true;
+    });
+  }
+
+  void closeSearch() async {
+    locations = await loadLocations();
+    setState(() {
+      filterModel.setChosenFilter("");
+      searchModel.showResults = false;
+    });
+  }
+
+  void updateSearch(String value) {
+    setState(() {
+      if (value == '') {
+        filterModel.initializeSearches();
+      } else {
+        filterModel.searches.clear();
+        for (String filter in filterModel.filters.keys.toList()) {
+          if (filter.toLowerCase().contains(value.toLowerCase())) {
+            filterModel.searches.add(filter);
+          }
+        }
+      }
+    });
+  }
+
+  void updateResults(String topFilter) {
+    setState(() {
+      locations.removeWhere((location) {
+        return !location.services.contains(topFilter);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
       body: Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFFEDF4FF),
-            Color(0xFFc8dcf8),
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFEDF4FF),
+              Color(0xFFc8dcf8),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
-      ),
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: const [
-          Header(),
-          Column(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.zero,
+          child: Column(
             children: [
-              SizedBox(height: 80), // TODO: Replace this with Search Bar
-              //SearchBar(), // renderd by the helps team, we will use the same search bar
-              HelpsRow(),
-              SizedBox(height: 10,),
-              GuideButton(),
-              SizedBox(height: 80,),
-              EmergencyRow(),
-              SizedBox(height: 200,)
+              const Header(),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: SearchBarWidget(
+                  activateSearch: activateSearch,
+                  closeSearch: closeSearch,
+                  updateSearch: updateSearch,
+                  updateResults: updateResults,
+                ),
+              ),
+              if (searchModel.showResults)
+                SearchOptions(
+                  searchModel: searchModel,
+                  searches: filterModel.searches,
+                  updateResults: updateResults,
+                ),
+              const SizedBox(height: 40),
+              HelpsRow(onIndexChanged: widget.onIndexChanged),
+              const SizedBox(height: 40),
+              GestureDetector(
+                onTap: () {
+                  widget.onIndexChanged(2);
+                },
+                child: Alert(
+                  alertBase: AlertBase(
+                    type: AlertType.Safety,
+                    header: 'Severe Weather Warning',
+                    message:
+                        'A severe thunderstorm is expected in your area. Stay indoors and avoid unnecessary travel.',
+                    date: DateTime.now(),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
+              EmergencyRow(onIndexChanged: widget.onIndexChanged),
+              const SizedBox(height: 200),
             ],
           ),
-        ],
-      ),
-    ),
-    bottomNavigationBar: MyNavigationBar(
-        currentPageIndex: _selectedIndex,
-        onItemTapped: (int index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        }
+        ),
       ),
     );
   }
 }
 
-// Widget for header
+// Widget for header remains unchanged
 class Header extends StatelessWidget {
   const Header({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-          // Header
-          Container(
-            height: 213,
-            decoration: const BoxDecoration(
-    color: Color(0xFF6359CA),
-    borderRadius: BorderRadius.only(
-        bottomLeft: Radius.circular(26),
-        bottomRight: Radius.circular(26))),
-            alignment: Alignment.center,
+    return Stack(children: [
+      // Header
+      Container(
+        height: 213,
+        decoration: const BoxDecoration(
+            color: Color(0xFF6359CA),
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(26),
+                bottomRight: Radius.circular(26))),
+        alignment: Alignment.center,
+      ),
+      // Image
+      Positioned(
+        top: 0,
+        left: 20,
+        child: Center(
+          child: Image.asset(
+            'assets/images/header_image.png',
+            height: 180,
+            fit: BoxFit.cover,
           ),
-          // Image
-          Positioned(
-            top: 0,
-            left: 20,
-            child: Center(
-              child: Image.asset(
-    'assets/images/header_image.png',
-    height: 180,
-    fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        ]);
+        ),
+      ),
+    ]);
   }
 }
 
 // Widget for Helps Row
 class HelpsRow extends StatelessWidget {
-  const HelpsRow({super.key});
+  final Function(int, {String? filter}) onIndexChanged;
+
+  const HelpsRow({super.key, required this.onIndexChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -118,13 +181,14 @@ class HelpsRow extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              // Home Page is index 0, Helps Page is index 1
               HelpsButton(
                   color1: const Color(0xFFE57701),
                   color2: const Color(0xFFFFB15E),
                   text: "Searching for Food",
                   imageURL: "assets/images/helps_food_icon.png",
                   onTap: () {
-                    Navigator.pushNamed(context, '/helps');
+                    onIndexChanged(1, filter: "Food"); // Switch to HelpsPage
                   }),
               HelpsButton(
                   color1: const Color(0xFF50714A),
@@ -132,7 +196,7 @@ class HelpsRow extends StatelessWidget {
                   text: "Looking for Shelter",
                   imageURL: "assets/images/helps_shelter_icon.png",
                   onTap: () {
-                    Navigator.pushNamed(context, '/helps');
+                    onIndexChanged(1, filter: "Shelter");
                   }),
               HelpsButton(
                   color1: const Color(0xFF4F77C0),
@@ -140,7 +204,7 @@ class HelpsRow extends StatelessWidget {
                   text: "Get Medical Relief",
                   imageURL: "assets/images/helps_medicine_icon.png",
                   onTap: () {
-                    Navigator.pushNamed(context, '/helps');
+                    onIndexChanged(1, filter: "Medical");
                   })
             ],
           ))
@@ -148,13 +212,13 @@ class HelpsRow extends StatelessWidget {
   }
 }
 
-// Widget for Helps Button
+// Widget for Helps Button remains unchanged
 class HelpsButton extends StatelessWidget {
   final Color color1;
   final Color color2;
   final String text;
   final String imageURL;
-  final VoidCallback? onTap; // Add this line
+  final VoidCallback? onTap; // No change needed
 
   const HelpsButton({
     super.key,
@@ -162,7 +226,7 @@ class HelpsButton extends StatelessWidget {
     required this.color2,
     required this.text,
     required this.imageURL,
-    this.onTap, // And this line
+    this.onTap,
   });
 
   @override
@@ -181,7 +245,7 @@ class HelpsButton extends StatelessWidget {
               radius: 1.2,
             ),
           ),
-          // Add a ripple effect when button is clicked
+          // Ripple effect
           child: InkWell(
             onTap: onTap,
             splashColor: color2.withOpacity(1),
@@ -230,218 +294,215 @@ class HelpsButton extends StatelessWidget {
 
 // Widget for Emergency Row
 class EmergencyRow extends StatelessWidget {
-  const EmergencyRow({super.key});
+  final Function(int, {String? filter}) onIndexChanged;
+
+  const EmergencyRow({super.key, required this.onIndexChanged});
 
   @override
   Widget build(BuildContext context) {
-  return Column(
-  children: [
-    Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      child: Container(
-        alignment: Alignment.centerLeft,
-        child: const Text(
-          "Need Emergency Help?",
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          textAlign: TextAlign.left,
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          child: Container(
+            alignment: Alignment.centerLeft,
+            child: const Text(
+              "Need Emergency Help?",
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              textAlign: TextAlign.left,
+            ),
+          ),
         ),
-        ),),
-    const SizedBox(height: 10),
-    Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Row (
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          EmergencyButton(
-            title: "24/7 Hotline",
-            text: "Reach out anytime for support",
-            imageURL: "assets/images/24-hours-line.png",
-            onTap: () {
-                Navigator.pushNamed(context, '/helps');
-              }
-          ),
-          EmergencyButton(
-            title: "Local outreach team",
-            text: "Connect with your local agency",
-            imageURL: "assets/images/phone-fill.png",
-            onTap: () {
-                Navigator.pushNamed(context, '/helps');
-              }
-          ),
-        ],
-        )
-      )
-    ],
-  );
+        const SizedBox(height: 10),
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                EmergencyButton(
+                    title: "24/7 Hotline",
+                    text: "Reach out anytime for support",
+                    imageURL: "assets/images/24-hours-line.png",
+                    onTap: () {
+                      onIndexChanged(2); // Switch to AlertPage
+                    }),
+                EmergencyButton(
+                    title: "Local outreach team",
+                    text: "Connect with your local agency",
+                    imageURL: "assets/images/phone-fill.png",
+                    onTap: () {
+                      onIndexChanged(2);
+                    }),
+              ],
+            ))
+      ],
+    );
   }
-  
 }
 
-// Widget for Emergency Buttons
+// Widget for Emergency Buttons remains unchanged
 class EmergencyButton extends StatelessWidget {
-
   final String title;
   final String text;
   final String imageURL;
-  final VoidCallback? onTap; // Add this line
+  final VoidCallback? onTap; // No change needed
 
   const EmergencyButton({
     super.key,
     required this.title,
     required this.text,
     required this.imageURL,
-    this.onTap, // And this line
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(14),
-      child: Material(
-        child: Ink(
-          color: Colors.white,
-          child: InkWell(
-            onTap: onTap,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                border: Border.all(
-                color: Colors.grey.shade300,
-                width: 1.0,
+        borderRadius: BorderRadius.circular(14),
+        child: Material(
+          child: Ink(
+            color: Colors.white,
+            child: InkWell(
+              onTap: onTap,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey.shade300,
+                    width: 1.0,
+                  ),
+                  borderRadius: BorderRadius.circular(14.0), // Uniform radius
                 ),
-              borderRadius: BorderRadius.circular(14.0), // Uniform radius
-              ),
-            child: SizedBox(
-              width: 180,
-              height: 120,
-              child: Stack(
-                children: [
-                  // Icon
-                  Positioned(
-                    top: 12,
-                    left: 12,
-                    child: SizedBox(
-                      height: 30,
-                      width: 30,
-                      child: Image.asset(
-                        imageURL,
-                        fit: BoxFit.cover,
+                child: SizedBox(
+                  width: 180,
+                  height: 120,
+                  child: Stack(
+                    children: [
+                      // Icon
+                      Positioned(
+                        top: 12,
+                        left: 12,
+                        child: SizedBox(
+                          height: 30,
+                          width: 30,
+                          child: Image.asset(
+                            imageURL,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  // Text caption
-                  Positioned(
-                    bottom: 40,
-                    left: 12,
-                    right: 12,
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
+                      // Text caption
+                      Positioned(
+                        bottom: 40,
+                        left: 12,
+                        right: 12,
+                        child: Text(
+                          title,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 20,
-                    left: 12,
-                    right: 12,
-                    child: Text(
-                      text,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w300,
+                      Positioned(
+                        bottom: 20,
+                        left: 12,
+                        right: 12,
+                        child: Text(
+                          text,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
-    ));
+        ));
   }
-
 }
 
+// Widget for GuideButton
 class GuideButton extends StatelessWidget {
-  const GuideButton({super.key});
+  final Function(int, {String? filter}) onIndexChanged;
+
+  const GuideButton({super.key, required this.onIndexChanged});
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      
-      borderRadius: BorderRadius.circular(14),
-      child: Material(
-        child: Ink(
-          color: Colors.white,
-          child: InkWell(
-            onTap: () {
-                Navigator.pushNamed(context, '/helps');
+        borderRadius: BorderRadius.circular(14),
+        child: Material(
+          child: Ink(
+            color: Colors.white,
+            child: InkWell(
+              onTap: () {
+                onIndexChanged(1); // Switch to HelpsPage
               },
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                border: Border.all(
-                color: Colors.grey.shade300,
-                width: 1.0,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey.shade300,
+                    width: 1.0,
+                  ),
+                  borderRadius: BorderRadius.circular(14.0), // Uniform radius
                 ),
-              borderRadius: BorderRadius.circular(14.0), // Uniform radius
-              ),
-            child: SizedBox(
-              width: 365,
-              height: 80,
-              child: Stack(
-                children: [
-                  // Icon
-                  Positioned(
-                    top: 20,
-                    right: 12,
-                    child: SizedBox(
-                      height: 35,
-                      width: 35,
-                      child: Image.asset(
-                        "assets/images/arrow-right-s-line.png",
-                        fit: BoxFit.cover,
+                child: SizedBox(
+                  width: 365,
+                  height: 80,
+                  child: Stack(
+                    children: [
+                      // Icon
+                      Positioned(
+                        top: 20,
+                        right: 12,
+                        child: SizedBox(
+                          height: 35,
+                          width: 35,
+                          child: Image.asset(
+                            "assets/images/arrow-right-s-line.png",
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  // Text caption
-                  const Positioned(
-                    top: 20,
-                    left: 12,
-                    right: 12,
-                    child: Text(
-                      "Guide you to the right services faster",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
+                      // Text caption
+                      const Positioned(
+                        top: 20,
+                        left: 12,
+                        right: 12,
+                        child: Text(
+                          "Guide you to the right services faster",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  const Positioned(
-                    bottom: 20,
-                    left: 12,
-                    right: 12,
-                    child: Text(
-                      "Please choose your current situation",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w300,
+                      const Positioned(
+                        bottom: 20,
+                        left: 12,
+                        right: 12,
+                        child: Text(
+                          "Please choose your current situation",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
-    ));
+        ));
   }
-
-
 }

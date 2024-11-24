@@ -214,7 +214,6 @@ class _HelpsPageState extends State<HelpsPage> {
               onRefresh: () {
                 setState(
                   () {
-                    print('refreshing');
                     for (int index = 0;
                         index < searchModel.locations.length;
                         index++) {

@@ -60,7 +60,7 @@ class LocationModel {
     return timeInMinutes;
   }
 
-  void clearDistance(){
+  void clearDistance() {
     hasDistance = false;
   }
 
@@ -74,38 +74,20 @@ class LocationModel {
     );
   }
 
-  // static double calculateDistance(
-  //     double lat1, double lon1, double lat2, double lon2) {
-  //   const double earthRadius = 3961;
-
-  //   double lat1Rad = _degToRad(lat1);
-  //   double lon1Rad = _degToRad(lon1);
-  //   double lat2Rad = _degToRad(lat2);
-  //   double lon2Rad = _degToRad(lon2);
-
-  //   double dlat = lat2Rad - lat1Rad;
-  //   double dlon = lon2Rad - lon1Rad;
-
-  //   double a = sin(dlat / 2) * sin(dlat / 2) +
-  //       cos(lat1Rad) * cos(lat2Rad) * sin(dlon / 2) * sin(dlon / 2);
-  //   double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-
-  //   return earthRadius * c;
-  // }
-
-  Future<double> calculateDistance(double lat1, double long1, double lat2, double long2) async {
-    if (hasDistance){
+  Future<double> calculateDistance(
+      double lat1, double long1, double lat2, double long2) async {
+    if (hasDistance) {
       return distance;
     }
-    final response = await http.get(Uri.parse('http://router.project-osrm.org/route/v1/foot/$long1,$lat1;$long2,$lat2?overview=false'));
+    final response = await http.get(Uri.parse(
+        'http://router.project-osrm.org/route/v1/foot/$long1,$lat1;$long2,$lat2?overview=false'));
     if (response.statusCode == 200) {
       final result = await jsonDecode(response.body) as Map<String, dynamic>;
       if (result['code'] == 'Ok') {
-        print('distance updated');
         hasDistance = true;
         distance = result['routes'][0]['distance'] / 1609.34;
         return distance;
-      }else{
+      } else {
         return -1;
       }
     } else {
@@ -113,15 +95,8 @@ class LocationModel {
     }
   }
 
-  // static double _degToRad(double deg) {
-  //   return deg * (pi / 180.0);
-  // }
-
-  List<LocationModel> filterLocationsByDistance (
-      List<LocationModel> locations,
-      double currentLat,
-      double currentLon,
-      double maxDistance) {
+  List<LocationModel> filterLocationsByDistance(List<LocationModel> locations,
+      double currentLat, double currentLon, double maxDistance) {
     return locations.where((location) {
       return location.distance <= maxDistance;
     }).toList();
@@ -138,7 +113,6 @@ Future<List<LocationModel>> loadLocations() async {
         .map((location) => LocationModel.fromJson(location))
         .toList();
   } catch (e) {
-    print("Error loading locations: $e");
     return [];
   }
 }

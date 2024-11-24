@@ -26,8 +26,8 @@ class _HelpsPageState extends State<HelpsPage> {
   FilterModel filterModel = FilterModel();
 
   final MapController _mapController = MapController();
-  double currLat = 42.279;
-  double currLong = -83.732;
+  double currLat = 36.129920;
+  double currLong = -115.116680;
   bool locationObtained = false;
   int _selectedIndex = 0;
 
@@ -349,28 +349,6 @@ class _HelpsPageState extends State<HelpsPage> {
                                         'Support',
                                         'Shower'
                                       ];
-                                      // double distance =
-                                      //     LocationModel.calculateDistance(
-                                      //         currLat,
-                                      //         currLong,
-                                      //         availableLocation
-                                      //             .coordinates.latitude,
-                                      //         availableLocation
-                                      //             .coordinates.longitude);
-
-                                      // location.onLocationChanged
-                                      //     .listen((LocationData currentLocation) {
-                                      //   setState(() {
-                                      //     distance =
-                                      //         LocationModel.calculateDistance(
-                                      //             currLat,
-                                      //             currLong,
-                                      //             availableLocation
-                                      //                 .coordinates.latitude,
-                                      //             availableLocation
-                                      //                 .coordinates.longitude);
-                                      //   });
-                                      // });
 
                                       return Padding(
                                         padding: const EdgeInsets.symmetric(

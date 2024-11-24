@@ -345,15 +345,6 @@ class _AlertPageState extends State<AlertPage> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  Positioned(
-                    left: 0,
-                    child: BackButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      color: Colors.white,
-                    ),
-                  ),
                   const Text(
                     'Alerts',
                     style: TextStyle(

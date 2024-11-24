@@ -259,31 +259,40 @@ class _HelpsPageState extends State<HelpsPage> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text.rich(TextSpan(children: [
-                                    const TextSpan(
-                                        text: 'We found ',
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold)),
-                                    TextSpan(
-                                        text: filterModel.chosenFilter.isEmpty
-                                            ? '${searchModel.locations.length} Releifs'
-                                            : '${searchModel.locations.length} ${filterModel.chosenFilter} Locations',
-                                        style: const TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            decoration:
-                                                TextDecoration.underline,
-                                            color: Colors.deepPurple)),
-                                    TextSpan(
-                                        text: filterModel.chosenFilter.isEmpty
-                                            ? ' nearby'
-                                            : ' within 2 miles',
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ))
-                                  ])),
+                                  SizedBox(
+                                    width:
+                                        0.8 * MediaQuery.of(context).size.width,
+                                    child: Text.rich(
+                                        overflow: TextOverflow.clip,
+                                        softWrap: true,
+                                        TextSpan(children: [
+                                          const TextSpan(
+                                              text: 'We found ',
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold)),
+                                          TextSpan(
+                                              text: filterModel
+                                                      .chosenFilter.isEmpty
+                                                  ? '${searchModel.locations.length} Releifs'
+                                                  : '${searchModel.locations.length} ${filterModel.chosenFilter} Locations',
+                                              style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  decoration:
+                                                      TextDecoration.underline,
+                                                  color: Colors.deepPurple)),
+                                          TextSpan(
+                                              text: filterModel
+                                                      .chosenFilter.isEmpty
+                                                  ? ' nearby'
+                                                  : ' within 2 miles',
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ))
+                                        ])),
+                                  ),
                                   const Spacer(),
                                   Tooltip(
                                     message:
@@ -452,12 +461,7 @@ class _HelpsPageState extends State<HelpsPage> {
                                                               'Navigation server failure');
                                                         } else {
                                                           return Text(
-
-                                                            
-
-
-
-                                                           '${LocationModel.estimateWalkingTime(searchModel.locations[index].distance)} mins by walking (${searchModel.locations[index].hasDistance ? '' : '(OLD VALUE)'}${searchModel.locations[index].distance.toStringAsFixed(1)} miles)' ,
+                                                              '${LocationModel.estimateWalkingTime(searchModel.locations[index].distance)} mins by walking (${searchModel.locations[index].hasDistance ? '' : '(OLD VALUE)'}${searchModel.locations[index].distance.toStringAsFixed(1)} miles)',
                                                               style: const TextStyle(
                                                                   color: Colors
                                                                       .black54));

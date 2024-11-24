@@ -94,17 +94,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   searches: filterModel.searches,
                   updateResults: updateResults,
                 ),
-                const SizedBox(height: 40),
-              HelpsRow(onIndexChanged: widget.onIndexChanged),
-              const SizedBox(height: 10),
-              // GuideButton(),
               const SizedBox(height: 40),
-              Alert(
-                alertBase: AlertBase(
-                  type: AlertType.Safety,
-                  header: 'Severe Weather Warning',
-                  message: 'A severe thunderstorm is expected in your area. Stay indoors and avoid unnecessary travel.',
-                  date: DateTime.now(),
+              HelpsRow(onIndexChanged: widget.onIndexChanged),
+              const SizedBox(height: 40),
+              GestureDetector(
+                onTap: () {
+                  widget.onIndexChanged(2);
+                },
+                child: Alert(
+                  alertBase: AlertBase(
+                    type: AlertType.Safety,
+                    header: 'Severe Weather Warning',
+                    message:
+                        'A severe thunderstorm is expected in your area. Stay indoors and avoid unnecessary travel.',
+                    date: DateTime.now(),
+                  ),
                 ),
               ),
               const SizedBox(height: 40),
@@ -365,8 +369,7 @@ class EmergencyButton extends StatelessWidget {
                     color: Colors.grey.shade300,
                     width: 1.0,
                   ),
-                  borderRadius:
-                      BorderRadius.circular(14.0), // Uniform radius
+                  borderRadius: BorderRadius.circular(14.0), // Uniform radius
                 ),
                 child: SizedBox(
                   width: 180,
@@ -446,8 +449,7 @@ class GuideButton extends StatelessWidget {
                     color: Colors.grey.shade300,
                     width: 1.0,
                   ),
-                  borderRadius:
-                      BorderRadius.circular(14.0), // Uniform radius
+                  borderRadius: BorderRadius.circular(14.0), // Uniform radius
                 ),
                 child: SizedBox(
                   width: 365,

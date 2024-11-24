@@ -81,8 +81,26 @@ class Alert extends StatelessWidget {
 
   String getRelativeTime(DateTime date) {
     final now = DateTime.now();
-    final difference = now.difference(date);
+    var difference = date.difference(now);
 
+    if (difference.isNegative == false) {
+      if (difference.inDays >= 7) {
+        final weeks = (difference.inDays / 7).floor();
+        return 'in $weeks ${weeks == 1 ? 'week' : 'weeks'}';
+      } else if (difference.inDays > 0) {
+        return 'in ${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'}';
+      } else if (difference.inHours > 0) {
+        return 'in ${difference.inHours} ${difference.inHours == 1 ? 'hr' : 'hrs'}';
+      } else if (difference.inMinutes > 0) {
+        return 'in ${difference.inMinutes} ${difference.inMinutes == 1 ? 'min' : 'mins'}';
+      } else if (difference.inSeconds > 30) {
+        return 'in ${difference.inSeconds} secs';
+      } else {
+        return 'now';
+      }
+    }
+
+    difference = now.difference(date);
     if (difference.inDays >= 7) {
       final weeks = (difference.inDays / 7).floor();
       return weeks == 1 ? '1 week ago' : '$weeks weeks ago';

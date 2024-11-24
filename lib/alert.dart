@@ -142,62 +142,62 @@ class _AlertPageState extends State<AlertPage> {
   //hours: 0-24
   final List<Map<String, String>> alertsArray = [
     {
-      "date": "2024-11-20 00:37:00",
-      "title": "Free Houses",
+      "date": "2024-11-24 00:37:00",
+      "title": "Free Houses 11/24/24",
       "description": "Giving away houses to homeless people",
       "type": "Event",
     },
     {
       "date": "2024-11-27 18:43:00",
-      "title": "Free Apartments",
+      "title": "Free Apartments 11/27/24",
       "description": "Giving away apartments to homeless people",
       "type": "Safety",
     },
     {
       "date": "2024-11-23 18:43:00",
-      "title": "Free Food",
+      "title": "Free Food 11/23/24",
       "description": "Giving away food to homeless people",
       "type": "Safety",
     },
     {
       "date": "2024-11-21 18:43:00",
-      "title": "Free Food",
+      "title": "Free Food 11/21/24",
       "description": "Giving away food to homeless people",
       "type": "Safety",
     },
     {
       "date": "2024-11-20 18:43:00",
-      "title": "Free Food",
+      "title": "Free Food 11/20/24",
       "description": "Giving away food to homeless people",
       "type": "Safety",
     },
     {
       "date": "2024-11-19 18:43:00",
-      "title": "Free Food",
+      "title": "Free Food 11/19/24",
       "description": "Giving away food to homeless people",
       "type": "Safety",
     },
     {
       "date": "2024-11-18 18:43:00",
-      "title": "Free Food",
+      "title": "Free Food 11/18/24",
       "description": "Giving away food to homeless people",
       "type": "Safety",
     },
     {
       "date": "2024-11-17 18:43:00",
-      "title": "Free Food",
+      "title": "Free Food 11/17/24",
       "description": "Giving away food to homeless people",
       "type": "Safety",
     },
     {
       "date": "2024-11-16 18:43:00",
-      "title": "Free Food",
+      "title": "Free Food 11/16/24",
       "description": "Giving away food to homeless people",
       "type": "Safety",
     },
     {
       "date": "2024-11-15 18:43:00",
-      "title": "Free Food",
+      "title": "Free Food 11/15/24",
       "description": "Giving away food to homeless people",
       "type": "Safety",
     },
@@ -233,52 +233,47 @@ class _AlertPageState extends State<AlertPage> {
   List<Map<String, String>> dateTimeSortArray(
       List<int> dateRange, List<Map<String, String>> alertsArray) {
     List<Map<String, String>> sortedArray = [];
-    Map<String, String> temp;
-    int currHour;
-    int nextHour;
-    int currMinute;
-    int nextMinute;
-    int currDate;
+    DateTime now = DateTime.now();
 
-    for (int i = 0; i < alertsArray.length; i++) {
-      //[lowerBound, upperBound]
-      //date indexes: yyyy-mm-dd hh:mm:ss 1234(year) 5(-) 67(month) 8(-) 9(10)(date) 11(space) (12)(13) (hour) 14 (colon) (15)(16) minutes, anymore than that is unneeded
-      currDate = int.parse(alertsArray[i]["date"]!.substring(8, 10));
+    // Create date at start of today (midnight) for consistent comparison
+    DateTime today = DateTime(now.year, now.month, now.day);
 
-      print([alertsArray[i]["date"]!.substring(8, 10), "two"]);
-      if (currDate >= dateRange[0] && currDate <= dateRange[1]) {
-        sortedArray.add(alertsArray[i]);
+    // Filter alerts for the given date range
+    for (var alert in alertsArray) {
+      DateTime alertDate = DateTime.parse(alert["date"]!);
+      // Normalize alert date to start of day for consistent comparison
+      alertDate = DateTime(alertDate.year, alertDate.month, alertDate.day);
+
+      // Calculate days difference
+      int daysDifference = alertDate.difference(today).inDays;
+
+      // Today
+      if (dateRange[0] == 0 && dateRange[1] == 0) {
+        if (daysDifference == 0) {
+          sortedArray.add(alert);
+        }
       }
-      print(i);
-    }
-    // if (sortedArray.isEmpty) {
-    //   sortedArray = [
-    //     {
-    //       "date": "9999-99-99 00:00:00",
-    //       "title": "Nothing Yet",
-    //       "description": "Unavailable",
-    //       "type": "Event",
-    //     }
-    //   ];
-    //   return sortedArray;
-    // }
-    for (int curr = 0; curr < sortedArray.length - 1; curr++) {
-      for (int next = 1; next < sortedArray.length; next++) {
-        currHour = int.parse(sortedArray[curr]["date"]!.substring(11, 13));
-        nextHour = int.parse(sortedArray[next]["date"]!.substring(11, 13));
-        currMinute = int.parse(sortedArray[curr]["date"]!.substring(14, 16));
-        nextMinute = int.parse(sortedArray[next]["date"]!.substring(11, 13));
-
-        if (currHour <= nextHour ||
-            (currHour == nextHour && currMinute <= nextMinute)) {
-          //this is the issue, temp is being bad, and idk what its doing
-          //error is trying to access curr from the array, its not allowing access for some reason
-          temp = sortedArray[curr];
-          sortedArray[curr] = sortedArray[next];
-          sortedArray[next] = temp;
+      // This Week (next 7 days)
+      else if (dateRange[0] == 1 && dateRange[1] == 7) {
+        if (daysDifference > 0 && daysDifference <= 7) {
+          sortedArray.add(alert);
+        }
+      }
+      // Last Week (past 7 days)
+      else if (dateRange[0] == -7 && dateRange[1] == -1) {
+        if (daysDifference < 0 && daysDifference >= -7) {
+          sortedArray.add(alert);
         }
       }
     }
+
+    // Sort the filtered alerts by date (newest first)
+    sortedArray.sort((a, b) {
+      DateTime dateA = DateTime.parse(a["date"]!);
+      DateTime dateB = DateTime.parse(b["date"]!);
+      return dateB.compareTo(dateA);
+    });
+
     return sortedArray;
   }
 
@@ -305,14 +300,11 @@ class _AlertPageState extends State<AlertPage> {
         }).toList();
       }
 
-      // Then update the date-filtered lists with the type-filtered results
-      today = dateTimeSortArray(
-          [DateTime.now().day, DateTime.now().day], typeFilteredAlerts);
-      thisWeek = dateTimeSortArray(
-          [DateTime.now().day + 1, DateTime.now().day + 7], typeFilteredAlerts);
-      pastEvents = dateTimeSortArray(
-          [DateTime.now().day - 14, DateTime.now().day - 1],
-          typeFilteredAlerts);
+      // Then update the date-filtered lists
+      today = dateTimeSortArray([0, 0], typeFilteredAlerts); // Today only
+      thisWeek = dateTimeSortArray([1, 7], typeFilteredAlerts); // Next 7 days
+      pastEvents =
+          dateTimeSortArray([-7, -1], typeFilteredAlerts); // Last 7 days
       dateFilteredAlerts = [today, thisWeek, pastEvents];
 
       // Update filteredAlerts for compatibility
@@ -324,12 +316,9 @@ class _AlertPageState extends State<AlertPage> {
   void initState() {
     super.initState();
     // Initialize with all alerts
-    today = dateTimeSortArray(
-        [DateTime.now().day, DateTime.now().day], alertsArray);
-    thisWeek = dateTimeSortArray(
-        [DateTime.now().day + 1, DateTime.now().day + 7], alertsArray);
-    pastEvents = dateTimeSortArray(
-        [DateTime.now().day - 14, DateTime.now().day - 1], alertsArray);
+    today = dateTimeSortArray([0, 0], alertsArray); // Today only
+    thisWeek = dateTimeSortArray([1, 7], alertsArray); // Next 7 days
+    pastEvents = dateTimeSortArray([-7, -1], alertsArray); // Last 7 days
     dateFilteredAlerts = [today, thisWeek, pastEvents];
 
     filteredAlerts = alertsArray;

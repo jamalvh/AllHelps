@@ -414,9 +414,10 @@ class _AlertPageState extends State<AlertPage> {
                           child: Text(
                             dateName[index],
                             style: const TextStyle(
-                              color: Color(0xFF4D5166),
+                              color: Color(0xFF4d5166),
                               fontFamily: "NotoSans",
                               fontSize: 14,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),

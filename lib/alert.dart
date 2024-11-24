@@ -134,10 +134,8 @@ class _AlertPageState extends State<AlertPage> {
 
   List<List<int>> showTimeLimit = [[0, 0], [1, 7], [14, -1]];
 
-  //this is not sorted in order of ascending dates
-  //dates are in yyyy-mm-dd hh:mm:ss, no milisecond cus that's too much
-  //year, month, day, hour, minute
-  //using military time: 0-24, will be sorted through a function
+  //dates are in yyyy-mm-dd hh:mm:ss
+  //hours: 0-24
   final List<Map<String, String>> alertsArray = [
     {
       "date": "2024-11-20 00:37:00",
@@ -149,6 +147,12 @@ class _AlertPageState extends State<AlertPage> {
       "date": "2024-11-25 18:43:00",
       "title": "Free Apartments",
       "description": "Giving away apartments to homeless people",
+      "type": "Safety",
+    },
+    {
+      "date": "2024-11-23 18:43:00",
+      "title": "Free Food",
+      "description": "Giving away food to homeless people",
       "type": "Safety",
     }
   ];
@@ -182,13 +186,18 @@ class _AlertPageState extends State<AlertPage> {
     //sorts arrays in each date so that each date is in chronological order w/ respec to time in the date range
   List<Map<String, String>> dateTimeSortArray(List<int> dateRange, List<Map<String, String>> alertsArray) {
     List<Map<String, String>> sortedArray = [];
-     Map<String, String> temp;
+    Map<String, String> temp;
+    int currHour;
+    int nextHour;
+    int currMinute;
+    int nextMinute;
+    int currDate; 
 
-    //sorts the dates, no errors, 
     for (int i = 0; i < alertsArray.length; i++) {
-      //[lower, upper], date: yyyy-mm-dd hh:mm:ss 1234(year) 5(space) 67(month) 8(space) 9(10)(date) 11(space) (12)(13) (hour) 14 (colon) (15)(16) minutes, anymore than that is unneeded
-      //so substring(9, 11) ("coincidence?! I think Not!")
-      if (int.parse(alertsArray[i]["date"]!.substring(9, 11)) >= dateRange[0] && int.parse(alertsArray[i]["date"]!.substring(9, 11)) <= dateRange[1]) {
+      //[lowerBound, upperBound]
+      //date indexes: yyyy-mm-dd hh:mm:ss 1234(year) 5(-) 67(month) 8(-) 9(10)(date) 11(space) (12)(13) (hour) 14 (colon) (15)(16) minutes, anymore than that is unneeded
+      currDate = int.parse(alertsArray[i]["date"]!.substring(9, 11));
+      if (currDate >= dateRange[0] && currDate <= dateRange[1]) {
         sortedArray.add(alertsArray[i]);
       }
     }
@@ -196,20 +205,13 @@ class _AlertPageState extends State<AlertPage> {
     //makes sure the times in that date is in order, slowest method i can think of lol
     for (int curr = 0; curr < sortedArray.length-1; curr++) {
       for (int next = 1; next < sortedArray.length; next++) {
-        //compare hours first then minutes if hours are the same
-        //has a value but for some reason swaping is messing up, checking is raising an error for some reason
 
-        //why the hell is this comparing everything in the string to everything in the string?? 
+        currHour = int.parse(sortedArray[curr]["date"]!.substring(11, 13));
+        nextHour = int.parse(sortedArray[next]["date"]!.substring(11, 13));
+        currMinute = int.parse(sortedArray[curr]["date"]!.substring(14, 16));
+        nextMinute = int.parse(sortedArray[next]["date"]!.substring(11, 13));
 
-        // error is caused by this, for some reason, parcing this string isn't working correctly for some reason, i can't parse it for some reason
-        //hour is the first, minute is the second
-        if (
-          int.parse(sortedArray[curr]["date"]!.substring(11, 13)) >= int.parse(sortedArray[next]["date"]!.substring(11, 13))
-          ||
-          (int.parse(sortedArray[curr]["date"]!.substring(11, 13)) == int.parse(sortedArray[next]["date"]!.substring(11, 13))
-          &&
-          int.parse(sortedArray[curr]["date"]!.substring(14, 16)) >= int.parse(sortedArray[next]["date"]!.substring(14, 16)))
-          ) {
+        if (currHour <= nextHour || (currHour == nextHour && currMinute <= nextMinute)) {
             //this is the issue, temp is being bad, and idk what its doing
              //error is trying to access curr from the array, its not allowing access for some reason
             temp = sortedArray[curr];
@@ -226,6 +228,7 @@ class _AlertPageState extends State<AlertPage> {
   List<Map<String, String>> pastEvents = []; 
 
   List<List<Map<String, String>>> dateFilteredAlerts = [];
+  List<int> eventQuantities = [];
 
   @override
   void initState() {
@@ -234,6 +237,7 @@ class _AlertPageState extends State<AlertPage> {
     thisWeek = dateTimeSortArray([1, 7], alertsArray);
     pastEvents = dateTimeSortArray([14, -1], alertsArray);
     dateFilteredAlerts = [today, thisWeek, pastEvents];
+
     filteredAlerts = alertsArray;
   }
 
@@ -259,25 +263,6 @@ class _AlertPageState extends State<AlertPage> {
     for (int i = 0; i < alertsArray.length; i++) {
       sortedAlertsArrayTimes.add(DateTime.parse(alertsArray[i]["date"]!));
     }
-
-    int todayEvents = 0;
-    int thisWeekEvents = 0;
-    int pastWeeksEvents = 0;
-    for (int i = 0; i > sortedAlertsArrayTimes.length; i++) {
-      //parces the sorted alerts array, gives the lengths of time for which sections for what to display
-      if (sortedAlertsArrayTimes[i].year == DateTime.now().year) {
-        if (sortedAlertsArrayTimes[i].day - DateTime.now().day == 0) {
-          todayEvents++;
-        } else if (sortedAlertsArrayTimes[i].day - DateTime.now().day <= 7 && sortedAlertsArrayTimes[i].day - DateTime.now().day > 0 ) {
-          thisWeekEvents++;
-        } else if (sortedAlertsArrayTimes[i].day - DateTime.now().day <= -1 && sortedAlertsArrayTimes[i].day - DateTime.now().day >= -14 ) {
-          pastWeeksEvents++;
-        }
-      }
-    }
-
-    List<int> eventQuantities = [todayEvents, thisWeekEvents, pastWeeksEvents];
-    print(dateFilteredAlerts[0][0]);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F4F4),
@@ -338,13 +323,14 @@ class _AlertPageState extends State<AlertPage> {
                         color: Color(0xFF4D5166),
                         fontFamily: "NotoSans",
                         fontSize: 14,
+                        
                       ),
                     ),
                   ListView.builder(
                     shrinkWrap: true,
-                    itemCount: eventQuantities[index],
+                    itemCount: dateFilteredAlerts[index].length,
                     itemBuilder: (BuildContext context, int itemIndex) {
-
+                      
                       //for some reason this part of the code isn't running, prob cus the eventQuantities, check that next
                       print(dateFilteredAlerts[index][itemIndex]);
 
@@ -352,10 +338,10 @@ class _AlertPageState extends State<AlertPage> {
                       //and section[index] should give the corresponding lists required for this, filtered[index].length should be the item count
                       //if the thing exists, return this, else return a default alert
                       if (dateFilteredAlerts[index][itemIndex] != null) {
-                        return Alert(
-                          alertBase: _convertToAlertBase(dateFilteredAlerts[index][itemIndex])
-                          //alertBase: _convertToAlertBase(filteredAlerts[itemIndex])
-                        
+                        return 
+                          Alert(
+                          //alertBase: _convertToAlertBase(dateFilteredAlerts[index][itemIndex])
+                          alertBase: _convertToAlertBase(filteredAlerts[itemIndex])
                         );
                       } else { 
                         //if there is no event for that day, this is not used due to the num times this function gets run, figure a way out to put a default thing in or get rid of it entirely

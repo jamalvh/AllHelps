@@ -410,11 +410,15 @@ class _AlertPageState extends State<AlertPage> {
                         shrinkWrap: true,
                         itemCount: dateFilteredAlerts[index].length,
                         itemBuilder: (BuildContext context, int itemIndex) {
-                          return Alert(
-                              alertBase: _convertToAlertBase(
-                                  dateFilteredAlerts[index][itemIndex])
-                              //alertBase: _convertToAlertBase(filteredAlerts[itemIndex])
-                              );
+                          return Column(
+                            children: [
+                              Alert(
+                                alertBase: _convertToAlertBase(
+                                    dateFilteredAlerts[index][itemIndex]),
+                              ),
+                              const SizedBox(height: 10),
+                            ],
+                          );
                           //TODO: put in when I'm filtering and there's nothing in the thing
                           /*return Alert(
                             alertBase: _convertToAlertBase({

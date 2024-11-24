@@ -238,30 +238,38 @@ class _AlertPageState extends State<AlertPage> {
     // Create date at start of today (midnight) for consistent comparison
     DateTime today = DateTime(now.year, now.month, now.day);
 
+    // Find the start and end of the current week (Sunday to Saturday)
+    DateTime startOfWeek = today.subtract(Duration(days: today.weekday));
+    DateTime endOfWeek = startOfWeek.add(const Duration(days: 6));
+
     // Filter alerts for the given date range
     for (var alert in alertsArray) {
       DateTime alertDate = DateTime.parse(alert["date"]!);
       // Normalize alert date to start of day for consistent comparison
       alertDate = DateTime(alertDate.year, alertDate.month, alertDate.day);
 
-      // Calculate days difference
-      int daysDifference = alertDate.difference(today).inDays;
-
       // Today
       if (dateRange[0] == 0 && dateRange[1] == 0) {
-        if (daysDifference == 0) {
+        if (alertDate.isAtSameMomentAs(today)) {
           sortedArray.add(alert);
         }
       }
-      // This Week (next 7 days)
+      // This Week (current week)
       else if (dateRange[0] == 1 && dateRange[1] == 7) {
-        if (daysDifference > 0 && daysDifference <= 7) {
+        if (alertDate.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
+            alertDate.isBefore(endOfWeek.add(const Duration(days: 1)))) {
           sortedArray.add(alert);
         }
       }
-      // Last Week (past 7 days)
+      // Last Week
       else if (dateRange[0] == -7 && dateRange[1] == -1) {
-        if (daysDifference < 0 && daysDifference >= -7) {
+        DateTime startOfLastWeek =
+            startOfWeek.subtract(const Duration(days: 7));
+        DateTime endOfLastWeek = startOfWeek.subtract(const Duration(days: 1));
+
+        if (alertDate
+                .isAfter(startOfLastWeek.subtract(const Duration(days: 1))) &&
+            alertDate.isBefore(endOfLastWeek.add(const Duration(days: 1)))) {
           sortedArray.add(alert);
         }
       }

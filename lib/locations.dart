@@ -101,7 +101,6 @@ class LocationModel {
     if (response.statusCode == 200) {
       final result = await jsonDecode(response.body) as Map<String, dynamic>;
       if (result['code'] == 'Ok') {
-        print('distance updated');
         hasDistance = true;
         distance = result['routes'][0]['distance'] / 1609.34;
         return distance;
@@ -138,7 +137,6 @@ Future<List<LocationModel>> loadLocations() async {
         .map((location) => LocationModel.fromJson(location))
         .toList();
   } catch (e) {
-    print("Error loading locations: $e");
     return [];
   }
 }

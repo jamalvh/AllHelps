@@ -148,7 +148,7 @@ class _AlertPageState extends State<AlertPage> {
       "type": "Event",
     },
     {
-      "date": "2024-11-25 18:43:00",
+      "date": "2024-11-27 18:43:00",
       "title": "Free Apartments",
       "description": "Giving away apartments to homeless people",
       "type": "Safety",
@@ -346,44 +346,59 @@ class _AlertPageState extends State<AlertPage> {
               onSelectionChanged: updateFilters,
             ),
             const SizedBox(height: 14),
+            Alert(
+              alertBase: AlertBase(
+                type: AlertType.Welcome,
+                header: "Welcome to our platform!",
+                message:
+                    "Missed a notification from us? No worries. They'll be right here waiting for you for up to 14 days.",
+                date: DateTime.now(),
+              ),
+            ),
+            const SizedBox(height: 14),
             ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
               itemCount: 3,
               itemBuilder: (context, index) {
-                return Column(children: [
-                  Align(
-                    alignment: const Alignment(-0.97, 0),
-                    child: Text(
-                      dateName[index],
-                      style: const TextStyle(
-                        color: Color(0xFF4D5166),
-                        fontFamily: "NotoSans",
-                        fontSize: 14,
+                // Skip rendering if there are no events in this section
+                if (dateFilteredAlerts[index].isEmpty) {
+                  return const SizedBox.shrink();
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: Text(
+                        dateName[index],
+                        style: const TextStyle(
+                          color: Color(0xFF4D5166),
+                          fontFamily: "NotoSans",
+                          fontSize: 14,
+                        ),
                       ),
                     ),
-                  ),
-                  ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: dateFilteredAlerts[index].length,
-                      itemBuilder: (BuildContext context, int itemIndex) {
-                        return Alert(
-                            alertBase: _convertToAlertBase(
-                                dateFilteredAlerts[index][itemIndex])
-                            //alertBase: _convertToAlertBase(filteredAlerts[itemIndex])
-                            );
-                        //TODO: put in when I'm filtering and there's nothing in the thing
-                        /*return Alert(
-                          alertBase: _convertToAlertBase({
-                            "date": "Unavailable",
-                            "title": "Nothing Yet",
-                            "description": " ",
-                            "type": "Event",
-                            }
-                          )
-                        );*/
-                      })
-                ]);
+                    const SizedBox(height: 10),
+                    ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: dateFilteredAlerts[index].length,
+                        itemBuilder: (BuildContext context, int itemIndex) {
+                          return Column(
+                            children: [
+                              Alert(
+                                  alertBase: _convertToAlertBase(
+                                      dateFilteredAlerts[index][itemIndex])),
+                              if (itemIndex <
+                                  dateFilteredAlerts[index].length - 1)
+                                const SizedBox(height: 10),
+                            ],
+                          );
+                        }),
+                    const SizedBox(height: 10),
+                  ],
+                );
               },
             ),
           ],

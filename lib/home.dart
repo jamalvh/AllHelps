@@ -79,6 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             children: [
               const Header(),
+              const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: SearchBarWidget(
@@ -93,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   searches: filterModel.searches,
                   updateResults: updateResults,
                 ),
+                const SizedBox(height: 40),
               HelpsRow(onIndexChanged: widget.onIndexChanged),
               const SizedBox(height: 10),
               // GuideButton(),

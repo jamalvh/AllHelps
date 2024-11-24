@@ -158,7 +158,49 @@ class _AlertPageState extends State<AlertPage> {
       "title": "Free Food",
       "description": "Giving away food to homeless people",
       "type": "Safety",
-    }
+    },
+    {
+      "date": "2024-11-21 18:43:00",
+      "title": "Free Food",
+      "description": "Giving away food to homeless people",
+      "type": "Safety",
+    },
+    {
+      "date": "2024-11-20 18:43:00",
+      "title": "Free Food",
+      "description": "Giving away food to homeless people",
+      "type": "Safety",
+    },
+    {
+      "date": "2024-11-19 18:43:00",
+      "title": "Free Food",
+      "description": "Giving away food to homeless people",
+      "type": "Safety",
+    },
+    {
+      "date": "2024-11-18 18:43:00",
+      "title": "Free Food",
+      "description": "Giving away food to homeless people",
+      "type": "Safety",
+    },
+    {
+      "date": "2024-11-17 18:43:00",
+      "title": "Free Food",
+      "description": "Giving away food to homeless people",
+      "type": "Safety",
+    },
+    {
+      "date": "2024-11-16 18:43:00",
+      "title": "Free Food",
+      "description": "Giving away food to homeless people",
+      "type": "Safety",
+    },
+    {
+      "date": "2024-11-15 18:43:00",
+      "title": "Free Food",
+      "description": "Giving away food to homeless people",
+      "type": "Safety",
+    },
   ];
 
   //takes out the times out of each index to use in parcing our data
@@ -337,56 +379,58 @@ class _AlertPageState extends State<AlertPage> {
           ),
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AlertSelector(
-              onSelectionChanged: updateFilters,
-            ),
-            const SizedBox(height: 14),
-            ListView.builder(
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              itemCount: 3,
-              itemBuilder: (context, index) {
-                return Column(children: [
-                  Align(
-                    alignment: const Alignment(-0.97, 0),
-                    child: Text(
-                      dateName[index],
-                      style: const TextStyle(
-                        color: Color(0xFF4D5166),
-                        fontFamily: "NotoSans",
-                        fontSize: 14,
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AlertSelector(
+                onSelectionChanged: updateFilters,
+              ),
+              const SizedBox(height: 14),
+              ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                itemCount: 3,
+                itemBuilder: (context, index) {
+                  return Column(children: [
+                    Align(
+                      alignment: const Alignment(-0.97, 0),
+                      child: Text(
+                        dateName[index],
+                        style: const TextStyle(
+                          color: Color(0xFF4D5166),
+                          fontFamily: "NotoSans",
+                          fontSize: 14,
+                        ),
                       ),
                     ),
-                  ),
-                  ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: dateFilteredAlerts[index].length,
-                      itemBuilder: (BuildContext context, int itemIndex) {
-                        return Alert(
-                            alertBase: _convertToAlertBase(
-                                dateFilteredAlerts[index][itemIndex])
-                            //alertBase: _convertToAlertBase(filteredAlerts[itemIndex])
-                            );
-                        //TODO: put in when I'm filtering and there's nothing in the thing
-                        /*return Alert(
-                          alertBase: _convertToAlertBase({
-                            "date": "Unavailable",
-                            "title": "Nothing Yet",
-                            "description": " ",
-                            "type": "Event",
-                            }
-                          )
-                        );*/
-                      })
-                ]);
-              },
-            ),
-          ],
+                    ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: dateFilteredAlerts[index].length,
+                        itemBuilder: (BuildContext context, int itemIndex) {
+                          return Alert(
+                              alertBase: _convertToAlertBase(
+                                  dateFilteredAlerts[index][itemIndex])
+                              //alertBase: _convertToAlertBase(filteredAlerts[itemIndex])
+                              );
+                          //TODO: put in when I'm filtering and there's nothing in the thing
+                          /*return Alert(
+                            alertBase: _convertToAlertBase({
+                              "date": "Unavailable",
+                              "title": "Nothing Yet",
+                              "description": " ",
+                              "type": "Event",
+                              }
+                            )
+                          );*/
+                        })
+                  ]);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

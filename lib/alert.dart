@@ -196,10 +196,13 @@ class _AlertPageState extends State<AlertPage> {
     for (int i = 0; i < alertsArray.length; i++) {
       //[lowerBound, upperBound]
       //date indexes: yyyy-mm-dd hh:mm:ss 1234(year) 5(-) 67(month) 8(-) 9(10)(date) 11(space) (12)(13) (hour) 14 (colon) (15)(16) minutes, anymore than that is unneeded
-      currDate = int.parse(alertsArray[i]["date"]!.substring(9, 11));
+      currDate = int.parse(alertsArray[i]["date"]!.substring(8, 10));
+
+      print([alertsArray[i]["date"]!.substring(8, 10), "two"]);
       if (currDate >= dateRange[0] && currDate <= dateRange[1]) {
         sortedArray.add(alertsArray[i]);
       }
+      print(i);
     }
     if (sortedArray.isEmpty) {
       sortedArray = [{
@@ -241,9 +244,9 @@ class _AlertPageState extends State<AlertPage> {
   @override
   void initState() {
     super.initState();
-    today = dateTimeSortArray([0, 0], alertsArray);
-    thisWeek = dateTimeSortArray([1, 7], alertsArray);
-    pastEvents = dateTimeSortArray([14, -1], alertsArray);
+    today = dateTimeSortArray([DateTime.now().day, DateTime.now().day], alertsArray);
+    thisWeek = dateTimeSortArray([DateTime.now().day+1, DateTime.now().day+7], alertsArray);
+    pastEvents = dateTimeSortArray([DateTime.now().day-14, DateTime.now().day-1], alertsArray);
     dateFilteredAlerts = [today, thisWeek, pastEvents];
 
     filteredAlerts = alertsArray;

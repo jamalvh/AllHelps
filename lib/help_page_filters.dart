@@ -191,7 +191,7 @@ void _showDistanceModal(BuildContext context) {
             child: SingleChildScrollView(
               child: Container(
                 padding: const EdgeInsets.all(16),
-                height: 400,
+                height: 375,
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -199,6 +199,18 @@ void _showDistanceModal(BuildContext context) {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Add the grey drag indicator box
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[400], 
+                          borderRadius: BorderRadius.circular(10), 
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16), 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -250,12 +262,10 @@ void _showDistanceModal(BuildContext context) {
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.deepPurple,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 16),
-
-                    // Walking time buttons
                     Column(
                       children: [
                         Row(
@@ -276,8 +286,6 @@ void _showDistanceModal(BuildContext context) {
                       ],
                     ),
                     const SizedBox(height: 20),
-
-                    // Cancel and Apply buttons
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -285,15 +293,15 @@ void _showDistanceModal(BuildContext context) {
                           child: ElevatedButton.icon(
                             onPressed: () => Navigator.pop(context),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.deepPurple[50],
+                             backgroundColor: const Color.fromARGB(255, 224, 236, 248),
                               foregroundColor: Colors.deepPurple,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(24),
+                                borderRadius: BorderRadius.circular(15),
                               ),
-                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              padding: const EdgeInsets.symmetric(vertical: 18),
                             ),
                             icon: const Icon(Icons.cancel, color: Colors.deepPurple),
-                            label: const Text('Cancel', style: TextStyle(color: Colors.black)),
+                            label: const Text('Cancel', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -301,15 +309,15 @@ void _showDistanceModal(BuildContext context) {
                           child: ElevatedButton.icon(
                             onPressed: () => Navigator.pop(context),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.deepPurple[50],
+                              backgroundColor: const Color.fromARGB(255, 224, 236, 248),
                               foregroundColor: Colors.deepPurple,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(24),
+                                borderRadius: BorderRadius.circular(15),
                               ),
-                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              padding: const EdgeInsets.symmetric(vertical: 18),
                             ),
                             icon: const Icon(Icons.check_circle, color: Colors.deepPurple),
-                            label: const Text('Apply', style: TextStyle(color: Colors.black)),
+                            label: const Text('Apply', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                           ),
                         ),
                       ],
@@ -324,6 +332,21 @@ void _showDistanceModal(BuildContext context) {
     },
   );
 }
+
+
+/*
+
+           _buildWalkingTimeButton(context, 5, isLeft: true),
+                            _buildWalkingTimeButton(context, 20, isLeft: false),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _buildWalkingTimeButton(context, 30, isLeft: true),
+                            _buildWalkingTimeButton(context, 60, isLeft: false),
+*/
 
 Widget _buildWalkingTimeButton(BuildContext context, double time, {bool isLeft = false}) {
   return Expanded(

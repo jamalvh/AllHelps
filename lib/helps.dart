@@ -457,7 +457,7 @@ class _HelpsPageState extends State<HelpsPage> {
 
 
 
-                                                           '${LocationModel.estimateWalkingTime(searchModel.locations[index].distance)} mins by walking (${searchModel.locations[index].hasDistance ? '' : '(OLD VALUE) '} ${searchModel.locations[index].distance.toStringAsFixed(1)} miles)' ,
+                                                           '${LocationModel.estimateWalkingTime(searchModel.locations[index].distance)} mins by walking (${searchModel.locations[index].hasDistance ? '' : '(OLD VALUE)'}${searchModel.locations[index].distance.toStringAsFixed(1)} miles)' ,
                                                               style: const TextStyle(
                                                                   color: Colors
                                                                       .black54));

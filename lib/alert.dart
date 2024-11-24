@@ -201,8 +201,16 @@ class _AlertPageState extends State<AlertPage> {
         sortedArray.add(alertsArray[i]);
       }
     }
-
-    //makes sure the times in that date is in order, slowest method i can think of lol
+    if (sortedArray.isEmpty) {
+      sortedArray = [{
+          "date": "9999-99-99 00:00:00",
+          "title": "Nothing Yet",
+          "description": "Unavailable",
+          "type": "Event",
+        }
+      ];
+      return sortedArray;
+    }
     for (int curr = 0; curr < sortedArray.length-1; curr++) {
       for (int next = 1; next < sortedArray.length; next++) {
 
@@ -303,8 +311,9 @@ class _AlertPageState extends State<AlertPage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
+          mainAxisAlignment: MainAxisAlignment.start, 
+          crossAxisAlignment: CrossAxisAlignment.start,
+           children: [
             AlertSelector(
               onSelectionChanged: updateFilters,
             ),
@@ -317,43 +326,36 @@ class _AlertPageState extends State<AlertPage> {
               itemBuilder: (context, index) {
                 return Column(
                 children: [
-                  Text(
-                    dateName[index], 
-                    style: const TextStyle(
-                        color: Color(0xFF4D5166),
-                        fontFamily: "NotoSans",
-                        fontSize: 14,
-                        
+                  Align(
+                    alignment: const Alignment(-0.97, 0),
+                    child: Text(
+                      dateName[index], 
+                      style: const TextStyle(
+                          color: Color(0xFF4D5166),
+                          fontFamily: "NotoSans",
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
+                  ),
                   ListView.builder(
                     shrinkWrap: true,
                     itemCount: dateFilteredAlerts[index].length,
                     itemBuilder: (BuildContext context, int itemIndex) {
-                      
-                      //for some reason this part of the code isn't running, prob cus the eventQuantities, check that next
-                      print(dateFilteredAlerts[index][itemIndex]);
-
-                      //var index is the listview we're in, dateName[index] gives the section we're in
-                      //and section[index] should give the corresponding lists required for this, filtered[index].length should be the item count
-                      //if the thing exists, return this, else return a default alert
-                      if (dateFilteredAlerts[index][itemIndex] != null) {
-                        return 
-                          Alert(
-                          //alertBase: _convertToAlertBase(dateFilteredAlerts[index][itemIndex])
-                          alertBase: _convertToAlertBase(filteredAlerts[itemIndex])
-                        );
-                      } else { 
-                        //if there is no event for that day, this is not used due to the num times this function gets run, figure a way out to put a default thing in or get rid of it entirely
-                        return Alert(
+                      return 
+                        Alert(
+                        alertBase: _convertToAlertBase(dateFilteredAlerts[index][itemIndex])
+                        //alertBase: _convertToAlertBase(filteredAlerts[itemIndex])
+                      );
+                        //TODO: put in when I'm filtering and there's nothing in the thing
+                        /*return Alert(
                           alertBase: _convertToAlertBase({
                             "date": "Unavailable",
                             "title": "Nothing Yet",
                             "description": " ",
                             "type": "Event",
-                          }));
-                          //alertBase: _convertToAlertBase(filteredAlerts[itemIndex])
-                      }
+                            }
+                          )
+                        );*/
                     } 
                   )
                 ]

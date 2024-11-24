@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:allhelps/alert.dart';
 import 'package:allhelps/helps.dart';
 import 'package:allhelps/home.dart';
-import 'package:allhelps/my.dart';
 import 'package:allhelps/help_page_filters.dart';
 
 
@@ -43,7 +42,6 @@ class _MyAppState extends State<MyApp> {
       MyHomePage(onIndexChanged: onIndexChanged),
       HelpsPage(),
       AlertPage(),
-      MyPage(),
     ];
   }
 
@@ -124,20 +122,6 @@ class _MyAppState extends State<MyApp> {
                           height: 40,
                         ),
                       ),
-                      // My Icon
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedIndex = 3;
-                          });
-                        },
-                        child: Image.asset(
-                          selectedIndex == 3
-                              ? 'assets/images/My_selected.png'
-                              : 'assets/images/My.png',
-                          height: 40,
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -150,7 +134,6 @@ class _MyAppState extends State<MyApp> {
         '/home': (context) => MyHomePage(onIndexChanged: onIndexChanged),
         '/helps': (context) => HelpsPage(),
         '/alert': (context) => AlertPage(),
-        '/my': (context) => MyPage(),
       },
     );
   }

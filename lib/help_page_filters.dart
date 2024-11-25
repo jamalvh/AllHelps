@@ -198,8 +198,7 @@ void _showDistanceModal(BuildContext context) {
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Add the grey drag indicator box
+                  children: [  
                     Center(
                       child: Container(
                         width: 40,
@@ -358,7 +357,7 @@ Widget _buildWalkingTimeButton(BuildContext context, double time, {bool isLeft =
         style: const TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.bold,
-          color: Colors.black, // Text color
+          color: Colors.black, 
         ),
       ),
     ),

@@ -339,22 +339,13 @@ class _AlertPageState extends State<AlertPage> {
           decoration: const BoxDecoration(
             color: Color(0xFF6359CA),
           ),
-          child: SafeArea(
+          child: const SafeArea(
             child: Padding(
-              padding: const EdgeInsets.only(top: 50.0, bottom: 10.0),
+              padding: EdgeInsets.only(top: 50.0, bottom: 10.0),
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  Positioned(
-                    left: 0,
-                    child: BackButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      color: Colors.white,
-                    ),
-                  ),
-                  const Text(
+                  Text(
                     'Alerts',
                     style: TextStyle(
                       color: Colors.white,
@@ -425,7 +416,7 @@ class _AlertPageState extends State<AlertPage> {
                                 const SizedBox(height: 10),
                             ],
                           );
-                        }).toList(),
+                        }),
                         const SizedBox(height: 10),
                       ],
                     );

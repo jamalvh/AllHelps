@@ -100,8 +100,8 @@ class _FiltersState extends State<Filters> {
     List<Widget> subFilters = [];
     subFilters
         .add(renderSubFilter('', filterModel.getSubLevelImage('Clear filter')));
-    subFilters.add(renderSubFilter(
-        'Distance', filterModel.getSubLevelImage('Distance')));
+    subFilters.add(
+        renderSubFilter('Distance', filterModel.getSubLevelImage('Distance')));
     filterModel.filters[topCategory]?.forEach((subCategory) {
       subFilters.add(renderSubFilter(
           subCategory, filterModel.getSubLevelImage(subCategory)));
@@ -159,7 +159,7 @@ class _FiltersState extends State<Filters> {
                         )
                       : Container();
                 } else {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(child: Container());
                 }
               },
             ),
@@ -176,198 +176,210 @@ class _FiltersState extends State<Filters> {
     );
   }
 
-void _showDistanceModal(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-    ),
-    builder: (BuildContext context) {
-      return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          return SizedBox(
-            width: MediaQuery.of(context).size.width, 
-            child: SingleChildScrollView(
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                height: 375,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [  
-                    Center(
-                      child: Container(
-                        width: 40,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[400], 
-                          borderRadius: BorderRadius.circular(10), 
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16), 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Expanded(
-                          child: Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Location Based on ',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: 'Distance',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    decoration: TextDecoration.underline,
-                                    color: Colors.deepPurple,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Tooltip(
-                          message:
-                              'These are the nearest shelters based on your current location',
+  void _showDistanceModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            return SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  height: 375,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(16)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 40,
+                          height: 5,
                           decoration: BoxDecoration(
-                            color: Colors.black,
+                            color: Colors.grey[400],
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          textStyle: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
-                          child: const Icon(
-                            Icons.info_outline,
-                            size: 24,
-                          ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Walking time',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.deepPurple,
-                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildWalkingTimeButton(context, 5, isLeft: true),
-                            _buildWalkingTimeButton(context, 20, isLeft: false),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildWalkingTimeButton(context, 30, isLeft: true),
-                            _buildWalkingTimeButton(context, 60, isLeft: false),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () => Navigator.pop(context),
-                            style: ElevatedButton.styleFrom(
-                             backgroundColor: const Color.fromARGB(255, 224, 236, 248),
-                              foregroundColor: Colors.deepPurple,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Expanded(
+                            child: Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'Location Based on ',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: 'Distance',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline,
+                                      color: Colors.deepPurple,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              padding: const EdgeInsets.symmetric(vertical: 18),
                             ),
-                            icon: const Icon(Icons.cancel, color: Colors.deepPurple),
-                            label: const Text('Cancel', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                           ),
+                          Tooltip(
+                            message:
+                                'These are the nearest shelters based on your current location',
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            textStyle: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                            child: const Icon(
+                              Icons.info_outline,
+                              size: 24,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Walking time',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.deepPurple,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () => Navigator.pop(context),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(255, 224, 236, 248),
-                              foregroundColor: Colors.deepPurple,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
+                      ),
+                      const SizedBox(height: 16),
+                      Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _buildWalkingTimeButton(context, 5, isLeft: true),
+                              _buildWalkingTimeButton(context, 20,
+                                  isLeft: false),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _buildWalkingTimeButton(context, 30,
+                                  isLeft: true),
+                              _buildWalkingTimeButton(context, 60,
+                                  isLeft: false),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () => Navigator.pop(context),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromARGB(255, 224, 236, 248),
+                                foregroundColor: Colors.deepPurple,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 18),
                               ),
-                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              icon: const Icon(Icons.cancel,
+                                  color: Colors.deepPurple),
+                              label: const Text('Cancel',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold)),
                             ),
-                            icon: const Icon(Icons.check_circle, color: Colors.deepPurple),
-                            label: const Text('Apply', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () => Navigator.pop(context),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromARGB(255, 224, 236, 248),
+                                foregroundColor: Colors.deepPurple,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 18),
+                              ),
+                              icon: const Icon(Icons.check_circle,
+                                  color: Colors.deepPurple),
+                              label: const Text('Apply',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
-      );
-    },
-  );
-}
-
-Widget _buildWalkingTimeButton(BuildContext context, double time, {bool isLeft = false}) {
-  return Expanded(
-    child: OutlinedButton(
-      onPressed: () {
-        widget.filterLocationsByWalkingTime(time);
-        Navigator.of(context).pop();
+            );
+          },
+        );
       },
-      style: OutlinedButton.styleFrom(
-        backgroundColor: Colors.white,
-        side: BorderSide(color: Colors.grey[300]!),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: isLeft ? const Radius.circular(50) : Radius.zero,
-            bottomLeft: isLeft ? const Radius.circular(50) : Radius.zero,
-            topRight: !isLeft ? const Radius.circular(50) : Radius.zero,
-            bottomRight: !isLeft ? const Radius.circular(50) : Radius.zero,
+    );
+  }
+
+  Widget _buildWalkingTimeButton(BuildContext context, double time,
+      {bool isLeft = false}) {
+    return Expanded(
+      child: OutlinedButton(
+        onPressed: () {
+          widget.filterLocationsByWalkingTime(time);
+          Navigator.of(context).pop();
+        },
+        style: OutlinedButton.styleFrom(
+          backgroundColor: Colors.white,
+          side: BorderSide(color: Colors.grey[300]!),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: isLeft ? const Radius.circular(50) : Radius.zero,
+              bottomLeft: isLeft ? const Radius.circular(50) : Radius.zero,
+              topRight: !isLeft ? const Radius.circular(50) : Radius.zero,
+              bottomRight: !isLeft ? const Radius.circular(50) : Radius.zero,
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 30),
+        ),
+        child: Text(
+          time == 60.0 ? '60 mins +' : '< $time mins',
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 30),
       ),
-      child: Text(
-        time == 60.0 ? '60 mins +' : '< $time mins',
-        style: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-          color: Colors.black, 
-        ),
-      ),
-    ),
-  );
-}
-
-
-
-
-
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

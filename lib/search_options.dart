@@ -6,11 +6,15 @@ class SearchOptions extends StatefulWidget {
   final List<String> searches;
   final Function(String) updateResults;
   final SearchModel searchModel;
-  const SearchOptions(
-      {super.key,
-      required this.searches,
-      required this.updateResults,
-      required this.searchModel});
+  final Function(int, {String? filter}) onIndexChanged;
+
+  const SearchOptions({
+    super.key,
+    required this.searches,
+    required this.updateResults,
+    required this.searchModel,
+    required this.onIndexChanged,
+  });
 
   @override
   State<SearchOptions> createState() => _SearchOptionsState();
@@ -32,9 +36,9 @@ class _SearchOptionsState extends State<SearchOptions> {
                   for (var location in widget.searchModel.locations) {
                     location.clearDistance();
                   }
+                  widget.onIndexChanged(1);
                   filterModel.setChosenFilter(widget.searches.elementAt(index));
                   widget.updateResults(filterModel.chosenFilter);
-                  Navigator.pushNamed(context, '/help');
                 },
                 child: Row(children: [
                   FutureBuilder<bool>(

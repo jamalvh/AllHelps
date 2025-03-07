@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:latlong2/latlong.dart' as lat_lng;
 import 'package:http/http.dart' as http;
 
 class LocationModel {
+  final String id; // Added unique identifier
   final String name;
   final lat_lng.LatLng coordinates;
   final String openTime;
@@ -12,13 +15,16 @@ class LocationModel {
   final List<String> services;
   late double distance = -1;
   bool hasDistance = false;
+  final String tel;
 
   LocationModel({
+    required this.id, // Added to constructor
     required this.name,
     required this.coordinates,
     required this.openTime,
     required this.closeTime,
     required this.services,
+    required this.tel,
   });
 
   static TimeOfDay _parseTime(String time) {
@@ -66,12 +72,15 @@ class LocationModel {
 
   factory LocationModel.fromJson(Map<String, dynamic> json) {
     return LocationModel(
-      name: json['name'],
-      coordinates: lat_lng.LatLng(json['latitude'], json['longitude']),
-      openTime: json['openTime'],
-      closeTime: json['closeTime'],
-      services: List<String>.from(json['services']),
-    );
+        id: json['id'] ?? '', // Added id handling
+        name: json['name'],
+        coordinates: json["geopoint"],
+        openTime: json['openTime'],
+        closeTime: json['closeTime'],
+        services: List<String>.from(
+          json['services'],
+        ),
+        tel: json["tel"]);
   }
 
   Future<double> calculateDistance(
@@ -104,18 +113,29 @@ class LocationModel {
 }
 
 Future<List<LocationModel>> loadLocations() async {
-  try {
-    final String jsonString =
-        await rootBundle.loadString('lib/help_page_assets/locations.json');
-    final List<dynamic> jsonData = json.decode(jsonString);
+  var snapshot = await FirebaseFirestore.instance.collection('connects').get();
 
-    return jsonData
-        .map((location) => LocationModel.fromJson(location))
-        .toList();
-  } catch (e) {
-    return [];
-  }
+  var locations = snapshot.docs.map((doc) {
+    var data = doc.data().map((key, value) {
+      if (value is Timestamp) {
+        return MapEntry(key, value.toDate().toString());
+      }
+      return MapEntry(key, value);
+    });
+    var loc = LocationModel(
+        id: doc.id, // Use Firestore document ID as location ID
+        closeTime: data["closeTime"] ?? "17:00",
+        openTime: data["openTime"] ?? "09:00",
+        name: data["name"]!,
+        services: List<String>.from(data["services"] ?? []),
+        coordinates: lat_lng.LatLng(
+          (data["coordinates"] as GeoPoint).latitude,
+          (data["coordinates"] as GeoPoint).longitude,
+        ),
+        tel: data["tel"] ?? "No Phone Number");
+
+    return loc;
+  }).toList();
+
+  return locations;
 }
-
-
-

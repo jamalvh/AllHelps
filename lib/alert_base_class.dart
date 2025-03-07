@@ -1,16 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class Alert extends StatelessWidget {
   final AlertBase alertBase;
 
-  Alert({required this.alertBase});
+  const Alert({super.key, required this.alertBase});
 
   @override
   Widget build(BuildContext context) {
     final DateFormat formatter = DateFormat('MM/dd/yyyy');
-    final String formattedDate =
-        formatter.format(alertBase.date ?? DateTime.now());
+    formatter.format(alertBase.date ?? DateTime.now());
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -124,6 +124,7 @@ class Alert extends StatelessWidget {
   }
 }
 
+// ignore: constant_identifier_names
 enum AlertType { Welcome, Event, Resources, Safety }
 
 class AlertBase {
@@ -161,6 +162,8 @@ class AlertBase {
   Color get welcomeBorder => _welcomeBorder;
 
   void show() {
-    print('AlertBase.show()');
+    if (kDebugMode) {
+      print('AlertBase.show()');
+    }
   }
 }

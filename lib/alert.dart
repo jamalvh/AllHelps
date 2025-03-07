@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'alert_base_class.dart';
 
@@ -207,6 +208,27 @@ class _AlertPageState extends State<AlertPage> {
   //only used for comparison as of the moment
   final List<DateTime> sortedAlertsArrayTimes = [];
 
+  Stream<List<Map<String, String>>> fetchAlertsStream() {
+    var stream = FirebaseFirestore.instance
+        .collection('alerts')
+        .orderBy('date', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) {
+              return doc.data().map((key, value) {
+                if (value is Timestamp) {
+                  return MapEntry(
+                      key,
+                      value
+                          .toDate()
+                          .toString()); // Convert Timestamp to DateTime string
+                }
+                return MapEntry(key, value.toString());
+              });
+            }).toList());
+
+    return stream;
+  }
+
   AlertType _getAlertType(String type) {
     switch (type) {
       case "Event":
@@ -347,13 +369,13 @@ class _AlertPageState extends State<AlertPage> {
           decoration: const BoxDecoration(
             color: Color(0xFF6359CA),
           ),
-          child: SafeArea(
+          child: const SafeArea(
             child: Padding(
-              padding: const EdgeInsets.only(top: 50.0, bottom: 10.0),
+              padding: EdgeInsets.only(top: 50.0, bottom: 10.0),
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  const Text(
+                  Text(
                     'Alerts',
                     style: TextStyle(
                       color: Colors.white,
@@ -373,64 +395,114 @@ class _AlertPageState extends State<AlertPage> {
             onSelectionChanged: updateFilters,
           ),
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 14),
-                  Alert(
-                    alertBase: AlertBase(
-                      type: AlertType.Welcome,
-                      header: "Welcome to our platform!",
-                      message:
-                          "Missed a notification from us? No worries. They'll be right here waiting for you for up to 14 days.",
-                      date: DateTime.now(),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  ...List.generate(3, (index) {
-                    if (dateFilteredAlerts[index].isEmpty) {
-                      return const SizedBox.shrink();
-                    }
+            child: StreamBuilder<List<Map<String, String>>>(
+              stream: fetchAlertsStream(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16),
-                          child: Text(
-                            dateName[index],
-                            style: const TextStyle(
-                              color: Color(0xFF4d5166),
-                              fontFamily: "NotoSans",
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No alerts found'));
+                }
+
+                // Get the alerts from the snapshot
+                List<Map<String, String>> alertsArray = snapshot.data!;
+
+                // Apply filtering based on selected filters
+                List<Map<String, String>> typeFilteredAlerts;
+                if (selectedFilters[0]) {
+                  typeFilteredAlerts = alertsArray;
+                } else {
+                  typeFilteredAlerts = alertsArray.where((alert) {
+                    if (selectedFilters[1] && alert["type"] == "Event") {
+                      return true;
+                    }
+                    if (selectedFilters[2] && alert["type"] == "Resources") {
+                      return true;
+                    }
+                    if (selectedFilters[3] && alert["type"] == "Safety") {
+                      return true;
+                    }
+                    return false;
+                  }).toList();
+                }
+
+                // Update date-filtered lists
+                today =
+                    dateTimeSortArray([0, 0], typeFilteredAlerts); // Today only
+
+                typeFilteredAlerts
+                    .removeWhere((element) => today.contains(element));
+
+                thisWeek = dateTimeSortArray(
+                    [1, 7], typeFilteredAlerts); // Next 7 days
+                typeFilteredAlerts
+                    .removeWhere((element) => thisWeek.contains(element));
+                pastEvents = dateTimeSortArray(
+                    [-7, -1], typeFilteredAlerts); // Last 7 days
+                dateFilteredAlerts = [today, thisWeek, pastEvents];
+
+                return SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 14),
+                      Alert(
+                        alertBase: AlertBase(
+                          type: AlertType.Welcome,
+                          header: "Welcome to our platform!",
+                          message:
+                              "Missed a notification from us? No worries. They'll be right here waiting for you for up to 14 days.",
+                          date: DateTime.now(),
                         ),
-                        const SizedBox(height: 10),
-                        ...dateFilteredAlerts[index]
-                            .asMap()
-                            .entries
-                            .map((entry) {
-                          final itemIndex = entry.key;
-                          final alert = entry.value;
-                          return Column(
-                            children: [
-                              Alert(alertBase: _convertToAlertBase(alert)),
-                              if (itemIndex <
-                                  dateFilteredAlerts[index].length - 1)
-                                const SizedBox(height: 10),
-                            ],
-                          );
-                        }).toList(),
-                        const SizedBox(height: 10),
-                      ],
-                    );
-                  }),
-                ],
-              ),
+                      ),
+                      const SizedBox(height: 14),
+                      ...List.generate(3, (index) {
+                        if (dateFilteredAlerts[index].isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16),
+                              child: Text(
+                                dateName[index],
+                                style: const TextStyle(
+                                  color: Color(0xFF4d5166),
+                                  fontFamily: "NotoSans",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            ...dateFilteredAlerts[index]
+                                .asMap()
+                                .entries
+                                .map((entry) {
+                              final itemIndex = entry.key;
+                              final alert = entry.value;
+                              return Column(
+                                children: [
+                                  Alert(alertBase: _convertToAlertBase(alert)),
+                                  if (itemIndex <
+                                      dateFilteredAlerts[index].length - 1)
+                                    const SizedBox(height: 10),
+                                ],
+                              );
+                            }).toList(),
+                            const SizedBox(height: 10),
+                          ],
+                        );
+                      }),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         ],

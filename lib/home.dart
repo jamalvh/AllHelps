@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:allhelps/alert_base_class.dart';
 import 'package:allhelps/filter_model.dart';
@@ -5,13 +6,15 @@ import 'package:allhelps/search_model.dart';
 import 'package:allhelps/locations.dart';
 import 'package:allhelps/search_bar_page.dart';
 import 'package:allhelps/search_options.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyHomePage extends StatefulWidget {
   final Function(int, {String? filter}) onIndexChanged;
 
-  const MyHomePage({Key? key, required this.onIndexChanged}) : super(key: key);
+  const MyHomePage({super.key, required this.onIndexChanged});
 
   @override
+  // ignore: library_private_types_in_public_api
   _MyHomePageState createState() => _MyHomePageState();
 }
 
@@ -22,41 +25,49 @@ class _MyHomePageState extends State<MyHomePage> {
   List<LocationModel> locations = [];
 
   void activateSearch() {
-    setState(() {
-      filterModel.initializeSearches();
-      searchModel.showResults = true;
-    });
+    if (mounted) {
+      setState(() {
+        filterModel.initializeSearches();
+        searchModel.showResults = true;
+      });
+    }
   }
 
   void closeSearch() async {
     locations = await loadLocations();
-    setState(() {
-      filterModel.setChosenFilter("");
-      searchModel.showResults = false;
-    });
+    if (mounted) {
+      setState(() {
+        filterModel.setChosenFilter("");
+        searchModel.showResults = false;
+      });
+    }
   }
 
   void updateSearch(String value) {
-    setState(() {
-      if (value == '') {
-        filterModel.initializeSearches();
-      } else {
-        filterModel.searches.clear();
-        for (String filter in filterModel.filters.keys.toList()) {
-          if (filter.toLowerCase().contains(value.toLowerCase())) {
-            filterModel.searches.add(filter);
+    if (mounted) {
+      setState(() {
+        if (value == '') {
+          filterModel.initializeSearches();
+        } else {
+          filterModel.searches.clear();
+          for (String filter in filterModel.filters.keys.toList()) {
+            if (filter.toLowerCase().contains(value.toLowerCase())) {
+              filterModel.searches.add(filter);
+            }
           }
         }
-      }
-    });
+      });
+    }
   }
 
   void updateResults(String topFilter) {
-    setState(() {
-      locations.removeWhere((location) {
-        return !location.services.contains(topFilter);
+    if (mounted) {
+      setState(() {
+        locations.removeWhere((location) {
+          return !location.services.contains(topFilter);
+        });
       });
-    });
+    }
   }
 
   @override
@@ -94,6 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   searchModel: searchModel,
                   searches: filterModel.searches,
                   updateResults: updateResults,
+                  onIndexChanged: widget.onIndexChanged,
                 ),
               const SizedBox(height: 40),
               HelpsRow(onIndexChanged: widget.onIndexChanged),
@@ -102,14 +114,63 @@ class _MyHomePageState extends State<MyHomePage> {
                 onTap: () {
                   widget.onIndexChanged(2);
                 },
-                child: Alert(
-                  alertBase: AlertBase(
-                    type: AlertType.Safety,
-                    header: 'Severe Weather Warning',
-                    message:
-                        'A severe thunderstorm is expected in your area. Stay indoors and avoid unnecessary travel.',
-                    date: DateTime.now(),
-                  ),
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('alerts')
+                      .orderBy('date', descending: true)
+                      .limit(1)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    // If there's an error or no data, return an empty container
+                    if (snapshot.hasError) {
+                      return const SizedBox.shrink();
+                    }
+
+                    // Show loading indicator while fetching
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    // No alerts found
+                    if (snapshot.data!.docs.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+
+                    // Get the most recent alert
+                    var alertData = snapshot.data!.docs.first.data()
+                        as Map<String, dynamic>;
+
+                    // Convert alert type
+                    AlertType alertType;
+                    switch (alertData['type']) {
+                      case 'Event':
+                        alertType = AlertType.Event;
+                        break;
+                      case 'Safety':
+                        alertType = AlertType.Safety;
+                        break;
+                      case 'Resources':
+                        alertType = AlertType.Resources;
+                        break;
+                      default:
+                        alertType = AlertType.Welcome;
+                    }
+
+                    return GestureDetector(
+                      onTap: () {
+                        widget.onIndexChanged(2);
+                      },
+                      child: Alert(
+                        alertBase: AlertBase(
+                          type: alertType,
+                          header: alertData['title'] ?? 'Recent Alert',
+                          message: alertData['description'] ??
+                              'No description available',
+                          date: alertData['date'].toDate(),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
               const SizedBox(height: 40),
@@ -201,7 +262,7 @@ class HelpsRow extends StatelessWidget {
               HelpsButton(
                   color1: const Color(0xFF4F77C0),
                   color2: const Color(0xFF86A8FE),
-                  text: "Get Medical Relief",
+                  text: "Get Medical Connect",
                   imageURL: "assets/images/helps_medicine_icon.png",
                   onTap: () {
                     onIndexChanged(1, filter: "Medical");
@@ -323,15 +384,17 @@ class EmergencyRow extends StatelessWidget {
                     title: "24/7 Hotline",
                     text: "Reach out anytime for support",
                     imageURL: "assets/images/24-hours-line.png",
-                    onTap: () {
-                      onIndexChanged(2); // Switch to AlertPage
+                    onTap: () async {
+                      // 988
+                      launchUrl(Uri.parse('tel:988'));
                     }),
                 EmergencyButton(
                     title: "Local outreach team",
                     text: "Connect with your local agency",
                     imageURL: "assets/images/phone-fill.png",
                     onTap: () {
-                      onIndexChanged(2);
+                      // 211
+                      launchUrl(Uri.parse('tel:211'));
                     }),
               ],
             ))
